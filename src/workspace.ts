@@ -81,9 +81,12 @@ export class Workspace {
       return {path: relative(this.root, target), bytes: Buffer.byteLength(content)};
     }
 
+    let mode = 0o600;
     try {
       const current = await lstat(target);
       if (current.isSymbolicLink() || !current.isFile() || current.nlink > 1) throw new Error('Only regular files with one hard link can be overwritten');
+      // Preserve ordinary permission bits, never copy setuid/setgid bits.
+      mode = current.mode & 0o777;
     } catch (error: any) {
       if (error.code !== 'ENOENT') throw error;
     }
@@ -91,11 +94,16 @@ export class Workspace {
     const temp = resolve(dirname(target), `.${basename(target)}.localmcp-${randomBytes(8).toString('hex')}`);
     const file = await open(temp, constants.O_WRONLY | constants.O_CREAT | constants.O_EXCL | constants.O_NOFOLLOW, 0o600);
     try {
-      await file.writeFile(content, 'utf8');
-      await file.sync();
-    } finally { await file.close(); }
-    try { await rename(temp, target); }
-    catch (error) { await rm(temp, {force: true}); throw error; }
+      try {
+        await file.writeFile(content, 'utf8');
+        await file.chmod(mode);
+        await file.sync();
+      } finally { await file.close(); }
+      await rename(temp, target);
+    } catch (error) {
+      await rm(temp, {force: true});
+      throw error;
+    }
     return {path: relative(this.root, target), bytes: Buffer.byteLength(content)};
   }
 

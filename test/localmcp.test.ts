@@ -38,7 +38,8 @@ test('real SDK stdio initialization and create/read/edit/list round trip', async
   const transport = new StdioClientTransport({command:process.execPath,args:[resolve('dist/index.js'),'stdio'],env:{LOCALMCP_ROOT:root,LOCALMCP_CONFIG:'/nonexistent/localmcp-test.json'},stderr:'pipe'});
   await client.connect(transport); t.after(() => client.close());
   const tools = await client.listTools();
-  assert.equal(tools.tools.length,26);
+  assert.equal(tools.tools.length,27);
+  assert.ok(tools.tools.some(t => t.name === 'git_status'));
   assert.ok(tools.tools.some(t => t.name === 'run_command'));
   const call = (name: string,args: any) => client.callTool({name,arguments:args});
   assert.equal((await call('write_file',{path:'hello.txt',content:'hello world'})).isError,undefined);
