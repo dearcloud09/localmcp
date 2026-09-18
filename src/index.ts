@@ -1,6 +1,5 @@
 #!/usr/bin/env node
 import { timingSafeEqual } from 'node:crypto';
-import { fileURLToPath } from 'node:url';
 import express from 'express';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import { StreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/streamableHttp.js';
@@ -12,27 +11,19 @@ import { loadSkills } from './skills/loader.js';
 import { ProcessManager } from './process.js';
 
 async function ensureInitialized(force = false) {
-  const {copyFile, access, cp, mkdir} = await import('node:fs/promises');
-  const {dirname, resolve} = await import('node:path');
-  const {homedir} = await import('node:os');
-  const packageRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
-  const configDir = resolve(homedir(), '.localmcp');
-  const target = resolve(configDir, 'localmcp.json');
-  const skillsTarget = resolve(configDir, 'skills');
-  await mkdir(configDir,{recursive:true,mode:0o700});
-  let created = false;
-  try {await access(target);} catch (error:any) {if(error.code!=='ENOENT')throw error;await copyFile(resolve(packageRoot,'localmcp.example.json'),target);created=true;}
-  try {await access(skillsTarget);} catch (error:any) {if(error.code!=='ENOENT')throw error;await cp(resolve(packageRoot,'skills'),skillsTarget,{recursive:true});created=true;}
-  if (created || force) console.log(created ? `Initialized ${configDir}` : `Already initialized: ${configDir}`);
+  // Legacy init now validates an explicit profile; never creates a home-wide one.
+  await config();
+  if (force) console.log('Configuration validated. No files were created or replaced.');
 }
 
 async function main() {
   let mode = process.argv[2] || 'start';
   if (mode === 'init') {await ensureInitialized(true); return;}
   if (['start', 'stop', 'reload', 'status'].includes(mode)) {
+    if (mode === 'start' || mode === 'reload') await ensureInitialized();
     const {control, status, printStatus} = await import('./lifecycle.js');
     if (mode === 'status') printStatus(await status());
-    else await control(mode as 'start' | 'stop' | 'reload', ensureInitialized);
+    else await control(mode as 'start' | 'stop' | 'reload');
     return;
   }
   if (mode === 'agent') {await ensureInitialized(); await import('./agent.js'); return;}

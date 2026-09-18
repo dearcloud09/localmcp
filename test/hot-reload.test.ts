@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {mkdtemp,writeFile,rename,rm} from 'node:fs/promises';
+import {mkdtemp,writeFile,rename,rm,mkdir} from 'node:fs/promises';
 import {tmpdir} from 'node:os';
 import {join,resolve} from 'node:path';
 import {Client} from '@modelcontextprotocol/sdk/client/index.js';
@@ -27,8 +27,9 @@ test('config watcher serializes reloads and picks up edits made during a reload'
 
 test('stdio hot reload preserves calls and processes, rejects bad config and survives atomic saves', {timeout:30000},async t=>{
   const root=await mkdtemp(join(tmpdir(),'localmcp-hot-'));t.after(()=>rm(root,{recursive:true,force:true}));
+  const project=join(root,'project');await mkdir(project);
   const path=join(root,'custom.json');
-  const settings:any={workspaces:{first:root},defaultWorkspace:'first',features:{shell:true}};
+  const settings:any={workspaces:{first:project},defaultWorkspace:'first',features:{shell:true,processes:true}};
   await writeFile(path,JSON.stringify(settings));
   const client=new Client({name:'hot-test',version:'1'});
   const transport=new StdioClientTransport({command:process.execPath,args:[resolve('dist/index.js'),'stdio'],env:{LOCALMCP_CONFIG:path},stderr:'pipe'});
@@ -46,9 +47,15 @@ test('stdio hot reload preserves calls and processes, rejects bad config and sur
   await until(async()=>logs.includes('ENOENT'));
   assert.equal((await info()).workspace,'first');
   delete settings.mcpServers;
+  const validWorkspaces=settings.workspaces;
+  settings.workspaces={first:root};
+  await writeFile(path,JSON.stringify(settings));
+  await until(async()=>logs.includes('CONFIG_IN_WORKSPACE'));
+  assert.equal((await info()).workspace,'first');
+  settings.workspaces=validWorkspaces;
   // An in-flight command and a persistent process must survive the configuration switch.
   const running=call('run_command',{command:'sleep 2; printf finished',timeoutMs:5000});
-  settings.workspaces={first:root,second:root};settings.defaultWorkspace='second';
+  settings.workspaces={first:project,second:project};settings.defaultWorkspace='second';
   const staged=join(root,'staged.json');await writeFile(staged,JSON.stringify(settings));await rename(staged,path);
   await until(async()=>(await info()).workspace==='second');
   assert.equal(JSON.parse((await running).content[0].text).output,'finished');

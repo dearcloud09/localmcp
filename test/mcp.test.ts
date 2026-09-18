@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {mkdtemp,writeFile,rm} from 'node:fs/promises';
+import {mkdtemp,writeFile,rm,mkdir} from 'node:fs/promises';
 import {tmpdir} from 'node:os';
 import {join,resolve} from 'node:path';
 import {Client} from '@modelcontextprotocol/sdk/client/index.js';
@@ -9,9 +9,10 @@ import {StdioClientTransport} from '@modelcontextprotocol/sdk/client/stdio.js';
 test('stable MCP gateways discover, validate and forward external tools', async t => {
   const root=await mkdtemp(join(tmpdir(),'localmcp-gateway-'));
   t.after(()=>rm(root,{recursive:true,force:true}));
+  const project=join(root,'project');await mkdir(project);
   const names=join(root,'tools.json'),config=join(root,'config.json');
   await writeFile(names,JSON.stringify(['echo','second']));
-  await writeFile(config,JSON.stringify({root,features:{shell:false},mcpServers:{external:{command:process.execPath,args:[resolve('test/fixtures/mcp-server.mjs'),names]}}}));
+  await writeFile(config,JSON.stringify({root:project,features:{shell:false},mcpServers:{external:{command:process.execPath,args:[resolve('test/fixtures/mcp-server.mjs'),names]}}}));
   const client=new Client({name:'gateway-test',version:'1'});
   const transport=new StdioClientTransport({command:process.execPath,args:[resolve('dist/index.js'),'stdio'],env:{LOCALMCP_CONFIG:config},stderr:'pipe'});
   t.after(()=>client.close());
