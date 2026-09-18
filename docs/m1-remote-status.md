@@ -1,42 +1,23 @@
-# M1 remote handoff status
+# M1 원격 반영·검증 현황
 
-Date: 2026-09-18
-Upstream baseline: `fff33cfb5249be914ec7bab54455e793c1617321`
-Target: `dearcloud09/localmcp`, branch `feat/m1-modular-runtime`
+갱신: 2026-09-18. 현재 계획: [1pager](onepager.ko.md). 전체 진행: [progress.md](progress.md).
 
-## Important: this branch is documentation-only
+## 현재 상태 — 문서 전용 브랜치가 아님
 
-The M1 source implementation has NOT been committed to this branch. This commit contains the agreed plan and this status report only. It does not install the modular runtime or make the original defaults safe.
+M1 소스는 `d5b4ea9511c5c05229bb34ab52747553a61e3f03`으로 `feat/m1-modular-runtime`에 반영됐다. 원본 main은 `fff33cfb5249be914ec7bab54455e793c1617321`이며 PR #1은 Draft다. 초기 문서 2개와 M1 변경 24개가 올라간 것을 GitHub에서 확인했다.
 
-The branch was created successfully through the connected GitHub app. Bulk source uploads and a single-file CLI adapter upload were then blocked by the tool security check with an indeterminate-security-status message. A reduced metadata-only source request succeeded, but no partial source tree was committed. Source-write attempts were stopped rather than routing the blocked code through another write path. The exact cause of the security-check failure was not supplied.
+사용자가 맥에서 타입 검사·빌드·전체 테스트를 실행하고 `M1_CHECKS_OK`와 **64개 통과, 실패·취소·건너뜀 0개**를 보고했다. 이 수치는 사용자 제공 실행 결과이지 원격 CI 결과가 아니다. macOS cwd 검사의 realpath 수정도 원격 소스에서 확인했다.
 
-## Validation actually rerun in this session
+GitHub Actions는 **사용 한도 초과로 보류(사용자 확인)**한다. 계정 과금 내역을 별도로 조회하거나 한도를 변경하지 않았다. 다른 OS/Node 조합, Worker 중계, 실제 ChatGPT 연결은 여전히 미검증이다.
 
-- The supplied M1 patch SHA-256 matches `fc72da17c05199e4f20cba3d823f35a182c7d8d15903b4cb552dfc4212685ae7`.
-- All 24 supplied overlay files match their manifest SHA-256 values.
-- The four modified upstream files match their recorded Git blob hashes.
-- `git apply --check` and patch application succeed on a reconstructed baseline file subset; all 24 resulting files are byte-identical to the supplied overlay. This is NOT a full repository clone.
-- Strict TypeScript compilation of the independent core/CLI/Git/files/process test subset passed.
-- The independent Node test run passed 43 tests with zero failures, cancellations or skips.
-- Environment: Linux, Node 22.16.0, TypeScript 5.8.3, Git 2.47.3. These are the available verification tools, not proof of validation with the upstream dependency versions.
+## 기록의 정정과 이력
 
-## Still unverified
+이 파일의 초기 버전 `b6cf30595a2a903270f3bf4363cf158cad924e14`에는 소스 업로드 전 문서 전용 상태가 기록돼 있었다. 그때 connector의 코드 쓰기가 보안 검사에서 차단되어 구현을 원격에 올리지 못했고, 이후 저장소 소유자가 로컬에서 검증 후 직접 push했다. 초기의 '구현 미반영' 표현은 더 이상 현재 상태가 아니다.
 
-The execution container cannot resolve `github.com` or `registry.npmjs.org`. No full clone or original dependency installation was possible. Complete `npm run check`, `npm run build`, `npm test`, SDK integration, Worker relay, live ChatGPT connection and cross-platform behavior remain unverified in this session. No CI success is claimed.
+이전 개발환경에서의 43개 독립 테스트 및 패치 무결성 검증은 당시 기록이다. macOS 전체 64개 검사나 현재 변경의 검증으로 합산하지 않는다.
 
-## Applying the implementation
+## 이번 M2a와 남은 경계
 
-The accompanying `localmcp-m1-fork-handoff.zip` is an implementation patch bundle, not a complete checkout. It contains the original 24-file patch, source overlay, tests, current validation logs, and a guarded local application helper. The revised helper accepts the pinned baseline plus documentation-only commits, verifies original source identities, and refuses a dirty checkout. It does not commit, push, start a service or deploy.
+M2a는 로컬 준비 전용 profile CLI와 독립 검사 28개를 추가한다. 이 실행환경의 Linux/Node 22.16.0에서 검증했고, M1의 기존 src 코드는 변경하지 않았다. 현재 전체 checkout의 결합 검사·macOS 재실행·실연결은 수행하지 않았다.
 
-After applying the patch in an authenticated local checkout, run:
-
-```sh
-npm ci --ignore-scripts
-npm run check
-npm run build
-npm test
-```
-
-Only after these pass should the implementation be committed and pushed to this branch. A disposable-project ChatGPT round trip is a separate acceptance check. Keep the pull request in draft until the missing checks have been resolved or explicitly reviewed.
-
-The home-workspace default, broad legacy shell authority, OS isolation and durable recovery are M2 work. Do not start this on a sensitive host with the upstream defaults. No tunnel, account setting, package publication or deployment was performed.
+기존 runtime의 홈 workspace 기본값과 넓은 셸 권한은 자동으로 바뀌지 않았다. M2a 프로필을 쓰지 않는 시작 경로에는 기존 위험이 남는다. 정책 강제·OS 격리·영속 복구는 후속 단계다. 새 검사 통과를 운영 준비 완료나 모델 호출 성공으로 표시하지 않는다.

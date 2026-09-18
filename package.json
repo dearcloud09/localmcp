@@ -28,7 +28,7 @@
     "stdio": "node dist/index.js stdio",
     "http": "node dist/index.js http",
     "dev": "tsx src/index.ts",
-    "test": "tsx --test test/*.test.ts",
+    "test": "tsx --test test/*.test.ts && npm run test:profile",
     "check": "tsc --noEmit && tsc -p worker/tsconfig.json",
     "prepack": "npm run build",
     "prepublishOnly": "npm run check && npm test && npm run build",
@@ -37,7 +37,9 @@
     "worker:dev": "wrangler dev --config wrangler.jsonc",
     "deploy": "npm run worker:deploy",
     "worker:deploy": "wrangler deploy --config wrangler.jsonc",
-    "worker:secrets": "wrangler secret bulk ~/.localmcp/worker-secrets.json --config wrangler.jsonc"
+    "worker:secrets": "wrangler secret bulk ~/.localmcp/worker-secrets.json --config wrangler.jsonc",
+    "test:profile": "node --test test/project-profile.test.mjs",
+    "profile": "node scripts/project-profile.mjs"
   },
   "repository": {
     "type": "git",
