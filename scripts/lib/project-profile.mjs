@@ -62,6 +62,8 @@ export function safeProfile(root) {
   return {
     workspaces: { project: root }, defaultWorkspace: 'project',
     features: { files: true, shell: false, processes: false },
+    // Explicitly an editable smoke profile, not the runtime's read-only default.
+    permissions: { fileRead: true, fileWrite: true },
     skills: { dir: 'skills', enabled: [] }, mcpServers: {},
   };
 }
@@ -84,14 +86,15 @@ function keysAre(value, expected) {
 }
 function checkShape(value) {
   // Deliberately validate only this tool's files-only smoke profile, not every LocalMCP configuration.
-  if (!keysAre(value, ['workspaces', 'defaultWorkspace', 'features', 'skills', 'mcpServers']) ||
+  if (!keysAre(value, ['workspaces', 'defaultWorkspace', 'features', 'permissions', 'skills', 'mcpServers']) ||
       !keysAre(value.workspaces, ['project']) || typeof value.workspaces.project !== 'string' || value.defaultWorkspace !== 'project' ||
       !keysAre(value.features, ['files', 'shell', 'processes']) || value.features.files !== true ||
       value.features.shell !== false || value.features.processes !== false ||
+      !keysAre(value.permissions, ['fileRead', 'fileWrite']) || value.permissions.fileRead !== true || value.permissions.fileWrite !== true ||
       !keysAre(value.skills, ['dir', 'enabled']) || value.skills.dir !== 'skills' ||
       !Array.isArray(value.skills.enabled) || value.skills.enabled.length !== 0 ||
       !object(value.mcpServers) || Object.keys(value.mcpServers).length !== 0) {
-    fail('NOT_SMOKE_PROFILE', 'Expected the generated files-only profile with shell, processes, Skills and external MCP disabled.');
+    fail('NOT_SMOKE_PROFILE', 'Expected the editable smoke profile with explicit fileRead/fileWrite permission and execution disabled. Review old profiles before regenerating.');
   }
 }
 export async function inspectProfile({ config, home = homedir(), env = process.env }) {
@@ -126,7 +129,7 @@ export async function inspectProfile({ config, home = homedir(), env = process.e
     capabilities: { fileWrites: true, shell: false, processes: false, externalMcp: false, skills: false },
     limitations: ['Local preflight only; no ChatGPT, tunnel, or MCP connection was tested.',
       'Files inside the workspace are writable and not automatically secret-filtered.',
-      'This tool does not change or enforce the legacy runtime defaults and is not an OS sandbox.'],
+      'Preflight does not enforce runtime policy, revoke active operations, or provide an OS sandbox.'],
   };
 }
 export const DEMO_FILES = Object.freeze({

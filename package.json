@@ -38,7 +38,7 @@
     "deploy": "npm run worker:deploy",
     "worker:deploy": "wrangler deploy --config wrangler.jsonc",
     "worker:secrets": "wrangler secret bulk ~/.localmcp/worker-secrets.json --config wrangler.jsonc",
-    "test:profile": "node --test test/project-profile.test.mjs",
+    "test:profile": "node --test test/project-profile.test.mjs test/file-permissions-profile.test.mjs",
     "profile": "node scripts/project-profile.mjs"
   },
   "repository": {

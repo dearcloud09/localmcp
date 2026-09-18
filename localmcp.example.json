@@ -12,5 +12,9 @@
     "dir": "skills",
     "enabled": []
   },
-  "mcpServers": {}
+  "mcpServers": {},
+  "permissions": {
+    "fileRead": true,
+    "fileWrite": false
+  }
 }

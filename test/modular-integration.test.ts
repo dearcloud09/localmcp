@@ -24,7 +24,7 @@ async function fixture(t: { after: (fn: () => Promise<unknown>) => void }): Prom
   const processes = new ProcessManager(); const mcp = new McpLoader({}); await mcp.start();
   t.after(async () => { await processes.close(); await mcp.close(); await rm(root, { recursive: true, force: true }); });
   return {
-    config: { root, workspaces: { test: root }, defaultWorkspace: 'test', files: true, shell: true, processes: true, port: 8787, skillsDir: join(root, 'skills'), mcpServers: {} },
+    config: { root, workspaces: { test: root }, defaultWorkspace: 'test', files: true, fileRead: true, fileWrite: true, shell: true, processes: true, port: 8787, skillsDir: join(root, 'skills'), mcpServers: {} },
     processes, mcp, skills: [],
   };
 }

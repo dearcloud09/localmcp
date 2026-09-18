@@ -35,7 +35,7 @@ test('command results, nonzero exit, bounded output and timeout', async t => {
 test('real SDK stdio initialization and create/read/edit/list round trip', async t => {
   const root = await temp(t);
   const cfgPath = join(await temp(t), 'profile.json');
-  await writeFile(cfgPath, JSON.stringify({root, features:{shell:true,processes:true}}), {mode:0o600});
+  await writeFile(cfgPath, JSON.stringify({root, permissions:{fileWrite:true}, features:{shell:true,processes:true}}), {mode:0o600});
   const client = new Client({name:'test',version:'1'});
   const transport = new StdioClientTransport({command:process.execPath,args:[resolve('dist/index.js'),'stdio'],env:{LOCALMCP_CONFIG:cfgPath},stderr:'pipe'});
   await client.connect(transport); t.after(() => client.close());
@@ -56,7 +56,7 @@ test('real SDK stdio initialization and create/read/edit/list round trip', async
 test('HTTP URL credential, origin rejection and SDK round trip', async t => {
   const root = await temp(t), token = 'a'.repeat(64), port = 18000 + Math.floor(Math.random()*20000);
   const cfgPath = join(await temp(t), 'profile.json');
-  await writeFile(cfgPath, JSON.stringify({root, features:{shell:false,processes:false}}), {mode:0o600});
+  await writeFile(cfgPath, JSON.stringify({root, permissions:{fileWrite:true}, features:{shell:false,processes:false}}), {mode:0o600});
   const child = spawn(process.execPath,[resolve('dist/index.js'),'http'],{env:{...process.env,LOCALMCP_CONFIG:cfgPath,LOCALMCP_ROOT:root,LOCALMCP_SHELL:'0',LOCALMCP_PORT:String(port),LOCALMCP_TOKEN:token},stdio:'ignore'});
   t.after(() => {child.kill('SIGTERM');});
   const base = `http://127.0.0.1:${port}`;

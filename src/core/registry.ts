@@ -2,9 +2,10 @@ import { randomUUID } from 'node:crypto';
 import { performance } from 'node:perf_hooks';
 
 export type Backend = 'internal' | 'cli' | 'mcp';
-export type Feature = 'files' | 'shell' | 'processes';
+export type Feature = 'files' | 'fileRead' | 'fileWrite' | 'shell' | 'processes';
 export interface FeatureContext {
-  config: { files: boolean; shell: boolean; processes: boolean };
+  // Missing embedding permissions fail closed at dispatch, rather than inheriting write access.
+  config: { files: boolean; fileRead?: boolean; fileWrite?: boolean; shell: boolean; processes: boolean };
 }
 export interface ToolDescriptor {
   name: string;

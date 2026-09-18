@@ -41,7 +41,7 @@ test('Worker + Durable Object + local agent: authenticated MCP, chunking and rec
   assert.equal((await fetch(`${origin}/mcp/${registered.deviceId}/${mcpToken}`,{method:'POST',headers:{'Content-Type':'application/json'},body:'{}'})).status,404);
   await mkdir(join(root,'.localmcp'));
   const configPath=join(root,'.localmcp/localmcp.json');
-  await writeFile(configPath,JSON.stringify({workspaces:{project},defaultWorkspace:'project',features:{shell:false,processes:false}}),{mode:0o600});
+  await writeFile(configPath,JSON.stringify({workspaces:{project},defaultWorkspace:'project',permissions:{fileWrite:true},features:{shell:false,processes:false}}),{mode:0o600});
   await writeFile(join(root,'.localmcp/worker.json'),JSON.stringify({workerUrl:origin,agentToken:registered.agentToken,mcpToken:registered.mcpToken,deviceId:registered.deviceId}));
   async function cli(command?: string) {
     return new Promise<string>((done, reject) => {

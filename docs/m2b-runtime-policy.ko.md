@@ -1,5 +1,7 @@
 # M2b-01a — 시작·설정 재로딩 정책
 
+> M2b-01b 갱신: 파일 쓰기는 이제 별도 권한이며 기본값은 false다. [파일 권한·전환 안내](m2b-file-permissions.ko.md)를 함께 적용한다. 아래 시작 정책은 계속 유효하다.
+
 이 변경은 `d22c579`의 M2a 위에 추가한다. 전체 로드맵은 [1pager](onepager.ko.md), 실제 검증 범위는 [진행표](progress.md)와 [검증 JSON](validation/m2b-policy-local.json)을 기준으로 한다.
 
 ## 바뀌는 동작
@@ -21,7 +23,7 @@ node scripts/project-profile.mjs init --workspace /absolute/project --config /ab
 node scripts/project-profile.mjs doctor --config /absolute/outside/project-profile.json
 ```
 
-`LOCALMCP_CONFIG`를 그 프로필로 지정해 사용한다. `localmcp.example.json`은 경로를 바꿔야 하는 예시이지 즉시 실행 가능한 설정이 아니다. 초기 파일 연결에는 생성 프로필의 셸/프로세스/Skills/외부 MCP 비활성 상태를 유지한다.
+생성 프로필은 편집 검증용이므로 fileRead/fileWrite를 명시적으로 허용한다. `LOCALMCP_CONFIG`를 그 프로필로 지정해 사용한다. `localmcp.example.json`은 기본 읽기 전용이며 경로를 바꿔야 하는 예시이지 즉시 실행 가능한 설정이 아니다. 초기 파일 연결에는 생성 프로필의 셸/프로세스/Skills/외부 MCP 비활성 상태를 유지한다.
 
 quick tunnel을 별도로 승인해 실행할 때의 상태 파일은 이제 현재 폴더의 `.localmcp` 대신 `~/.localmcp/quick`에 저장된다. 기존 quick 상태는 이동·삭제하지 않는다. 이 개발 작업에서 터널을 실행한 것은 아니다.
 
@@ -39,6 +41,6 @@ npm run check && npm run build && npm test
 
 ## 아직 제공하지 않는 것
 
-파일 쓰기는 아직 별도 권한으로 분리하지 않았다. `.env` 등 workspace 내부 민감 파일 차단, 하위 MCP별 실행 제한, 셸 OS 격리, 프로세스의 즉시 권한 회수, 영속 복구는 후속 작업이다. 명시적으로 실행을 켜면 기존 셸은 호스트에 접근할 수 있다. 직접 createServer/내부 모듈을 사용하는 개발자는 별도로 설정·정책을 적용해야 한다.
+파일 도구의 읽기/쓰기 권한은 M2b-01b에서 분리했다. `.env` 등 workspace 내부 민감 파일 차단, 하위 MCP별 실행 제한, 셸 OS 격리, 프로세스의 즉시 권한 회수, 영속 복구는 후속 작업이다. 명시적으로 실행을 켜면 기존 셸은 호스트에 접근할 수 있다. 직접 createServer/내부 모듈을 사용하는 개발자는 별도로 설정·정책을 적용해야 한다.
 
 잘못된 reload는 이전 설정을 유지한다. 설정을 지우거나 잘못 편집하는 것은 서버 종료 명령이 아니며, 확정 종료에는 기존 stop 경로를 사용한다.

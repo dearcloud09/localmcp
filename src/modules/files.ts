@@ -1,10 +1,11 @@
 import { z } from 'zod';
+import { FILE_READ_REQUIREMENTS, FILE_WRITE_REQUIREMENTS } from '../core/file-permissions.js';
 import { defineTool, withWorkspace, type ModuleRegistry } from './define.js';
 import { selectWorkspace } from './context.js';
 
 export function registerFileTools(registry: ModuleRegistry): void {
-  const read = { module: 'files', requires: ['files'] as const, readOnly: true };
-  const write = { ...read, readOnly: false };
+  const read = { module: 'files', requires: FILE_READ_REQUIREMENTS, readOnly: true };
+  const write = { ...read, requires: FILE_WRITE_REQUIREMENTS, readOnly: false };
   defineTool(registry, { ...read, name: 'list_directory', schema: withWorkspace({ path: z.string().default('.'), offset: z.number().int().min(0).default(0), limit: z.number().int().min(1).max(500).default(100) }) }, (a, c) => selectWorkspace(c, a.workspace).ws.list(a.path, a.offset, a.limit));
   defineTool(registry, { ...read, name: 'workspace_tree', schema: withWorkspace({ path: z.string().default('.'), maxDepth: z.number().int().min(1).max(20).default(3), maxEntries: z.number().int().min(1).max(5000).default(1000) }) }, (a, c) => selectWorkspace(c, a.workspace).ws.tree(a.path, a.maxDepth, a.maxEntries));
   defineTool(registry, { ...read, name: 'stat_path', schema: withWorkspace({ path: z.string() }) }, (a, c) => selectWorkspace(c, a.workspace).ws.stat(a.path));
