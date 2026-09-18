@@ -5,10 +5,12 @@ import { z } from 'zod';
 import type { McpServerConfig } from './mcp/loader.js';
 import { readRuntimeDocument, resolveRuntimeWorkspaces, resolveExecutionFlags } from './core/runtime-policy.js';
 import { resolveFilePermissions } from './core/file-permissions.js';
+import { validateAllowedTools } from './core/external-tool-policy.js';
 
 const mcpEntrySchema = z.object({
   enabled: z.boolean().optional().default(true), command: z.string().min(1),
   args: z.array(z.string()).optional().default([]), env: z.record(z.string(), z.string()).optional(),
+  allowedTools: z.array(z.string()).optional(),
 }).strict();
 export const localMcpConfigSchema = z.object({
   root: z.string().min(1).optional(),
@@ -51,7 +53,9 @@ export async function config(snapshot?: { content: string; path: string }): Prom
   if (!Number.isInteger(port) || port < 1 || port > 65535) throw new Error('Invalid LOCALMCP_PORT');
   const mcpServers: Record<string, McpServerConfig> = {};
   for (const [name, m] of Object.entries(c.mcpServers)) {
-    if (m.enabled) mcpServers[name] = { command: m.command, args: m.args, env: m.env };
+    if (m.enabled) mcpServers[name] = {
+      command: m.command, args: m.args, env: m.env, allowedTools: validateAllowedTools(m.allowedTools),
+    };
   }
   return {
     ...workspaces, files: c.features.files, ...permissions, ...execution, port, token: process.env.LOCALMCP_TOKEN,

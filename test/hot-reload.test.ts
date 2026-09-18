@@ -42,7 +42,7 @@ test('stdio hot reload preserves calls and processes, rejects bad config and sur
   await writeFile(path,'{bad');
   await until(async()=>logs.includes('hot-reload rejected'));
   assert.equal((await info()).workspace,'first');
-  settings.mcpServers={broken:{command:join(root,'nonexistent-command')}};
+  settings.mcpServers={broken:{allowedTools:['echo'],command:join(root,'nonexistent-command')}};
   await writeFile(path,JSON.stringify(settings));
   await until(async()=>logs.includes('ENOENT'));
   assert.equal((await info()).workspace,'first');
@@ -67,7 +67,7 @@ test('stdio hot reload preserves calls and processes, rejects bad config and sur
   settings.defaultWorkspace='first';await writeFile(path,JSON.stringify(settings));
   await until(async()=>(await info()).workspace==='first');
   // Retiring an MCP server must drain its already-started tool calls.
-  settings.mcpServers={fixture:{command:process.execPath,args:[resolve('test/fixtures/mcp-server.mjs')]}};
+  settings.mcpServers={fixture:{allowedTools:['echo'],command:process.execPath,args:[resolve('test/fixtures/mcp-server.mjs')]}};
   await writeFile(path,JSON.stringify(settings));
   await until(async()=>JSON.parse((await call('list_mcp_servers')).content[0].text).servers.length===1);
   const external=call('call_mcp_tool',{server:'fixture',tool:'echo',arguments:{text:'slow'}});

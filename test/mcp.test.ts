@@ -12,7 +12,7 @@ test('stable MCP gateways discover, validate and forward external tools', async 
   const project=join(root,'project');await mkdir(project);
   const names=join(root,'tools.json'),config=join(root,'config.json');
   await writeFile(names,JSON.stringify(['echo','second']));
-  await writeFile(config,JSON.stringify({root:project,permissions:{fileWrite:true},features:{shell:false},mcpServers:{external:{command:process.execPath,args:[resolve('test/fixtures/mcp-server.mjs'),names]}}}));
+  await writeFile(config,JSON.stringify({root:project,permissions:{fileWrite:true},features:{shell:false},mcpServers:{external:{allowedTools:['echo','second','new_tool'],command:process.execPath,args:[resolve('test/fixtures/mcp-server.mjs'),names]}}}));
   const client=new Client({name:'gateway-test',version:'1'});
   const transport=new StdioClientTransport({command:process.execPath,args:[resolve('dist/index.js'),'stdio'],env:{LOCALMCP_CONFIG:config},stderr:'pipe'});
   t.after(()=>client.close());

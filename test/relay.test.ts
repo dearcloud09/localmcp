@@ -85,7 +85,7 @@ test('Worker + Durable Object + local agent: authenticated MCP, chunking and rec
   assert.equal((await client.listTools()).tools.length,20);
   const changedConfig=JSON.parse(originalConfig);
   changedConfig.workspaces={reloaded:project};changedConfig.defaultWorkspace='reloaded';
-  changedConfig.mcpServers={fixture:{command:process.execPath,args:[resolve('test/fixtures/mcp-server.mjs')]}};
+  changedConfig.mcpServers={fixture:{allowedTools:['echo'],command:process.execPath,args:[resolve('test/fixtures/mcp-server.mjs')]}};
   await writeFile(configPath,JSON.stringify(changedConfig));
   let hot=false;
   for(let i=0;i<100;i++){
