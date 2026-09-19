@@ -1,0 +1,77 @@
+{
+  "date": "2026-09-19",
+  "base_commit": "2850cf40103b5d4098455edccac732791bc107be",
+  "scope": "M2C-01a process-local mutation coordination, guarded edits and operation-ID deduplication. Not durable recovery or OS atomic CAS.",
+  "environment": {
+    "os": "Linux",
+    "node": "v22.16.0",
+    "typescript": "5.8.3",
+    "node_types": "25.1.0",
+    "test_uid": 1000,
+    "checkout": "partial source fixture; not full clone"
+  },
+  "executed": {
+    "strict_typecheck": "Actual Workspace, queue/journal, reused CLI/process source and independent tests only; tsc -p tsconfig.independent.json",
+    "command": "node --test compiled/test/mutation-coordinator.test.js compiled/test/mutation-workspace.test.js compiled/test/modular-cli.test.js compiled/test/modular-files-process.test.js",
+    "tests": 62,
+    "pass": 62,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 0,
+    "breakdown": {
+      "new_queue_journal": 18,
+      "new_workspace": 19,
+      "existing_cli_git": 15,
+      "existing_files_process": 10
+    },
+    "syntax_checked_ts_files": 6,
+    "negative_control": {
+      "baselineConcurrentAccepted": 2,
+      "changedConcurrentAccepted": 1,
+      "changedConflictRejected": 1,
+      "baselineReadBarrierInjected": true,
+      "scope": "actual prior/current Workspace classes and temporary files; not SDK or macOS"
+    },
+    "patch_round_trip": "git apply --check, apply and byte equality for all six proposed code/test files in a temporary Git repository"
+  },
+  "not_run": [
+    "5 new actual config/Zod/SDK integration tests",
+    "full original dependency typecheck/build/test",
+    "macOS/Windows",
+    "current changed code E0/E1",
+    "actual Docker E0-D",
+    "GitHub CI (user-reported quota)"
+  ],
+  "constraints": {
+    "github_git_access": "Could not resolve host: github.com",
+    "sdk_available": false,
+    "docker_available": false,
+    "user_mac_accessed": false,
+    "new_dependencies": false
+  },
+  "source_sha256": {
+    "src/core/mutation-coordinator.ts": "06267bcbc2cf37473c5476e0ec65045285d9ce1ee7bb50059dcbe7ea73493581",
+    "src/workspace.ts": "f256b8a300db7ab8c34d08346b3ffe81e09a5aaeecccc3cc69bb5a3bf23a1736",
+    "src/modules/files.ts": "3a319eb24c6cf3bd55f56054a4d23378b7eab106cf5a04dd6ab9b457c48fb0cf",
+    "test/mutation-coordinator.test.ts": "f2ee494650c87615ebc9175b31ecb5c5add62b3a8ba127e352724351eeab152a",
+    "test/mutation-workspace.test.ts": "993af6ce14384c6ab85d66edfe869158aae921037e95e7c7d7dfd92e7ee56eaa",
+    "test/mutation-integration.test.ts": "fe78f7a67bc9a7174185a504d9ee242a044754ac871f88b1092534a6e6253447"
+  },
+  "baseline_blobs": {
+    "src/workspace.ts": "c044e89c70d38b24915f3315e6438fd62d37ef22",
+    "src/modules/files.ts": "8218915d393a4be8d7b6e7a97d53c1cac1d602aa",
+    "src/core/sensitive-paths.ts": "ef103645c2083d6d576b7213e2554be766ab9159"
+  },
+  "limits": [
+    "Locks and journal are per Node process, not cross-process or durable.",
+    "A replay acknowledges the historical operation; it is not a read of current file state.",
+    "All cooperating file mutators share locks, but raw write_file has no caller-supplied version or operation ID.",
+    "Journal retains at most 1024 IDs per process and refuses new IDs at capacity without eviction.",
+    "Final hash/metadata check is not atomically coupled to OS rename; external-writer races remain.",
+    "Permissions are checked by existing dispatcher before execution/replay; direct Workspace embedding is not an authorization boundary.",
+    "Previous user E0/E1 evidence remains tied to the earlier code, not automatically to this update."
+  ],
+  "remote_code_status": "blocked_by_tool_security_check; code not applied to branch",
+  "remote_code_upload_error": "요청의 보안 상태를 결정하지 못해 이 도구 요청은 OpenAI에 의해 차단되었습니다.",
+  "code_write_retry_or_bypass_attempted": false
+}

@@ -1,0 +1,55 @@
+{
+  "date": "2026-09-18",
+  "base_commit": "d22c5793f30c1425cadc7835a4fb6b1d871c4f73",
+  "scope": "M2B-01a startup and reload configuration policy; not complete M2b",
+  "environment": {
+    "os": "Linux",
+    "node": "v22.16.0",
+    "typescript": "Version 5.8.3"
+  },
+  "executed": {
+    "strict_typescript": "policy module and independent M1 modules/tests only",
+    "test_command": "node --test compiled/test/runtime-policy.test.js compiled/test/modular-cli.test.js compiled/test/modular-core.test.js compiled/test/modular-files-process.test.js",
+    "tests": 67,
+    "pass": 67,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 0,
+    "breakdown": {
+      "new_policy": 24,
+      "existing_independent": 43
+    }
+  },
+  "not_run": [
+    "complete upstream dependency typecheck/build/test",
+    "runtime-config-integration.test.ts (7 tests, including 7 executable entrypoint cases)",
+    "updated SDK, Worker, IPC and hot reload tests",
+    "M2a profile suite in this run",
+    "macOS and Windows",
+    "live ChatGPT connection",
+    "GitHub CI (user-reported quota)"
+  ],
+  "network": {
+    "git_clone": "Could not resolve host: github.com",
+    "npm_ping": "EAI_AGAIN registry.npmjs.org"
+  },
+  "source_sha256": {
+    "src/core/runtime-policy.ts": "be3678205a2dae0b7008e557b30e73eba29a3132dcec3be5720a5af71606a417",
+    "src/config.ts": "f116edfb6a3ab6c5a95188f68fc724081430d6df6a87b0a55d4bc726ba1e437c",
+    "src/index.ts": "00853bc15f0c7481c3e428f5c174aefc25f90295c0b0c04eb353441a63e85883",
+    "src/agent.ts": "3482019493898b5f9996d5100a8ecc093993f1410d2f1b0c45fe809e4d28c777",
+    "src/launch.ts": "fc293fd19b46f7f6017e8498a34eb33bed5edbfe6973202a66f0675908fd17c9",
+    "test/runtime-policy.test.ts": "4651110c05f31b2e7587da4a11ca43cb4483aa53863302b726da75a43ac541c4",
+    "test/runtime-config-integration.test.ts": "082d34ffd6616ba26358e7ca1235052cc76c18e0f588de2e09f4e9a75122fbb5",
+    "test/localmcp.test.ts": "6c874f703765c7cdef52b3f789731f7c1ca1fccf2ae5f5bc5919de4e9334b082",
+    "test/hot-reload.test.ts": "a305254686e47ee452700f461a8fa0d1f812397bb83c105d34fc0955dd6a7953",
+    "test/mcp.test.ts": "5150ea737eaa8e668418997d5c66ac12f517b350fd271e36470a2164cb9d6cc8",
+    "test/relay.test.ts": "dd2566adbc323feafd221b89dbf14bb139c599cb8ad830679f4eb52cc9be8e91",
+    "test/lifecycle.test.ts": "c48cdd65e7ce6ad3b2a63042c2c1fbe3fc209f3f88b819b5ac55af17308490f8",
+    "localmcp.example.json": "6cf1886a6d5b810f20a7a0a4187b0b0db34f074e4786670adbd872ad17b6c1f9"
+  },
+  "syntax_validation": {
+    "changedTypeScriptFiles": 12,
+    "syntaxErrors": []
+  }
+}

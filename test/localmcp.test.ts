@@ -34,11 +34,14 @@ test('command results, nonzero exit, bounded output and timeout', async t => {
 });
 test('real SDK stdio initialization and create/read/edit/list round trip', async t => {
   const root = await temp(t);
+  const cfgPath = join(await temp(t), 'profile.json');
+  await writeFile(cfgPath, JSON.stringify({root, permissions:{fileWrite:true}, features:{shell:true,processes:true}}), {mode:0o600});
   const client = new Client({name:'test',version:'1'});
-  const transport = new StdioClientTransport({command:process.execPath,args:[resolve('dist/index.js'),'stdio'],env:{LOCALMCP_ROOT:root,LOCALMCP_CONFIG:'/nonexistent/localmcp-test.json'},stderr:'pipe'});
+  const transport = new StdioClientTransport({command:process.execPath,args:[resolve('dist/index.js'),'stdio'],env:{LOCALMCP_CONFIG:cfgPath},stderr:'pipe'});
   await client.connect(transport); t.after(() => client.close());
   const tools = await client.listTools();
-  assert.equal(tools.tools.length,26);
+  assert.equal(tools.tools.length,27);
+  assert.ok(tools.tools.some(t => t.name === 'git_status'));
   assert.ok(tools.tools.some(t => t.name === 'run_command'));
   const call = (name: string,args: any) => client.callTool({name,arguments:args});
   assert.equal((await call('write_file',{path:'hello.txt',content:'hello world'})).isError,undefined);
@@ -52,7 +55,9 @@ test('real SDK stdio initialization and create/read/edit/list round trip', async
 });
 test('HTTP URL credential, origin rejection and SDK round trip', async t => {
   const root = await temp(t), token = 'a'.repeat(64), port = 18000 + Math.floor(Math.random()*20000);
-  const child = spawn(process.execPath,[resolve('dist/index.js'),'http'],{env:{...process.env,LOCALMCP_CONFIG:'/nonexistent/localmcp-test.json',LOCALMCP_ROOT:root,LOCALMCP_SHELL:'0',LOCALMCP_PORT:String(port),LOCALMCP_TOKEN:token},stdio:'ignore'});
+  const cfgPath = join(await temp(t), 'profile.json');
+  await writeFile(cfgPath, JSON.stringify({root, permissions:{fileWrite:true}, features:{shell:false,processes:false}}), {mode:0o600});
+  const child = spawn(process.execPath,[resolve('dist/index.js'),'http'],{env:{...process.env,LOCALMCP_CONFIG:cfgPath,LOCALMCP_ROOT:root,LOCALMCP_SHELL:'0',LOCALMCP_PORT:String(port),LOCALMCP_TOKEN:token},stdio:'ignore'});
   t.after(() => {child.kill('SIGTERM');});
   const base = `http://127.0.0.1:${port}`;
   let ready = false;
@@ -122,7 +127,7 @@ test('skill loader discovers SKILL.md', async t => {
 
 test('localmcp.json controls core features, skills and MCP enablement', async t => {
   const root=await temp(t); await (await import('node:fs/promises')).mkdir(join(root,'skills','one'),{recursive:true}); await writeFile(join(root,'skills','one','SKILL.md'),'# One\n\nOne skill.');
-  const cfgPath=join(root,'localmcp.json'); await writeFile(cfgPath,JSON.stringify({root:'.',features:{files:false,shell:false,processes:false},skills:{dir:'skills',enabled:['one']},mcpServers:{off:{enabled:false,command:'never-run'}}}));
+  const cfgPath=join(await temp(t),'localmcp.json'); await writeFile(cfgPath,JSON.stringify({root,features:{files:false,shell:false,processes:false},skills:{dir:join(root,'skills'),enabled:['one']},mcpServers:{off:{enabled:false,command:'never-run'}}}));
   const old=process.env.LOCALMCP_CONFIG; process.env.LOCALMCP_CONFIG=cfgPath;
   try { const {config}=await import('../src/config.js'); const cfg=await config(); assert.equal(await (await import('node:fs/promises')).realpath(cfg.root),await (await import('node:fs/promises')).realpath(root)); assert.equal(cfg.files,false); assert.equal(cfg.shell,false); assert.deepEqual(cfg.enabledSkills,['one']); assert.deepEqual(cfg.mcpServers,{}); }
   finally { if(old===undefined)delete process.env.LOCALMCP_CONFIG;else process.env.LOCALMCP_CONFIG=old; }
@@ -138,8 +143,8 @@ test('localmcp.json schema rejects invalid and unknown config', async t => {
 });
 
 test('multiple workspaces select files independently', async t => {
-  const one=await temp(t),two=await temp(t),cfgPath=join(one,'multi.json'); await writeFile(join(one,'a.txt'),'one'); await writeFile(join(two,'a.txt'),'two');
-  await writeFile(cfgPath,JSON.stringify({workspaces:{one:'.',two},defaultWorkspace:'one',features:{files:true,shell:false}}));
+  const one=await temp(t),two=await temp(t),cfgPath=join(await temp(t),'multi.json'); await writeFile(join(one,'a.txt'),'one'); await writeFile(join(two,'a.txt'),'two');
+  await writeFile(cfgPath,JSON.stringify({workspaces:{one,two},defaultWorkspace:'one',features:{files:true,shell:false}}));
   const old=process.env.LOCALMCP_CONFIG; process.env.LOCALMCP_CONFIG=cfgPath;
   try {const {config}=await import('../src/config.js');const cfg=await config();assert.equal(cfg.defaultWorkspace,'one');assert.equal(Object.keys(cfg.workspaces).length,2);assert.equal(await readFile(join(cfg.workspaces.two,'a.txt'),'utf8'),'two');}
   finally{if(old===undefined)delete process.env.LOCALMCP_CONFIG;else process.env.LOCALMCP_CONFIG=old;}

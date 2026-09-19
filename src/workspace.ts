@@ -1,7 +1,9 @@
 import { constants } from 'node:fs';
-import { lstat, open, readdir, mkdir, rm, rename, stat as fsStat } from 'node:fs/promises';
+import { lstat, open, readdir, mkdir, rm, rename, stat as fsStat, rmdir } from 'node:fs/promises';
 import { createHash, randomBytes } from 'node:crypto';
 import { resolve, relative, isAbsolute, sep, dirname, basename } from 'node:path';
+
+import { assertFileToolPath, assertMutableTree, isSensitivePath, SensitivePathError } from './core/sensitive-paths.js';
 
 const MAX_TEXT_BYTES = 1024 * 1024;
 const DEFAULT_IGNORES = new Set(['.git', 'node_modules']);
@@ -28,6 +30,9 @@ export class Workspace {
     const target = resolve(this.root, input);
     const rel = relative(this.root, target);
     if (rel === '..' || rel.startsWith(`..${sep}`) || isAbsolute(rel)) throw new Error('Path is outside workspace');
+    assertFileToolPath(rel);
+    const rootInfo = await lstat(this.root);
+    if (rootInfo.isSymbolicLink() || !rootInfo.isDirectory()) throw new SensitivePathError('INVALID_WORKSPACE');
     const parts = rel.split(sep).filter(Boolean);
     let current = this.root;
     for (let i = 0; i < parts.length; i++) {
@@ -51,6 +56,7 @@ export class Workspace {
     const file = await open(await this.path(path), constants.O_RDONLY | constants.O_NOFOLLOW);
     try {
       const info = await file.stat();
+      if (info.nlink !== 1) throw new SensitivePathError('HARDLINK_BLOCKED');
       if (!info.isFile() || info.size > MAX_TEXT_BYTES) throw new Error('Only regular text files up to 1 MiB are supported');
       return await file.readFile('utf8');
     } finally { await file.close(); }
@@ -81,9 +87,12 @@ export class Workspace {
       return {path: relative(this.root, target), bytes: Buffer.byteLength(content)};
     }
 
+    let mode = 0o600;
     try {
       const current = await lstat(target);
       if (current.isSymbolicLink() || !current.isFile() || current.nlink > 1) throw new Error('Only regular files with one hard link can be overwritten');
+      // Preserve ordinary permission bits, never copy setuid/setgid bits.
+      mode = current.mode & 0o777;
     } catch (error: any) {
       if (error.code !== 'ENOENT') throw error;
     }
@@ -91,16 +100,23 @@ export class Workspace {
     const temp = resolve(dirname(target), `.${basename(target)}.localmcp-${randomBytes(8).toString('hex')}`);
     const file = await open(temp, constants.O_WRONLY | constants.O_CREAT | constants.O_EXCL | constants.O_NOFOLLOW, 0o600);
     try {
-      await file.writeFile(content, 'utf8');
-      await file.sync();
-    } finally { await file.close(); }
-    try { await rename(temp, target); }
-    catch (error) { await rm(temp, {force: true}); throw error; }
+      try {
+        await file.writeFile(content, 'utf8');
+        await file.chmod(mode);
+        await file.sync();
+      } finally { await file.close(); }
+      await rename(temp, target);
+    } catch (error) {
+      await rm(temp, {force: true});
+      throw error;
+    }
     return {path: relative(this.root, target), bytes: Buffer.byteLength(content)};
   }
 
   async list(path: string, offset: number, limit: number) {
-    const entries = (await readdir(await this.path(path), {withFileTypes: true})).sort((a,b) => a.name.localeCompare(b.name));
+    const entries = (await readdir(await this.path(path), {withFileTypes: true}))
+      .filter(entry => !entry.isSymbolicLink() && !isSensitivePath(relative(this.root, resolve(this.root, path, entry.name))))
+      .sort((a,b) => a.name.localeCompare(b.name));
     return {entries: entries.slice(offset, offset + limit).map(e => ({name: e.name, type: e.isSymbolicLink() ? 'symlink' : e.isDirectory() ? 'directory' : 'file'})), total: entries.length, nextOffset: offset + limit < entries.length ? offset + limit : null};
   }
 
@@ -127,6 +143,7 @@ export class Workspace {
         if (DEFAULT_IGNORES.has(entry.name) || entry.isSymbolicLink()) continue;
         const full = resolve(dir, entry.name);
         const rel = relative(this.root, full).split(sep).join('/');
+        if (isSensitivePath(rel)) continue;
         if (entry.isDirectory()) {
           results.push({path: rel + '/', type: 'directory'});
           if (depth < maxDepth) await visit(full, depth + 1);
@@ -212,15 +229,26 @@ export class Workspace {
     if (target === this.root) throw new Error('Cannot delete workspace root');
     const info = await lstat(target);
     if (info.isSymbolicLink()) throw new Error('Symbolic links are not allowed');
-    if (info.isDirectory() && !recursive) await rm(target, {recursive: false});
+    await assertMutableTree(this.root, target);
+    if (info.isDirectory() && !recursive) await rmdir(target);
     else await rm(target, {recursive, force: false});
     return {path: relative(this.root, target)};
   }
 
   async move(from: string, to: string, overwrite: boolean) {
     const source = await this.path(from);
+    if (source === this.root) throw new Error('Cannot move workspace root');
     const sourceInfo = await lstat(source);
     if (sourceInfo.isSymbolicLink()) throw new Error('Symbolic links are not allowed');
+    // Validate both trees before creating destination parents or moving any file.
+    await assertMutableTree(this.root, source);
+    const candidate = resolve(this.root, to);
+    if (candidate === this.root) throw new Error('Cannot replace workspace root');
+    const candidateRel = relative(this.root, candidate);
+    if (candidateRel === '..' || candidateRel.startsWith(`..${sep}`) || isAbsolute(candidateRel)) throw new Error('Path is outside workspace');
+    assertFileToolPath(candidateRel);
+    try { await lstat(candidate); await assertMutableTree(this.root, await this.path(to)); }
+    catch (error: any) { if (error.code !== 'ENOENT') throw error; }
     const target = await this.path(to, true);
     if (!overwrite) {
       try { await lstat(target); throw new Error('Destination already exists'); }

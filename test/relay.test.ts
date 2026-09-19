@@ -20,6 +20,7 @@ test('relay framing preserves large Unicode/image payloads and rejects invalid s
 });
 test('Worker + Durable Object + local agent: authenticated MCP, chunking and reconnect', {timeout:90000}, async t=>{
   const root=await mkdtemp(join(tmpdir(),'localmcp-relay-'));
+  const project=join(root,'project');await mkdir(project);
   const children:ChildProcess[]=[];
   t.after(async()=>{await cli('stop').catch(()=>{});for(const c of children)c.kill('SIGTERM');await new Promise(r=>setTimeout(r,2000));for(const c of children)if(c.exitCode===null)c.kill('SIGKILL');await rm(root,{recursive:true,force:true});});
   const port=20000+Math.floor(Math.random()*15000),origin=`http://127.0.0.1:${port}`;
@@ -39,10 +40,12 @@ test('Worker + Durable Object + local agent: authenticated MCP, chunking and rec
   const url=registered.mcpUrl;const post=()=>fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:'{}'});assert.equal((await post()).status,503);
   assert.equal((await fetch(`${origin}/mcp/${registered.deviceId}/${mcpToken}`,{method:'POST',headers:{'Content-Type':'application/json'},body:'{}'})).status,404);
   await mkdir(join(root,'.localmcp'));
+  const configPath=join(root,'.localmcp/localmcp.json');
+  await writeFile(configPath,JSON.stringify({workspaces:{project},defaultWorkspace:'project',permissions:{fileWrite:true},features:{shell:false,processes:false}}),{mode:0o600});
   await writeFile(join(root,'.localmcp/worker.json'),JSON.stringify({workerUrl:origin,agentToken:registered.agentToken,mcpToken:registered.mcpToken,deviceId:registered.deviceId}));
   async function cli(command?: string) {
     return new Promise<string>((done, reject) => {
-      const child=spawn(process.execPath,[resolve('dist/index.js'),...(command?[command]:[])],{cwd:root,env:{...process.env,HOME:root,LOCALMCP_ROOT:root,LOCALMCP_AGENT_PORT:String(port+1),LOCALMCP_SHELL:'0'},stdio:['ignore','pipe','pipe']});
+      const child=spawn(process.execPath,[resolve('dist/index.js'),...(command?[command]:[])],{cwd:root,env:{...process.env,HOME:root,USERPROFILE:root,LOCALMCP_CONFIG:configPath,LOCALMCP_ROOT:project,LOCALMCP_AGENT_PORT:String(port+1),LOCALMCP_SHELL:'0'},stdio:['ignore','pipe','pipe']});
       let output='';child.stdout.on('data',c=>{output+=c;});child.stderr.on('data',c=>{output+=c;});
       const timer=setTimeout(()=>{child.kill('SIGKILL');reject(new Error('CLI did not return: '+output));},25000);
       child.on('error',reject);
@@ -76,14 +79,13 @@ test('Worker + Durable Object + local agent: authenticated MCP, chunking and rec
   const duplicate=new WebSocket(origin.replace('http:','ws:')+`/agent/${registered.deviceId}`,{headers:{Authorization:`Bearer ${registered.agentToken}`}});
   const status=await new Promise<number>((resolve,reject)=>{duplicate.on('unexpected-response',(_req,res)=>{res.resume();duplicate.terminate();resolve(res.statusCode!);});duplicate.on('error',()=>{});duplicate.on('open',()=>{duplicate.close();reject(new Error('Duplicate accepted'));});});
   assert.equal(status,409);
-  const configPath=join(root,'.localmcp/localmcp.json');
   const originalConfig=await readFile(configPath,'utf8');
   await writeFile(configPath,'{invalid');
-  await assert.rejects(cli('reload'), /Invalid JSON/);
+  await assert.rejects(cli('reload'), /CONFIG_JSON/);
   assert.equal((await client.listTools()).tools.length,20);
   const changedConfig=JSON.parse(originalConfig);
-  changedConfig.workspaces={reloaded:root};changedConfig.defaultWorkspace='reloaded';
-  changedConfig.mcpServers={fixture:{command:process.execPath,args:[resolve('test/fixtures/mcp-server.mjs')]}};
+  changedConfig.workspaces={reloaded:project};changedConfig.defaultWorkspace='reloaded';
+  changedConfig.mcpServers={fixture:{allowedTools:['echo'],command:process.execPath,args:[resolve('test/fixtures/mcp-server.mjs')]}};
   await writeFile(configPath,JSON.stringify(changedConfig));
   let hot=false;
   for(let i=0;i<100;i++){
