@@ -1,0 +1,146 @@
+{
+  "date": "2026-09-19",
+  "repository": "dearcloud09/localmcp",
+  "branch": "feat/m1-modular-runtime",
+  "verdict": "verification_pending",
+  "observed_start_head": "4ecf0654b4dd9e3b43fc02025b37a01f42b2cc15",
+  "code_commit": "50cad2dcd02a3766a42580b5831c986319364fb7",
+  "pr": {
+    "number": 1,
+    "state": "open",
+    "draft": true,
+    "merged": false
+  },
+  "remote_compare_from_code": {
+    "ahead_by": 4,
+    "changed_files": 5,
+    "all_under_docs": true
+  },
+  "connection": {
+    "app": "LocalMCP-E1",
+    "discovered_tool_definitions": 20,
+    "first_localmcp_call": "workspace_info",
+    "workspace_info_attempts": 2,
+    "errors": [
+      "ConnectorClientServerError: 502: Server returned 502: Upstream or external service errors",
+      "ConnectorClientServerError: 502: Server returned 502: Upstream or external service errors"
+    ],
+    "normal_workspace_payload_received": false,
+    "workspace_values": {
+      "workspace": null,
+      "root": null,
+      "configFile": null,
+      "files": null,
+      "filePermissions": null,
+      "shell": null,
+      "processes": null,
+      "persistentProcesses": null,
+      "skills": null,
+      "mcpServers": null,
+      "availableChecks": null,
+      "mutationRecovery": null
+    },
+    "missing_reason": "All listed values are absent because no normal workspace_info payload was received; not evidence that a server field or permission is disabled.",
+    "existing_e1_identified": false,
+    "calculator_read": false,
+    "file_mutations_attempted": false
+  },
+  "permissions": {
+    "layers_separately_considered": [
+      "ChatGPT app approval",
+      "LocalMCP workspace/tool policy",
+      "execution environment"
+    ],
+    "host_app_settings_inspected": true,
+    "localmcp_server_policy_verified": false,
+    "github_repository_metadata": {
+      "pull": true,
+      "push": true
+    },
+    "docker_and_program_readiness": null,
+    "permissions_changed": false
+  },
+  "discovered_schema": {
+    "read_file_includeVersion": false,
+    "edit_file_expectedSha256": false,
+    "edit_file_operationId": false,
+    "apply_patch_expectedSha256": true,
+    "apply_patch_operationId": false,
+    "scope": "Definitions returned by tool discovery, not a successful live server schema read."
+  },
+  "version": {
+    "remote_package_json": "0.3.9",
+    "remote_mcp_version_literal": "0.3.0",
+    "remote_m2c_fields_present": true,
+    "running_mcp_version_observed": null,
+    "running_m2c_features_confirmed": null,
+    "exact_running_commit": null,
+    "process_start_path_time_and_build_verified": false,
+    "unresolved_explanations": [
+      "cached tool definitions",
+      "older running build",
+      "another worktree or entrypoint"
+    ],
+    "connection_failure_root_cause": null
+  },
+  "source_readback": {
+    "src/modules/files.ts": "9ac98604a58e45a0afece19a08e393967a5ddaa9",
+    "src/modules/workspaces.ts": "7dff8f56c9a8b61dc90a2bb746b9efc08ace821a",
+    "src/server.ts": "ebc338fed7526782d4e7b585cc6b80e862bb06ea",
+    "src/index.ts": "9ac4c17bce1bf0b18f5e96f94227812e8dda5bf9",
+    "src/core/mutation-runtime.ts": "da7c7a1463dfcd91561b42ff98f9e01eb6582aca",
+    "src/recovery-init.ts": "9b16bd1185b7a34573f637e8086b9db4d97e595f",
+    "test/recovery-runtime-sdk.test.ts": "ede156a70f4bd433fdd43773cc8cb394d882be3f",
+    "scripts/smoke-sandbox.mjs": "6593e5d71eb52f979f1c5596fa685475dbd0682e",
+    "scripts/lib/minimum-fixture.mjs": "fe1df4414f4fe4ac56b91b4d0073f049929782fc",
+    "scripts/e1-session.mjs": "e3f2478e949ad60ee900cd46bf0b8da9617c029e"
+  },
+  "dependency_review": {
+    "package_json_blob": "0faca9632cc8929ea262d39dc7b0f981f9ea34e7",
+    "package_lock_blob": "32b1658c5497d908a5fb91f2448519f788bf6b31",
+    "lockfile_read_lines": [
+      1,
+      60
+    ],
+    "full_dependency_graph_reviewed": false,
+    "prior_user_reported_high": 3,
+    "fresh_audit_report_received": false,
+    "advisory_identities_and_affected_paths": null,
+    "npm_audit_executed": false,
+    "npm_audit_fix_executed": false,
+    "lockfile_modified": false
+  },
+  "next_gates": {
+    "A": "Blocked on actual checkout and independent permitted audit execution; collection and interpretation criteria documented.",
+    "B": "Static review of existing real-Docker smoke and fresh-fixture creation only; Docker, local reviewed image and execution path unverified.",
+    "C": "Independent stdio/loopback-HTTP initialization/restart/revoke/watcher-reload acceptance plan only; no lifecycle run.",
+    "D": "Separate nonsecret candidate sample scope defined; no sample creation, new relay exposure, live-account edit or old-E1 reset."
+  },
+  "review_findings": [
+    "The inspected SDK recovery tests use InMemoryTransport and protocol-server recreation in one process; they alone do not prove full transport/process lifecycle.",
+    "An incompatible recovery change rejects the whole reload, retaining the prior config, including prior permissions if revocation was combined with that invalid change.",
+    "The existing E1 CLI prepare is create-only and start requires pre-edit source; do not reset a completed E1 or invent a custom-directory CLI option.",
+    "Application schema refresh, server rebuild/restart and identifying the actual running artifact are separate operations."
+  ],
+  "execution_results": {
+    "application_tests_run_this_session": false,
+    "new_minimum_report_received": false,
+    "actual_docker_run": false,
+    "full_durable_lifecycle_run": false,
+    "new_code_live_chatgpt_verified": false
+  },
+  "preserved_evidence": [
+    "docs/validation/m2c-publication-readback.json",
+    "docs/validation/m2c-local-checks-user-report.json",
+    "All previous E0/E1 evidence and existing E1 sample state"
+  ],
+  "change_scope": {
+    "documentation_only": true,
+    "source_upload_retried": false,
+    "services_or_images_installed": false,
+    "main_merged": false,
+    "deployment_performed": false,
+    "ci_pass_claimed": false
+  },
+  "privacy": "No credentials, raw challenges, access URLs, raw process argv/env, personal filesystem paths or host names stored."
+}

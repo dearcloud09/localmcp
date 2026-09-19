@@ -2,7 +2,40 @@
 
 갱신: 2026-09-19 · [1pager](onepager.ko.md) · `feat/m1-modular-runtime` · PR #1 Draft.
 
-## 현재 상태 — M2c 로컬 성공 보고 및 원격 소스 반영 확인
+## 이번 인계 점검과 후속 실행 기준
+판정: **verification_pending**. 최초 및 재시도 workspace_info가 연결 계층 502로 실패해 로컬 실행 관문은 보류한다. 앱 등록/도구 발견을 실시간 호출 성공으로 취급하지 않는다. 원격 읽기·정적 검토·검증 준비는 수행했다. [관측 JSON](validation/m2c-session-readonly-handoff.json)
+
+### 이번 세션에서 직접 확인한 것
+원격 PR과 branch ref를 각각 읽어 시작 HEAD `4ecf0654b4dd9e3b43fc02025b37a01f42b2cc15`, Draft·open·미병합을 확인했다. GitHub 승인 설정과 저장소 메타데이터의 pull/push 권한은 따로 확인했다. 코드 커밋 50cad2d부터 이 HEAD까지 compare는 docs 아래 5개 변경만 반환했다. 이번에는 이전 overlay ZIP의 전체 소스 해시 검사를 반복하지 않았다.
+
+발견한 LocalMCP 도구 정의는 20개다. read_file 입력에는 workspace/path만 있고 includeVersion이 없으며, edit_file에는 expectedSha256/operationId가 없다. apply_patch에는 expectedSha256이 있으나 operationId는 없다. 원격 src/modules/files.ts의 M2c 정의와 다르지만 현재 실행 중인 서버가 구버전이라는 확정 근거는 아니다.
+
+workspace, root, configFile, files, filePermissions, shell, processes, persistentProcesses, skills, mcpServers, availableChecks, mutationRecovery: **응답에 없음 — 정상 workspace_info 응답 미수신**. 필드 값이 false/빈 배열이라는 뜻이 아니다. 기존 E1 샘플인지 확인되지 않아 calculator.mjs를 읽지 않았고 LocalMCP 쓰기·셸·프로세스 호출도 하지 않았다.
+
+원격 src/server.ts의 MCP 버전은 고정 0.3.0이고 package.json은 0.3.9다. 실행 프로세스의 시작 경로/시각, 사용 중인 dist, 로컬 HEAD/dirty 상태는 확인하지 못했다. M2c 기능 포함 여부와 정확한 실행 커밋은 모두 미확인이다. 앱의 정의 새로고침은 서버 빌드/재시작과 별개다. 재연결 후에도 실행 경로·빌드 해시·프로세스 시작 근거 없이 디스크 HEAD만으로 실행 버전을 확정하지 않는다.
+
+### 남은 A–D의 수용 기준 — 실행 결과가 아닌 준비
+| 관문 | 준비한 검사 범위 | 현재 막힌 조건 |
+|---|---|---|
+| A / DEP-01 | 실제 checkout에서 npm audit JSON·종료 코드·Node/npm·HEAD/dirty·lock 해시·감사 범위를 함께 확보. 패키지→advisory→의존 경로→prod/dev 및 실제 노출 조건을 구분 | 실행 경로와 실제 감사 보고 없음. high 3개는 과거 사용자 보고만 유지 |
+| B / E0-D | 기존 smoke-sandbox가 새 임시 fixture에서 실제 SDK stdio/run_check를 호출. red 3, green 8, 격리·원본 불변·timeout cleanup을 확인하도록 작성됨 | Docker daemon/context, 검토한 로컬 이미지 전체 ID, 빌드/의존성, 허용된 검사 경로 미확인 |
+| C / 영속 lifecycle | 독립 fixture·profile·기록소·검사용 자식 서버에서 초기화, 별도 프로세스 재시작, replay, 권한 회수, 실제 config watcher reload를 stdio/loopback HTTP별 확인 | 유일한 연결과 분리된 실행 경로 없음. 기존 연결을 종료하는 방식은 사용하지 않음 |
+| D / 최종 후보 ChatGPT | M2c 도구 필드의 실제 모델 전달을 검증할 새 비밀 없는 샘플. versioned read→해시 제한 편집→재읽기→동일 ID 재전달 및 stale hash 거부. 고정 참조 파일/확인 코드는 불변 | 실행 후보 식별·정상 연결·별도 샘플/연결 범위가 아직 확보되지 않음 |
+
+A에서는 npm audit fix, lockfile 갱신, 패키지 설치를 하지 않는다. npm audit는 registry에 의존성 정보를 보내며 cache/log를 쓸 수 있으므로 순수 오프라인 읽기 검사로 부르지 않는다. 비영 종료는 취약점 발견과 실행 오류를 JSON/표준오류로 구분한다. 의존성 전파 경고를 독립 advisory 3개로 추정하지 않는다. 현재 package-lock.json은 앞 60줄과 blob ID만 읽었으며 전체 의존 경로를 분석했다고 표시하지 않는다. 공식 명령 계약: https://docs.npmjs.com/cli/v11/commands/npm-audit/
+
+B의 최소 검증 안내와 smoke-sandbox/minimum-fixture 소스만 검토했다. 실행은 하지 않았다. 준비 조건이 충족되면 기존 단독 sandbox smoke 경로를 사용해 이미 성공 보고된 verify:minimum 전체를 이유 없이 반복하지 않는다. 단독 smoke 성공을 실제로 실행하지 않은 전체 runner 성공 표시로 바꾸지 않는다. Docker 대역을 실제 컨테이너 근거로 취급하지 않으며 새 이미지 pull·일반 셸 대체도 하지 않는다.
+
+C의 검사 순서는 미초기화 기록소의 fail-closed 시작 → create-only 초기화/중복 초기화 거부 → guarded edit → 검사용 프로세스만 재시작 → 동일 ID/동일 payload의 과거 영수증과 실제 현재 파일 재읽기다. 이어 fileWrite 회수 후 도구 목록 제거와 캐시 replay 거부를 확인한다. 실제 설정 파일 watcher를 거치는 reload와 권한 snapshot을 코드에서 직접 교체하는 SDK 검사는 구분한다. 기록소/모드 변경과 권한 회수를 섞으면 전체 reload가 거부되어 기존 권한이 유지되므로 별도 거부 사례로 검사한다. 기존 SDK 검사 파일은 실제 SDK와 InMemoryTransport를 쓰며 같은 프로세스의 protocol server 재생성이다. 이를 별도 프로세스 재시작·실제 HTTP·전체 lifecycle 통과로 확대하지 않는다.
+
+D의 새 검사가 필요한 이유는 이전 E1이 파일-only 구실행 코드의 근거이고, 이번 발견 스키마도 원격 M2c 정의와 다르기 때문이다. 새 샘플은 기존 E1과 다른 디렉터리·확인 코드·기준 해시를 사용하고 실제 프로젝트·비밀은 넣지 않는다. 기존 E1의 파일/테스트/확인 코드/증거는 읽기 전제 확인 전 접근하지 않고, 수정·초기화·회귀시키지 않는다. 현재 scripts/e1-session.mjs CLI는 기본 세션 경로만 받으며 prepare는 create-only, start는 수정 전 소스를 요구한다. 따라서 기존 prepare/start를 반복하거나 존재하지 않는 directory 옵션을 안내하지 않는다. 새 공개 중계 범위는 이 준비만으로 승인된 것으로 보지 않는다. 새 helper 구현이나 소스 업로드도 이번에 하지 않았다.
+
+### 이번 변경과 중단 기준
+문서 3개만 갱신한다: onepager, progress, 새 관측 JSON. 기존 사용자 보고와 원격 반영 JSON은 시점별 증거로 보존한다. 상세 설계/과거 E1 안내의 옛 상태 문구는 당시 기록이며 최신 상태는 이 진행표와 1pager를 따른다. 제품 소스·테스트·의존성·설정·토큰·영속 기록소·기존 E1은 변경하지 않는다.
+
+연결 오류를 한 번만 재시도했고, workspace 밖 접근·권한 확대·소스 업로드 차단 우회·새 서비스/이미지 설치·main 병합·배포는 하지 않는다. 문서 전용 커밋에는 [skip ci]를 사용하며 CI 실행/통과를 주장하지 않는다. 독립 실행 경로와 샘플 전용 연결이 확보되어야 로컬 관문을 재개할 수 있다. 토큰·원시 argv/env·중계 URL·개인 로컬 경로는 공개 기록에 저장하지 않는다.
+
+## 이전 확인 이력 — M2c 로컬 성공 보고 및 원격 소스 반영 확인
 사용자는 마지막 커밋 블록에서 '커밋할 변경이 없어'와 shell_session_save의 parameter not set을 전달했다. 원격을 직접 조회한 결과 이미 사용자 코드 커밋과 문서 통합 커밋이 올라가 있었다. 코드 재적용이나 재커밋을 요구하지 않는다. 정확히 어느 터미널 실행에서 push했는지는 관찰하지 않았지만 원격 반영 자체는 확인했다.
 
 - 코드 커밋: `50cad2dcd02a3766a42580b5831c986319364fb7`.
