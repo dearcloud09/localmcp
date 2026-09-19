@@ -1,3 +1,4 @@
+import { RuntimeMutations, bindMutationSnapshot } from './core/mutation-runtime.js';
 import { Server } from '@modelcontextprotocol/sdk/server/index.js';
 import { CallToolRequestSchema, ListToolsRequestSchema, type CallToolResult, type Tool } from '@modelcontextprotocol/sdk/types.js';
 import type { Config } from './config.js';
@@ -16,12 +17,15 @@ export async function createServer(
   mcp: McpLoader,
   skills: Skill[],
   processes = new ProcessManager(),
-  getRuntime: () => RuntimeSnapshot = () => ({ config, mcp, skills }),
+  getRuntime?: () => RuntimeSnapshot,
 ) {
+  const initial: RuntimeSnapshot = getRuntime?.() ?? { config, mcp, skills };
+  const mutations = initial.mutations ?? await RuntimeMutations.open(initial.config);
+  bindMutationSnapshot(initial, mutations);
   const server = new Server({ name: 'localmcp', version: '0.3.0' }, { capabilities: { tools: {} } });
   const registry = createToolRegistry(recentExecutions.append);
   // Each call sees one consistent snapshot; later calls observe configuration hot reloads.
-  const context = (): ModuleContext => ({ ...getRuntime(), processes });
+  const context = (): ModuleContext => ({ ...bindMutationSnapshot(getRuntime?.() ?? initial, mutations), processes });
   server.setRequestHandler(ListToolsRequestSchema, async () => ({ tools: registry.list(context()) as Tool[] }));
   server.setRequestHandler(CallToolRequestSchema, async request => {
     try {

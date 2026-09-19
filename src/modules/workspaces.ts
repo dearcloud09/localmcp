@@ -11,6 +11,8 @@ export function registerWorkspaceTools(registry: ModuleRegistry): void {
       configFile: config.configFile, files: config.files, shell: config.shell, processes: config.processes,
       // File permissions do not constrain legacy shell or external MCP processes.
       filePermissions: { read: config.files && config.fileRead === true, write: config.files && config.fileRead === true && config.fileWrite === true, scope: 'file-tools' },
+      // No journal path, IDs or receipt contents are exposed.
+      mutationRecovery: context.mutations?.describe() ?? { mode: 'memory', restartPersistent: false },
       availableChecks: Object.keys(config.checks ?? {}),
       skills: skills.map(skill => skill.name), mcpServers: Object.keys(config.mcpServers),
       fileLimitBytes: 1048576, persistentProcesses: config.shell,

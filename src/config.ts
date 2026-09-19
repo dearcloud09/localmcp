@@ -2,6 +2,7 @@ import { realpath } from 'node:fs/promises';
 import { dirname, resolve } from 'node:path';
 import { homedir } from 'node:os';
 import { z } from 'zod';
+import { resolveRecoveryConfig, type RecoveryConfig } from './core/recovery-config.js';
 import type { McpServerConfig } from './mcp/loader.js';
 import { readRuntimeDocument, resolveRuntimeWorkspaces, resolveExecutionFlags } from './core/runtime-policy.js';
 import { resolveFilePermissions } from './core/file-permissions.js';
@@ -23,6 +24,7 @@ export const localMcpConfigSchema = z.object({
     processes: z.boolean().optional().default(false),
   }).strict().optional().default({ files: true, shell: false, processes: false }),
   permissions: z.object({ fileRead: z.boolean().optional(), fileWrite: z.boolean().optional() }).strict().optional(),
+  recovery: z.unknown().optional(),
   checks: z.record(z.string().regex(/^[a-z][a-z0-9_-]{0,63}$/), z.unknown()).optional().default({}),
   skills: z.object({
     dir: z.string().optional().default('skills'), enabled: z.array(z.string().min(1)).optional().default([]),
@@ -32,6 +34,7 @@ export const localMcpConfigSchema = z.object({
 export interface Config {
   root: string; workspaces: Record<string, string>; defaultWorkspace: string;
   files: boolean; fileRead: boolean; fileWrite: boolean; shell: boolean; processes: boolean; port: number; token?: string;
+  recovery?: RecoveryConfig;
   checks?: Record<string, SandboxCheck>; sandboxChecks?: boolean;
   skillsDir: string; enabledSkills?: string[]; mcpServers: Record<string, McpServerConfig>; configFile?: string;
 }
@@ -62,8 +65,9 @@ export async function config(snapshot?: { content: string; path: string }): Prom
       command: m.command, args: m.args, env: m.env, allowedTools: validateAllowedTools(m.allowedTools),
     };
   }
+  const recovery = await resolveRecoveryConfig(c.recovery, workspaces.workspaces, path);
   return {
-    ...workspaces, files: c.features.files, ...permissions, ...execution, port, token: process.env.LOCALMCP_TOKEN,
+    recovery, ...workspaces, files: c.features.files, ...permissions, ...execution, port, token: process.env.LOCALMCP_TOKEN,
     checks, sandboxChecks: Object.keys(checks).length > 0,
     skillsDir: resolve(dirname(path), c.skills.dir), enabledSkills: c.skills.enabled,
     mcpServers, configFile: path,

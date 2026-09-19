@@ -9,6 +9,7 @@ import { createServer } from './server.js';
 import { McpLoader } from './mcp/loader.js';
 import { loadSkills } from './skills/loader.js';
 import { ProcessManager } from './process.js';
+import { RuntimeMutations } from './core/mutation-runtime.js';
 
 async function ensureInitialized(force = false) {
   // Legacy init now validates an explicit profile; never creates a home-wide one.
@@ -30,21 +31,25 @@ async function main() {
   const cfg = await config();
   if (!['stdio', 'http'].includes(mode)) throw new Error('Usage: localmcp [start|status|stop|reload|init|agent|stdio|http]');
   if (mode === 'http' && (!cfg.token || cfg.token.length < 32)) throw new Error('HTTP requires LOCALMCP_TOKEN with at least 32 characters');
+  // Fail before loading plugins, opening a port or exposing a protocol server.
+  const mutations = await RuntimeMutations.open(cfg);
   const mcp = new McpLoader(cfg.mcpServers);
   await mcp.start();
   const skills = await loadSkills(cfg.skillsDir,cfg.enabledSkills);
   const processes = new ProcessManager();
-  let runtime={config:cfg,mcp,skills};
+  let runtime={config:cfg,mcp,skills,mutations};
   const retired=new Set<Promise<void>>();
   const closeWatcher=watchConfig(configFilePath(),async content=>{
     const nextConfig=await config({content,path:configFilePath()});
     if(JSON.stringify(nextConfig)===JSON.stringify(runtime.config))return;
+    // Never swap namespace/mode/scopes on reload and forget operation history.
+    mutations.assertCompatible(nextConfig);
     const nextSkills=await loadSkills(nextConfig.skillsDir,nextConfig.enabledSkills);
     const changedMcp=JSON.stringify(nextConfig.mcpServers)!==JSON.stringify(runtime.config.mcpServers);
     const nextMcp=changedMcp?new McpLoader(nextConfig.mcpServers):runtime.mcp;
     if(changedMcp)await nextMcp.start();
     const previous=runtime;
-    runtime={config:nextConfig,mcp:nextMcp,skills:nextSkills};
+    runtime={config:nextConfig,mcp:nextMcp,skills:nextSkills,mutations};
     if(changedMcp){
       const closing=previous.mcp.close().finally(()=>retired.delete(closing));
       retired.add(closing);
