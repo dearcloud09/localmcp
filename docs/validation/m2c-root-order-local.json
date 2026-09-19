@@ -1,0 +1,57 @@
+{
+  "date": "2026-09-19",
+  "repository": "dearcloud09/localmcp",
+  "remote_base_commit": "7a114950225d10aa848aa671ac6fbf3b88c1a4bf",
+  "status": "root-move-validation-order-fix-tested-locally-user-rerun-pending",
+  "user_evidence": {
+    "type": "pasted report JSON and attached full-tests text",
+    "revision": "7a114950225d10aa848aa671ac6fbf3b88c1a4bf",
+    "dirtyWorkingTree": true,
+    "node": "v23.11.0",
+    "platform": "darwin",
+    "typecheck": "passed",
+    "build": "passed",
+    "full_tests_exit": 1,
+    "full_tests_reason": "nonzero_exit",
+    "typescript_suite": {"tests": 336, "pass": 335, "fail": 1, "cancelled": 0, "skipped": 0},
+    "new_m2c_integration_tests_reported_passed": {"mutation-integration": 5, "recovery-runtime-sdk": 7},
+    "not_reached": ["test:profile", "test:minimum-tools", "mcp-smoke", "separate e1-session tests"],
+    "dockerRequested": false,
+    "liveChatGPTTested": false
+  },
+  "diagnosis": {
+    "test": "workspace-root movement and removal are refused",
+    "file": "test/sensitive-paths.test.ts:129",
+    "expected": "workspace root",
+    "actual": "Path is outside workspace",
+    "cause": "move reserves both source and destination keys before moveUnlocked checks the source root; the outside destination fails containment first.",
+    "scope": "validation-order/message compatibility regression; denied operation, not an observed root move",
+    "macos_specific": false
+  },
+  "fix": {
+    "file": "src/workspace.ts",
+    "added_lines": 2,
+    "behavior": "Reject normalized workspace-root source before destination key validation; preserve existing unlocked checks and queue for ordinary moves.",
+    "existing_tests_or_dependencies_modified": false,
+    "before_sha256": "7a7d6d2ec5fd6f1dc8b23b0cdd3ec0e69d1d48ba2f6e745223ac8770b380e5ac",
+    "after_sha256": "383ae04f869399db08318a72ebc0945ddd6e55d17c73401df7fae7664756239b"
+  },
+  "assistant_executed": {
+    "environment": {"platform": "linux", "node": "v22.16.0", "typescript": "5.8.3", "node_types": "25.1.0", "after_suite_uid": 1000},
+    "archive_manifest_verified": 105,
+    "before": {"new_tests": 6, "pass": 4, "fail": 2, "same_failure_reproduced": true},
+    "after": {"tests": 168, "pass": 168, "fail": 0, "cancelled": 0, "skipped": 0, "new_regression": 6, "previous_independent": 162},
+    "strict_typecheck": "passed for independent source/test subset",
+    "repair_checks": ["known source applies", "idempotence", "unexpected source preserved", "symlink source refused", "git apply --index byte equality"],
+    "not_executed": ["full repository npm test after fix", "new macOS result after fix", "actual Docker", "live ChatGPT"]
+  },
+  "source_status": {"remote_code_written_this_turn": false, "user_worktree_changed_by_assistant": false, "user_fix_application": "pending"},
+  "audit_warning": {"user_reported_high": 3, "packages_and_advisories": "not provided", "cause_of_this_test_failure": "not established", "auto_fix_run": false},
+  "artifacts_sha256": {
+    "patch": "8c19ec3b4d8217a4999a72a0faa6dfc5a5049a6e2a4ea07c946a2618a678c34e",
+    "repair_script": "4a870bd3161f2ed65b580c7d900809d554104b4e5ea0d64a44e508d6d9820ae9",
+    "before_tap": "d28dd98a70e1c1e83359947a74069aadfd95081c5755aff7c5936d22b722232d",
+    "after_tap": "5a8b3a98797e68692a14c854fd5f2cb55f922e47a87d4f5e20e25434e561ab55"
+  },
+  "privacy": "No access URL, token, personal local path, host name or raw challenge retained."
+}

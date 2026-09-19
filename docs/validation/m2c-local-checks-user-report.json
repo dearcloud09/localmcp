@@ -1,0 +1,58 @@
+{
+  "date": "2026-09-19",
+  "repository": "dearcloud09/localmcp",
+  "branch": "feat/m1-modular-runtime",
+  "documentation_base_commit": "5cc0c7c3624f316473e3949e76c4cd6f77505850",
+  "evidence_type": "user_reported_final_marker_after_provided_sequential_repair_and_verification_block",
+  "reported_marker": "M2C_LOCAL_CHECKS_OK",
+  "status": "local_checks_passed_on_user_report_source_push_pending",
+  "basis": "User reports the final success marker following the supplied set-e block, which runs the existing sensitive-path suite, verify:minimum and separate E1 helper tests before printing it.",
+  "reported_completed_commands": [
+    "node --import tsx --test test/sensitive-paths.test.ts",
+    "npm run verify:minimum",
+    "node --test test/e1-session.test.mjs"
+  ],
+  "minimum_runner_scope": ["typecheck", "build", "full-tests", "mcp-smoke"],
+  "root_order_fix": {
+    "file": "src/workspace.ts",
+    "expected_fixed_sha256_from_prior_repair": "383ae04f869399db08318a72ebc0945ddd6e55d17c73401df7fae7664756239b",
+    "user_file_hash_independently_read_this_turn": false,
+    "prior_failure_record": "docs/validation/m2c-root-order-local.json"
+  },
+  "evidence_limits": {
+    "fresh_report_json_received": false,
+    "fresh_full_test_log_received": false,
+    "fresh_exact_test_count": null,
+    "fresh_skip_count": null,
+    "runtime_versions_reconfirmed": false,
+    "user_machine_accessed_by_assistant": false,
+    "tests_rerun_by_assistant_this_turn": false,
+    "tested_worktree_bytes_independently_verified": false,
+    "new_code_live_chatgpt_tested": false,
+    "actual_docker_tested": false,
+    "full_durable_transport_lifecycle_verified": false
+  },
+  "prior_report_context_not_fresh_measurement": {
+    "revision": "7a114950225d10aa848aa671ac6fbf3b88c1a4bf",
+    "dirtyWorkingTree": true,
+    "platform": "darwin",
+    "node": "v23.11.0",
+    "typescript_tests": 336,
+    "typescript_pass": 335,
+    "typescript_fail": 1
+  },
+  "source_status": {
+    "remote_m2c_source_present_at_initial_read": false,
+    "source_written_by_assistant_this_turn": false,
+    "user_commit_or_push_success_report_received": false,
+    "next_gate": "Commit tested staged code, incorporate only remote docs changes, verify non-doc tree unchanged, push without force to the existing PR branch and read back remote state."
+  },
+  "dependency_audit": {
+    "prior_high_warning_count": 3,
+    "advisories_received": false,
+    "resolved": false,
+    "automatic_fix_run": false
+  },
+  "privacy": "No access URL, token, personal filesystem path or host name recorded. This is not an uploaded raw local verification report.",
+  "code_changed_by_this_update": false
+}
