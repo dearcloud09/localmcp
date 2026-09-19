@@ -2,10 +2,10 @@ import { randomUUID } from 'node:crypto';
 import { performance } from 'node:perf_hooks';
 
 export type Backend = 'internal' | 'cli' | 'mcp';
-export type Feature = 'files' | 'fileRead' | 'fileWrite' | 'shell' | 'processes';
+export type Feature = 'files' | 'fileRead' | 'fileWrite' | 'shell' | 'processes' | 'sandboxChecks';
 export interface FeatureContext {
-  // Missing embedding permissions fail closed at dispatch, rather than inheriting write access.
-  config: { files: boolean; fileRead?: boolean; fileWrite?: boolean; shell: boolean; processes: boolean };
+  // Missing embedding permissions fail closed at dispatch.
+  config: { files: boolean; fileRead?: boolean; fileWrite?: boolean; shell: boolean; processes: boolean; sandboxChecks?: boolean };
 }
 export interface ToolDescriptor {
   name: string;

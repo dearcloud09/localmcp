@@ -28,7 +28,7 @@
     "stdio": "node dist/index.js stdio",
     "http": "node dist/index.js http",
     "dev": "tsx src/index.ts",
-    "test": "tsx --test test/*.test.ts && npm run test:profile",
+    "test": "tsx --test test/*.test.ts && npm run test:profile && npm run test:minimum-tools",
     "check": "tsc --noEmit && tsc -p worker/tsconfig.json",
     "prepack": "npm run build",
     "prepublishOnly": "npm run check && npm test && npm run build",
@@ -39,7 +39,11 @@
     "worker:deploy": "wrangler deploy --config wrangler.jsonc",
     "worker:secrets": "wrangler secret bulk ~/.localmcp/worker-secrets.json --config wrangler.jsonc",
     "test:profile": "node --test test/project-profile.test.mjs test/file-permissions-profile.test.mjs",
-    "profile": "node scripts/project-profile.mjs"
+    "profile": "node scripts/project-profile.mjs",
+    "test:minimum-tools": "node --test test/verification-tools.test.mjs",
+    "verify:minimum": "node scripts/verify-minimum.mjs",
+    "smoke:mcp": "node scripts/smoke-mcp.mjs",
+    "smoke:sandbox": "node scripts/smoke-sandbox.mjs"
   },
   "repository": {
     "type": "git",

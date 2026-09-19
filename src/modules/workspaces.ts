@@ -9,8 +9,9 @@ export function registerWorkspaceTools(registry: ModuleRegistry): void {
     return {
       workspace: selected.name, root: selected.ws.root, defaultWorkspace: config.defaultWorkspace,
       configFile: config.configFile, files: config.files, shell: config.shell, processes: config.processes,
-      // This scope does not constrain separately enabled shell or external MCP tools.
+      // File permissions do not constrain legacy shell or external MCP processes.
       filePermissions: { read: config.files && config.fileRead === true, write: config.files && config.fileRead === true && config.fileWrite === true, scope: 'file-tools' },
+      availableChecks: Object.keys(config.checks ?? {}),
       skills: skills.map(skill => skill.name), mcpServers: Object.keys(config.mcpServers),
       fileLimitBytes: 1048576, persistentProcesses: config.shell,
     };

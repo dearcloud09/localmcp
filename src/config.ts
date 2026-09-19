@@ -6,6 +6,7 @@ import type { McpServerConfig } from './mcp/loader.js';
 import { readRuntimeDocument, resolveRuntimeWorkspaces, resolveExecutionFlags } from './core/runtime-policy.js';
 import { resolveFilePermissions } from './core/file-permissions.js';
 import { validateAllowedTools } from './core/external-tool-policy.js';
+import { validateSandboxCheck, type SandboxCheck } from './adapters/docker-snapshot.js';
 
 const mcpEntrySchema = z.object({
   enabled: z.boolean().optional().default(true), command: z.string().min(1),
@@ -22,6 +23,7 @@ export const localMcpConfigSchema = z.object({
     processes: z.boolean().optional().default(false),
   }).strict().optional().default({ files: true, shell: false, processes: false }),
   permissions: z.object({ fileRead: z.boolean().optional(), fileWrite: z.boolean().optional() }).strict().optional(),
+  checks: z.record(z.string().regex(/^[a-z][a-z0-9_-]{0,63}$/), z.unknown()).optional().default({}),
   skills: z.object({
     dir: z.string().optional().default('skills'), enabled: z.array(z.string().min(1)).optional().default([]),
   }).strict().optional().default({ dir: 'skills', enabled: [] }),
@@ -30,6 +32,7 @@ export const localMcpConfigSchema = z.object({
 export interface Config {
   root: string; workspaces: Record<string, string>; defaultWorkspace: string;
   files: boolean; fileRead: boolean; fileWrite: boolean; shell: boolean; processes: boolean; port: number; token?: string;
+  checks?: Record<string, SandboxCheck>; sandboxChecks?: boolean;
   skillsDir: string; enabledSkills?: string[]; mcpServers: Record<string, McpServerConfig>; configFile?: string;
 }
 export function configFilePath(): string {
@@ -45,12 +48,14 @@ export async function config(snapshot?: { content: string; path: string }): Prom
   }
   const c = parsed.data;
   const path = await realpath(requestedPath);
-  // Used by initial startup and both hot/manual reload. Never fall back to home.
   const workspaces = await resolveRuntimeWorkspaces(c, path);
   const execution = resolveExecutionFlags(c.features);
   const permissions = resolveFilePermissions(c.permissions, c.features.files);
   const port = Number(process.env.LOCALMCP_PORT || 8787);
   if (!Number.isInteger(port) || port < 1 || port > 65535) throw new Error('Invalid LOCALMCP_PORT');
+  if (Object.keys(c.checks).length > 16) throw new Error('At most 16 operator-configured checks are allowed');
+  const checks: Record<string, SandboxCheck> = Object.create(null);
+  for (const [name, value] of Object.entries(c.checks)) checks[name] = validateSandboxCheck(value);
   const mcpServers: Record<string, McpServerConfig> = {};
   for (const [name, m] of Object.entries(c.mcpServers)) {
     if (m.enabled) mcpServers[name] = {
@@ -59,6 +64,7 @@ export async function config(snapshot?: { content: string; path: string }): Prom
   }
   return {
     ...workspaces, files: c.features.files, ...permissions, ...execution, port, token: process.env.LOCALMCP_TOKEN,
+    checks, sandboxChecks: Object.keys(checks).length > 0,
     skillsDir: resolve(dirname(path), c.skills.dir), enabledSkills: c.skills.enabled,
     mcpServers, configFile: path,
   };

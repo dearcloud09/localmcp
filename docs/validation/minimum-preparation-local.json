@@ -1,0 +1,78 @@
+{
+  "date": "2026-09-19",
+  "base_commit": "dc5e3853c838a256b05c379885ff2bc9e497a1a0",
+  "scope": "M2B-03a optional Docker snapshot checks and E0 minimum-verification tooling; NOT completed E0/E0-D/E1",
+  "environment": {
+    "os": "Linux",
+    "node": "22.16.0",
+    "typescript": "5.8.3",
+    "test_uid": 1000,
+    "source_fixture": "partial reconstructed files, not a full repository clone"
+  },
+  "executed": {
+    "strict_typescript": "new Docker adapter, shared sensitive policy, current registry, existing CLI/Git, and independent TS tests",
+    "command": "node --test compiled/test/docker-snapshot.test.js compiled/test/docker-lifecycle.test.js compiled/test/modular-cli.test.js compiled/test/modular-core.test.js test/verification-tools.test.mjs",
+    "tests": {
+      "total": 65,
+      "pass": 65,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "new_snapshot": 14,
+      "docker_cli_double": 7,
+      "verification_tooling": 11,
+      "existing_cli_git": 15,
+      "existing_registry": 18
+    },
+    "syntax": {
+      "typescript": {
+        "files": 9,
+        "errors": []
+      },
+      "javascript_files": 7
+    },
+    "negative_controls": [
+      "Missing SDK: smoke-mcp exits 1, no success marker.",
+      "Missing prerequisites in partial source fixture: verify-minimum records blocked and exits 1.",
+      "Docker absent from explicit /usr/bin:/bin PATH under UID 1000: ENOENT, original marker unchanged."
+    ],
+    "fixture_red_green": "Actual Node generated fixture: 3 failures before source edit, 3 passes after; test bytes unchanged."
+  },
+  "not_run": [
+    "Full repository npm check/build/test with original dependency versions",
+    "Six actual SDK/config checks-integration tests",
+    "Actual SDK smoke-mcp round trip",
+    "Real Docker execution, inspect compatibility, timeout cleanup and smoke-sandbox",
+    "macOS/Windows current version",
+    "Live ChatGPT account connection",
+    "GitHub Actions (user-reported quota)"
+  ],
+  "limits": [
+    "Docker lifecycle tests use a process-level protocol double, not containers.",
+    "New run_check does not isolate legacy shell or external MCP.",
+    "Verification run reports do not implement product-wide recovery/idempotency.",
+    "No measured end-to-end model or MCP speed improvement."
+  ],
+  "network": {
+    "git_ls_remote": "Could not resolve host: github.com",
+    "plugin_search_localmcp": "no available directory result"
+  },
+  "source_sha256": {
+    "src/adapters/docker-snapshot.ts": "f5a8a8fe7831aff48c6086094b0209f79aafcd00e5f4e93c0a0d0f78c7d45b50",
+    "src/modules/checks.ts": "d2521be3a1065c916531aa3c2d1f7a4620abac7db6e796b1727e614530630b0a",
+    "src/config.ts": "1faab88033495a5ff724c9182c03610e970fc8c17536d12a6d4d2ce09ccefcd4",
+    "src/core/registry.ts": "250cda6a3086b07feec899aa25d8529e549bc546b6819eac05625b65c3a7e84d",
+    "src/modules/index.ts": "6c8890e2bccc7d1a3b3c15110ce1bb1d26bbe44486b1550a69fd6084264f1376",
+    "src/modules/workspaces.ts": "79800b0a7e5d8e47be316c2e2c3b67f71648b17e7c7e707665653307de2e6221",
+    "scripts/lib/verification.mjs": "09931abf25fa475cf13d90045ffcb5bdf6c2f6c013c704be40bf3f80c183e1a2",
+    "scripts/lib/minimum-fixture.mjs": "7002078b61d6d4e58a1f23fdd0734cf22b8f6d3bc2b39ed7ed8476511c2f2e07",
+    "scripts/smoke-mcp.mjs": "25ba41b72d47a9c40346de6a315651c74ff65309a65a5c9832b36dc3679e5727",
+    "scripts/smoke-sandbox.mjs": "5a491ace8584be58dc358df00e4dfdf32c1c7b6ddbcb8cd315d3b3907b1b50a7",
+    "scripts/verify-minimum.mjs": "a5a472265987fccd0e5db6f4b2760afbdc33ed12986a10ce7d3c2d20c5f3377a",
+    "test/docker-snapshot.test.ts": "71ad12be18f6fc7385474ed0029302b59efbd8f6dfe2c01532611f4250cc5618",
+    "test/docker-lifecycle.test.ts": "b3b13d5c7e8f4dcfeca14a171025ccf40fda8ee9518dffd04a3acbe4c587896e",
+    "test/fixtures/docker-cli-double.mjs": "018ec5b5ca2f4d9a20e3b656896bddb4a6368c203cdb6d2d0e77bf85ff5d7758",
+    "test/verification-tools.test.mjs": "5f656eac049b415bb573b0951c5c827b0b86f6239c98bff003a9458b1d5cf156",
+    "test/checks-integration.test.ts": "cb3be7d5d1826eb7494b86f96a589c59dc26ca25e340237bde763193902325ba"
+  }
+}
