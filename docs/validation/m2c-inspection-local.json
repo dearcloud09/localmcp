@@ -1,0 +1,78 @@
+{
+  "date": "2026-09-19",
+  "repository": "dearcloud09/localmcp",
+  "remote_base_commit": "10a7eb72666e85f7e87698f8f8704ae0de21c5cc",
+  "scope": "M2C-02b-3a local operator read-only journal inspection, not a recovery or retry command",
+  "remote_runtime_changed": false,
+  "source_upload_attempted_this_turn": false,
+  "prior_upload_boundary": "Earlier code-upload security block remains. No retry, split upload, alternative route or remote source-in-document upload.",
+  "baseline": {
+    "artifact": "localmcp-m2c-runtime-review.zip",
+    "files_verified": 72,
+    "full_checkout": false
+  },
+  "environment": {
+    "platform": "linux",
+    "node": "v22.16.0",
+    "typescript": "5.8.3",
+    "node_types": "25.1.0",
+    "test_uid": 1000
+  },
+  "executed": {
+    "strict_typecheck": "tsc -p tsconfig.independent.json; production core/Workspace/operator CLI plus independent tests, not full server",
+    "test_command": "node --test compiled/test/recovery-inspection.test.js compiled/test/recovery-runtime.test.js compiled/test/durable-journal.test.js compiled/test/durable-crash.test.js compiled/test/mutation-coordinator.test.js compiled/test/mutation-workspace.test.js compiled/test/modular-cli.test.js compiled/test/modular-files-process.test.js",
+    "counts": {
+      "tests": 154,
+      "pass": 154,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "new_operator_tests": 33,
+      "reexecuted_previous_tests": 121
+    },
+    "real_cli": "Compiled operator CLI executed as a Node child process. Exit 0 observation completed, exit 2 review required, exit 1 blocked; JSON output inspected.",
+    "crash": "Actual worker SIGKILL after an effect and before terminal receipt; separate operator CLI reports unresolved, preserves one effect and every record.",
+    "nonmutation": "Snapshots of file sets, bytes, modes, inodes, mtime and ctime before/after read-only inspection; atime is intentionally excluded.",
+    "current_file": "Exact-case canonical path retained. Matching, externally changed and policy-blocked files checked without rewriting history.",
+    "bounds_privacy": "Pagination cap 200 and capacity-bound enumeration, metadata revalidation, unexpected entries, symlink/hardlink/unsafe file rejection, no raw IDs/scopes/paths/fingerprints/receipt hashes in default output.",
+    "syntax": "node --check compiled/src/recovery-inspect.js",
+    "patch_roundtrip": {
+      "files": 4,
+      "git_apply_check": true,
+      "applied_bytes_match": true,
+      "target": "temporary partial Git repository only"
+    }
+  },
+  "source_sha256": {
+    "src/core/durable-mutation-journal.ts": "029a145a21e8a114d7795a5ffb38b1b949e03af858d2d3e702d2af96381c18f4",
+    "src/core/recovery-inspection.ts": "16c680bd96d26da0d3d36823a3a2dfd17b9b4adad7f4e0f3e9530c6811c60141",
+    "src/recovery-inspect.ts": "b51b9276020b90c4733f52b82d3d98af12598fcc4d7e1aaf5bf65e82aed87dcb",
+    "test/recovery-inspection.test.ts": "3e56179437a233d909faba2a8d2d701c95f606ef32dfde77e901f014292138cd"
+  },
+  "log_sha256": "c25bb610c4fb2077516131cb263f31e0ef116a21c5b42955d3f4faa18dc4da29",
+  "not_run": [
+    "Full pinned dependency check/build/test",
+    "Actual SDK/HTTP/stdio/Worker integration for new M2c code",
+    "macOS/Windows operator CLI",
+    "Actual Docker E0-D",
+    "New-code live ChatGPT E1",
+    "Power-loss/kernel-crash durability",
+    "Manual repair/reset/unlock/retry commands (not implemented)",
+    "New benchmark"
+  ],
+  "network": {
+    "git_probe": "Could not resolve host: github.com",
+    "npm_https_probe": "Could not resolve host: registry.npmjs.org",
+    "docker_cli": "not found",
+    "sdk": "not installed in partial fixture"
+  },
+  "limits": [
+    "Read-only is no intentional writes, deletes, chmod, retries or subprocess effects; ordinary reads may update filesystem atime.",
+    "Inventory is not an atomic snapshot. An unfinished record can still be active, not necessarily abandoned.",
+    "Page results do not assert health of the whole namespace. No output grants permission for automatic re-execution.",
+    "A succeeded receipt is historical; matching current bytes do not prove the actor or exactly-once execution.",
+    "Operator CLI is not exposed as an MCP tool, does not load runtime config or start app/network services.",
+    "Existing user E0/E1 evidence remains tied to earlier remote code, not this unpublished review."
+  ],
+  "patch_sha256": "23c620de3a388147bfe2340a1e60738e2faad92c5b1dadbbeca206485ec44ead"
+}
