@@ -1,0 +1,51 @@
+{
+  "recorded_date": "2026-09-19",
+  "repository": "dearcloud09/localmcp",
+  "branch": "feat/m1-modular-runtime",
+  "documentation_base_commit": "4a5e66c99ca95efe99fc1890942e8ac9c34ce9c8",
+  "evidence_type": "user_forwarded_answer_from_another_chatgpt_session",
+  "status": "chat_session_execution_report_received_local_check_pending",
+  "app_connection": "user_reported_success",
+  "reported_workspace": {
+    "workspace": "project",
+    "files": true,
+    "filePermissions": { "read": true, "write": true, "scope": "file-tools" },
+    "shell": false,
+    "processes": false,
+    "persistentProcesses": false,
+    "skills": [],
+    "mcpServers": [],
+    "availableChecks": []
+  },
+  "reported_execution": {
+    "transport_tools": "LocalMCP-E1",
+    "sequence": ["workspace_info", "read_three_files", "edit_file_once", "reread_three_files"],
+    "files_read": ["E1_CHALLENGE.txt", "calculator.mjs", "calculator.test.mjs"],
+    "changed_files": ["calculator.mjs"],
+    "old_text": "return a - b",
+    "new_text": "return a + b",
+    "reported_written_bytes": 44,
+    "reported_test_and_challenge_unchanged": true,
+    "tests_executed": false,
+    "local_check_executed": false
+  },
+  "challenge_comparison": {
+    "encoding": "SHA-256 of UTF-8 challenge without trailing newline",
+    "reported_sha256": "8222d6c37149e230698a76bb890bc57f1c3b9ccc8d6971347708f2645a52a9d4",
+    "local_result_received": false,
+    "matched_with_local_result": null,
+    "raw_challenge_published": false
+  },
+  "verification_limits": {
+    "raw_tool_calls_inspected_in_this_chat": false,
+    "approval_trace_inspected": false,
+    "user_mac_files_read_in_this_chat": false,
+    "e1_local_evidence_received": false,
+    "executed_revision_independently_verified": false,
+    "e1_overall_pass": false,
+    "live_docker_verified": false
+  },
+  "next_gate": "Stop E1 agent, run node scripts/e1-session.mjs check, then compare successful file/test results and the same challenge with the forwarded session report.",
+  "privacy": "No connection URL, access token, personal local path, or raw challenge stored. This is a report record, not an uploaded raw tool trace or local evidence JSON.",
+  "code_changed_by_this_update": false
+}
