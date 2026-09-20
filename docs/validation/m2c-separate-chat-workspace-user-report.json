@@ -1,0 +1,131 @@
+{
+  "date": "2026-09-20",
+  "repository": "dearcloud09/localmcp",
+  "branch": "feat/m1-modular-runtime",
+  "observed_remote_head": "64c0edd05be3e49c753b3e7de28e74644fccf0db",
+  "gate": "separate-chat workspace_info connectivity",
+  "verdict": "pass",
+  "verdict_scope": "One successful workspace_info call in a separate permitted conversation, accepted on user-relayed evidence; not current-conversation access or guarded-edit E1.",
+  "overall_project_verdict": "verification_pending",
+  "evidence": {
+    "type": "user_relayed_summary_of_separate_chat_tool_result",
+    "original_separate_chat_tool_transcript_directly_received": false,
+    "complete_raw_server_json_directly_received": false,
+    "current_session_direct_localmcp_calls": 0,
+    "first_call_reported": "workspace_info",
+    "arguments": {},
+    "reported_call_count": 1,
+    "extra_calls_reported": false,
+    "file_access_reported": false,
+    "shell_execution_reported": false,
+    "mutation_reported": false
+  },
+  "reported_workspace": {
+    "workspace": "project",
+    "defaultWorkspace": "project",
+    "root_stored": false,
+    "root_summary": "Path is consistent with the previously described E1 sample directory convention; session identity was not independently reread.",
+    "files": true,
+    "filePermissions": {
+      "read": true,
+      "write": true,
+      "scope": "file-tools"
+    },
+    "shell": false,
+    "processes": false,
+    "persistentProcesses": false,
+    "mutationRecovery": {
+      "mode": "memory",
+      "scope": "edit_file/apply_patch with operationId and expectedSha256",
+      "restartPersistent": false,
+      "automaticRetry": false,
+      "atomicFileAndJournal": false
+    }
+  },
+  "forwarded_summary_omissions": {
+    "fields": [
+      "configFile",
+      "skills",
+      "mcpServers",
+      "availableChecks"
+    ],
+    "reason": "Not included in the forwarded report. Unknown whether present in the original workspace_info response.",
+    "values": null,
+    "empty_or_disabled_assumed": false
+  },
+  "explicit_absence_reported_by_user": [
+    "separate exec permission field"
+  ],
+  "reported_schema": {
+    "read_file_includeVersion": true,
+    "edit_file_expectedSha256": true,
+    "edit_file_operationId": true,
+    "apply_patch_expectedSha256": true,
+    "apply_patch_operationId": true,
+    "basis": "User-relayed exposed schemas; no versioned read or mutation was performed."
+  },
+  "comparison": {
+    "previous_primary_chat_error": "FORBIDDEN: This conversation does not support developer MCPs",
+    "primary_chat_retested": false,
+    "primary_chat_restriction_cleared": null,
+    "separate_chat_success_reported": true,
+    "same_time_controlled_comparison": false,
+    "past_502_root_cause_proven": false,
+    "conversation_type_mode_plan_or_internal_host_cause_proven": false
+  },
+  "version_limits": {
+    "m2c_metadata_response_reported": true,
+    "exact_running_commit": null,
+    "fresh_process_or_build_provenance": false,
+    "versioned_read_behaviour_checked": false,
+    "guarded_edit_or_replay_checked": false,
+    "source_to_build_reproducibility_verified": false
+  },
+  "next_read_scope": {
+    "reuse_existing_workspace_info_response": true,
+    "first_confirm": [
+      "E1 sample/config path correspondence",
+      "fileRead permission",
+      "shell/processes disabled",
+      "skills/mcpServers/availableChecks empty from original response"
+    ],
+    "on_verified_conditions": {
+      "tool": "read_file",
+      "arguments": {
+        "workspace": "project",
+        "path": "calculator.mjs",
+        "includeVersion": true
+      },
+      "max_calls": 1
+    },
+    "on_missing_or_denied": "Stop without extra calls; distinguish omitted summary fields from original-response absence.",
+    "expected_response_fields": [
+      "content",
+      "sha256",
+      "bytes"
+    ],
+    "edit_existing_e1": false,
+    "public_scope_expansion": false,
+    "primary_session_keeps_git_ownership": true
+  },
+  "preserved_gates": {
+    "A": "Audit identification done; remediation unperformed.",
+    "B": "Actual Docker unperformed; no known executable path.",
+    "C": "Scoped 18-check user-reported pass unchanged.",
+    "D": "Connectivity prerequisite partly observed; actual guarded-edit live-account E1 remains unperformed."
+  },
+  "current_turn_actions": {
+    "localmcp_calls": 0,
+    "host_denial_retries": 0,
+    "server_restart": false,
+    "app_or_permission_change": false,
+    "source_test_or_lockfile_change": false,
+    "documentation_only": true,
+    "existing_e1_accessed": false,
+    "existing_evidence_json_changed": false,
+    "services_or_images_installed": false,
+    "main_merged": false,
+    "deployed": false
+  },
+  "privacy": "No personal root/config paths, PIDs, credentials, access URLs, raw logs, or challenge values stored."
+}
