@@ -1,0 +1,201 @@
+{
+  "date": "2026-09-20",
+  "repository": "dearcloud09/localmcp",
+  "branch": "feat/m1-modular-runtime",
+  "observed_remote_head": "3060bf141135a6a5017e6d4f8798bc430fe81228",
+  "gate": "C",
+  "verdict": "pass",
+  "verdict_scope": "Only the enumerated isolated stdio and loopback-HTTP lifecycle checks, accepted on user-reported execution evidence.",
+  "overall_project_verdict": "verification_pending",
+  "evidence_type": "user_pasted_complete_operator_output_compared_with_original_delivered_script",
+  "assistant_direct_macos_execution": false,
+  "raw_local_report_file_independently_received": false,
+  "script_review": {
+    "artifact": "lifecycle.mjs",
+    "sha256": "fd8b756a4933a2cb38746166f1f4a3bd1f751443e21ae51d16b36c7e56c222dc",
+    "original_zip_bytes_read_this_turn": true,
+    "matches_previous_published_hash": true,
+    "assertions_compared_to_report": true,
+    "product_tests_rerun_by_assistant": false
+  },
+  "user_result": {
+    "status": "C_SCOPED_LIFECYCLE_OK",
+    "sourceHead": "8dd7876192c1290d7d18bd70cc9b6d264aca34c4",
+    "sdkLoaded": true,
+    "sdkVersion": "1.30.0",
+    "transports": [
+      "stdio",
+      "loopback-http"
+    ],
+    "checks": [
+      {
+        "transport": "stdio",
+        "check": "uninitialized_start_rejected",
+        "status": "passed"
+      },
+      {
+        "transport": "stdio",
+        "check": "create_only_and_duplicate_rejection",
+        "status": "passed"
+      },
+      {
+        "transport": "stdio",
+        "check": "real_transport_workspace_and_schemas",
+        "status": "passed"
+      },
+      {
+        "transport": "stdio",
+        "check": "guarded_edit_and_stale_hash_rejection",
+        "status": "passed"
+      },
+      {
+        "transport": "stdio",
+        "check": "distinct_process_restart_historical_receipt",
+        "status": "passed"
+      },
+      {
+        "transport": "stdio",
+        "check": "real_watcher_revocation_and_cached_replay_denial",
+        "status": "passed"
+      },
+      {
+        "transport": "stdio",
+        "check": "compatible_permission_restore",
+        "status": "passed"
+      },
+      {
+        "transport": "stdio",
+        "check": "incompatible_reload_rejected_as_whole",
+        "status": "passed"
+      },
+      {
+        "transport": "stdio",
+        "check": "owned_server_cleanup",
+        "status": "passed"
+      },
+      {
+        "transport": "loopback-http",
+        "check": "uninitialized_start_rejected",
+        "status": "passed"
+      },
+      {
+        "transport": "loopback-http",
+        "check": "create_only_and_duplicate_rejection",
+        "status": "passed"
+      },
+      {
+        "transport": "loopback-http",
+        "check": "real_transport_workspace_and_schemas",
+        "status": "passed"
+      },
+      {
+        "transport": "loopback-http",
+        "check": "guarded_edit_and_stale_hash_rejection",
+        "status": "passed"
+      },
+      {
+        "transport": "loopback-http",
+        "check": "distinct_process_restart_historical_receipt",
+        "status": "passed"
+      },
+      {
+        "transport": "loopback-http",
+        "check": "real_watcher_revocation_and_cached_replay_denial",
+        "status": "passed"
+      },
+      {
+        "transport": "loopback-http",
+        "check": "compatible_permission_restore",
+        "status": "passed"
+      },
+      {
+        "transport": "loopback-http",
+        "check": "incompatible_reload_rejected_as_whole",
+        "status": "passed"
+      },
+      {
+        "transport": "loopback-http",
+        "check": "owned_server_cleanup",
+        "status": "passed"
+      }
+    ],
+    "passedChecks": 18,
+    "cleanupConfirmed": true,
+    "cleanupErrors": [],
+    "projectUnchanged": true,
+    "existingE1Accessed": false,
+    "publicRelayUsed": false,
+    "dockerUsed": false,
+    "packagesInstalled": false,
+    "buildRun": false,
+    "exactSourceToBuildProven": false,
+    "endMarker": "LOCALMCP_LIFECYCLE_END",
+    "phaseExit": 0
+  },
+  "candidate_guards_from_reviewed_script": {
+    "head": "8dd7876192c1290d7d18bd70cc9b6d264aca34c4",
+    "clean_working_tree_required": true,
+    "lock_sha256": "8185650314a8799924768a54193de71332d3a5c1037a87d58b4e08ba5442b1d4",
+    "dist_manifest_sha256": "d093a515eca545d75117ae7b9fb363445502dcfd03c48b7c902ffedd58c7f637",
+    "basis": "Successful user-reported run of the hash-verified script implies its preflight guards passed; the dist hash is not freshly printed in the supplied summary.",
+    "new_node_or_npm_version_reported": false
+  },
+  "acceptance": {
+    "criteria_fixed_before_run": true,
+    "unique_checks_per_transport": 9,
+    "total_reported_check_groups": 18,
+    "all_expected_checks_present_once": true,
+    "both_transports_complete": true,
+    "cleanup_and_project_invariance_satisfied": true,
+    "unnecessary_repeat_required": false
+  },
+  "limits": {
+    "restart_kind": "Orderly close/relaunch path; no intentional crash injection. HTTP cleanup has a fallback whose use is not separately logged.",
+    "crash_or_power_loss_verified": false,
+    "apply_patch_mutation_or_replay_tested": false,
+    "cross_process_concurrent_locking_tested": false,
+    "full_agent_relay_lifecycle_tested": false,
+    "actual_docker_tested": false,
+    "live_chatgpt_call_verified": false,
+    "source_to_build_reproducibility_verified": false,
+    "temporary_directories_deleted": false,
+    "project_snapshot_scope": [
+      "Git HEAD",
+      "Git porcelain status",
+      "package.json SHA-256",
+      "package-lock.json SHA-256",
+      "dist manifest SHA-256"
+    ],
+    "all_installed_dependency_bytes_attested": false,
+    "prior_synthetic_tests_combined_with_this_count": false
+  },
+  "current_chat_tool_observation": {
+    "namespace_discovery_performed": true,
+    "plugin_directory_search_performed": true,
+    "plugin_search_results": 0,
+    "localmcp_namespace_available": false,
+    "workspace_info_calls_this_turn": 0,
+    "normal_workspace_payload_received": false,
+    "prior_502_retried": false,
+    "app_permission_setting_requeried": false,
+    "app_refresh_or_selection_completion_reported": false,
+    "live_e1_ready_rechecked": false
+  },
+  "remaining": {
+    "A": "Audit identification completed earlier; remediation and post-change audit remain unperformed.",
+    "B": "No known Docker CLI path; actual E0-D remains unperformed. No installation or pull authorized by this result.",
+    "D": "Current chat tool exposure, workspace_info, running-candidate readback and any separately scoped guarded-edit live-account test remain unverified."
+  },
+  "change_scope": {
+    "documentation_only": true,
+    "existing_e1_modified": false,
+    "past_evidence_json_modified": false,
+    "source_or_tests_uploaded": false,
+    "packages_or_services_installed": false,
+    "lockfile_modified": false,
+    "main_merged": false,
+    "deployed": false,
+    "ci_success_claimed": false
+  },
+  "privacy": "User reportDirectory and all personal paths, PIDs, credentials, access URLs and raw logs are omitted."
+}

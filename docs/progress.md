@@ -3,7 +3,7 @@
 갱신: 2026-09-20 · [1pager](onepager.ko.md) · `feat/m1-modular-runtime` · PR #1 Draft.
 
 ## 현재 판정
-**verification_pending**. 정상 감사 보고와 E1 재기동 성공이라는 새 실행 근거를 확보했다. 다만 실제 ChatGPT workspace_info 호출, 취약점 수정, Docker 및 독립 영속 lifecycle 제품 실행은 아직 완료되지 않았다. [이번 근거](validation/m2c-audit-reconnect-user-report.json)
+**C: pass — 사용자 실행 근거에 따른 한정된 수명주기 관문 완료. 전체 프로젝트: verification_pending.** 실제 SDK를 사용한 stdio/loopback HTTP의 18개 점검, cleanup/project 불변, PHASE_EXIT=0이 사전 기준을 충족했다. 실제 ChatGPT workspace_info 호출, 취약점 수정, Docker 및 범위 밖 복구 보장은 남아 있다. [C 실행 근거](validation/m2c-scoped-lifecycle-user-report.json) · [이전 감사·재연결](validation/m2c-audit-reconnect-user-report.json)
 
 ## A — 실제 감사 수집 완료, 수정은 미실행
 사용자 실행 환경은 R2 HEAD `8dd7876192c1290d7d18bd70cc9b6d264aca34c4`, Node v23.11.0, npm 11.4.2다. lock SHA-256은 `8185650314a8799924768a54193de71332d3a5c1037a87d58b4e08ba5442b1d4`다. dev/optional/peer를 포함한 공개 npm registry 감사가 validAuditReport=true, exitCode=1, 실행 오류 없음, high=3/그 외=0을 반환했다. wrapper의 PHASE_EXIT=0은 수집 성공이고 취약점 0개라는 뜻이 아니다. projectUnchanged=true를 사용자 보고로 기록한다. 원본 감사 JSON/stderr 파일을 직접 수신하거나 독립 재감사하지는 않았다.
@@ -25,7 +25,7 @@ dev 표시만으로 런타임 도달 불가능을 증명하지 않는다. 검토
 ## 기존 E1 — 재기동 성공 보고와 Chat 도구 노출을 분리
 사용자는 기존 등록/샘플을 검증하는 블록에서 E1_RECONNECTED, startExitCode=0, ready=true, launchAttempted=true를 보고했다. 요청 시각은 2026-09-19T23:49:03.792Z다. buildStable=true와 existingSampleAndEvidencePreserved=true이며, 디스크 전체 dist manifest는 `d093a515eca545d75117ae7b9fb363445502dcfd03c48b7c902ffedd58c7f637`다. PID와 개인 경로는 공개 기록에서 제외한다. mcpToolCalled=false, exactSourceToBuildProven=false를 그대로 유지한다.
 
-이번 어시스턴트는 Plugin_Management 검색과 LocalMCP-E1 workspace_info 도구 탐색을 실제 수행했다. 검색 결과는 비어 있었고 LocalMCP-E1은 유효한 도구 namespace 목록에 없었다. 반면 해당 앱 승인 설정 조회는 found였으며 기본값 Allow low-risk actions를 상속했다. 등록 설정 존재는 도구 노출이나 호출 성공을 뜻하지 않는다. 이번 workspace_info 호출 횟수는 0이며, 502 재시도가 아니다.
+이전 재연결 결과 수신 뒤에는 앱 승인 설정 found/기본값 Allow low-risk actions 상속과 도구 미노출을 각각 확인했다. 이번 C 결과 수신 뒤에도 LocalMCP-E1 workspace_info 도구 탐색과 Plugin_Management 검색을 수행했으나 해당 namespace가 없고 검색 결과가 비어 있었다. 이번에는 승인 설정·살아 있는 E1 서버 상태를 다시 조회하지 않았다. 등록 설정 존재, 독립 SDK 전송 성공, 실제 ChatGPT 도구 노출은 서로 다른 근거다. 이번 실제 workspace_info 호출은 0회이며, 502 재시도가 아니다. 사용자 앱 refresh/대화 선택 완료 여부는 이번 메시지에 보고되지 않았다.
 
 남은 Chat 단계는 기존 앱 상세의 refresh와 대화 내 앱 선택이다. [공식 Developer mode 안내](https://developers.openai.com/api/docs/guides/developer-mode)에 따라 도구 설명/스키마 새로고침과 대화 선택을 수행한다. 서버 build/restart, 권한 확대, 새 URL 등록과 같은 작업으로 취급하지 않는다. 도구가 노출되면 첫 실제 LocalMCP 호출은 workspace_info이며, 정상 응답 전에 기존 calculator 파일을 읽거나 편집하지 않는다. 현재 workspace/권한/mutationRecovery의 실시간 값은 아직 미확인이다.
 
@@ -34,20 +34,42 @@ dev 표시만으로 런타임 도달 불가능을 증명하지 않는다. 검토
 ## B — 실제 Docker는 별도 보류
 이번 고정 설치 위치 점검도 executableCandidates=[]였고 daemonContacted=false다. 이전 PATH 미발견과 합쳐도 시스템 전체 미설치 증명은 아니다. 현재 알려진 Docker 실행 경로가 없으므로 실제 E0-D는 미실행이다. Docker 설치/실행환경 추가·새 이미지 다운로드·비용·원격 context 전환은 구체적 승인 없이 하지 않는다. C 검사는 Docker와 무관하게 진행 가능하다.
 
-## C — 독립 실행 블록 준비, 제품 결과 대기
-R2의 이미 설치된 SDK 1.30.0과 dist를 사용하는 운영자용 lifecycle.mjs를 별도 채팅 산출물로 준비했다. SHA-256은 `fd8b756a4933a2cb38746166f1f4a3bd1f751443e21ae51d16b36c7e56c222dc`다. 제품 소스나 저장소 테스트를 새로 업로드한 것이 아니다. HEAD/clean/lock/dist manifest가 보고된 후보와 다르면 실행 전에 중단한다. 설치·재빌드·공개 중계·기존 E1 접근·agent start/stop/reload를 하지 않는다.
+## C — 실제 SDK·독립 프로세스의 한정된 수명주기 관문 통과
+### 수용 기준과 근거
+사용자는 LIFECYCLE_VERIFIED 뒤의 점검 18개와 전체 durable_lifecycle 요약, LOCALMCP_LIFECYCLE_END, PHASE_EXIT=0을 제공했다. 상태는 C_SCOPED_LIFECYCLE_OK이며 sdkLoaded=true, sdkVersion=1.30.0, passedChecks=18, cleanupConfirmed=true, cleanupErrors=[], projectUnchanged=true다. 예고한 완료 조건을 바꾸지 않고 **C: pass**로 수용한다. [정규화한 사용자 실행 기록](validation/m2c-scoped-lifecycle-user-report.json)
 
-새 소유자 전용 임시 fixture/profile/journal만 만들고, 각 stdio 및 loopback HTTP 모드에서 다음 범위를 검사한다: 미초기화 시작 거부, create-only 초기화와 중복 거부/기록 불변, 실제 workspace/도구 schema, versioned read와 guarded edit/stale hash 거부, 다른 PID의 검사용 프로세스 재시작과 historical receipt, 실제 설정 파일 watcher를 통한 fileWrite 회수/도구 목록 제거/캐시 replay 거부, 권한 복원, 호환되지 않는 recovery 변경과 회수를 섞었을 때 전체 reload 거부/이전 권한 유지, 자기가 시작한 서버만 종료 및 프로젝트 불변.
+실행 근거는 사용자가 붙여넣은 출력이다. 어시스턴트가 맥에서 직접 실행하거나 임시 report.json을 독립 수신한 것은 아니다. 이번에는 제공했던 ZIP의 실제 lifecycle.mjs 바이트를 읽고 SHA-256 `fd8b756a4933a2cb38746166f1f4a3bd1f751443e21ae51d16b36c7e56c222dc`와 출력·assertion 대응을 대조했다. 이전 합성 SDK/서버 대역의 18개 자체 검사와 이번 실제 SDK 실행 보고 18개는 다른 실행이며 합산하지 않는다.
 
-이 블록은 읽기 전용이 아니다. 임시 파일/기록소를 쓰고 독립 서버를 시작·종료하며 loopback 포트를 사용한다. 원시 stderr·argv/env·token/URL은 출력하지 않는다. 기존 E1이나 실제 프로젝트 파일에는 도구 호출을 보내지 않는다. 예외·timeout·cleanup 실패는 통과가 아니며 자동 재실행하지 않는다.
+### 열거한 실제 검사 범위
+| 검사 묶음 | stdio | loopback HTTP |
+|---|---|---|
+| 미초기화 시작 거부·기록소 미생성 | passed | passed |
+| create-only 초기화·중복 거부·기록 내용 불변 | passed | passed |
+| 실제 workspace·권한·M2c 도구 스키마 | passed | passed |
+| versioned read·edit_file guarded edit·stale hash 거부 | passed | passed |
+| 별도 PID 재시작·과거 receipt·외부 변경 파일 보존 | passed | passed |
+| 실제 watcher를 통한 권한 회수·도구 제거·cached replay 거부 | passed | passed |
+| 호환되는 권한 복원·기존 receipt replay | passed | passed |
+| 부적합 recovery 변경의 전체 reload 거부·기존 권한 유지 | passed | passed |
+| 검사가 만든 서버만 종료 | passed | passed |
 
-이번에 수행한 것은 문법 검사와 명시적 합성 SDK/서버 대역을 사용한 운영자 harness 시험이다. 합성 경로의 18개 점검, 원래 후보 guard의 거부, 토큰/URL canary 출력 차단, 합성 checkout 불변을 확인했다. 실제 SDK 1.30.0·macOS·제품 lifecycle 실행은 아직 하지 않았다. upstream SDK v1.30.0 Git ref 조회도 404였으므로 그 원문을 읽었다고 주장하지 않는다. 설치 SDK 인터페이스가 다르면 블록은 실패 상태를 반환한다.
+9개 점검 묶음 × 2개 전송 = 18개다. 내부 assertion 수나 npm 전체 테스트 수로 표시하지 않는다. 권한 회수와 부적합 recovery 변경을 같은 설정에 넣은 사례는 전체 reload가 거부되어 이전 쓰기 권한이 유지됨을 확인했다. 이를 권한 회수 성공 사례로 오인하지 않는다.
 
-향후 C_SCOPED_LIFECYCLE_OK와 cleanupConfirmed/projectUnchanged=true를 받아도 열거한 범위만 통과다. 전원 장애·모든 crash/recovery·교차 프로세스 동시 잠금·relay/agent 전체 lifecycle·Docker·실계정 E1은 포함하지 않는다.
+### 후보·불변·종료 근거의 범위
+스크립트는 R2 HEAD `8dd7876192c1290d7d18bd70cc9b6d264aca34c4`, clean 상태, lock SHA-256 `8185650314a8799924768a54193de71332d3a5c1037a87d58b4e08ba5442b1d4`, dist manifest `d093a515eca545d75117ae7b9fb363445502dcfd03c48b7c902ffedd58c7f637`를 사전 검사한다. 성공 출력은 이 guard와 전후 snapshot 일치에 대한 사용자 실행 근거다. manifest 값은 이번 JSON에서 새로 출력된 필드가 아니라 해시 확인된 스크립트의 비교 상수다. Node/npm 버전은 이번 최종 JSON에 없어 앞선 환경 보고를 신규 측정으로 재표기하지 않는다.
+
+재시작은 client/transport close와 검사용 자식 종료 후 별도 PID로 시작한 경로다. HTTP 종료 함수에는 실패 시 SIGKILL fallback이 있지만 성공 출력은 fallback 사용 여부를 기록하지 않는다. 강제 중단을 주입한 crash/recovery 검사가 아니다. cleanupConfirmed는 검사용 서버 종료이지 임시 fixture/기록소/보고서 디렉터리 삭제가 아니다. 스크립트는 report.json과 임시 자료를 남긴다.
+
+projectUnchanged는 Git HEAD/status, package.json, lockfile, dist manifest의 snapshot 일치 범위다. node_modules 전체 바이트나 모든 미추적/ignored 파일의 전수 무결성 증명이 아니다. existingE1Accessed=false, publicRelayUsed=false, dockerUsed=false, packagesInstalled=false, buildRun=false와 exactSourceToBuildProven=false를 그대로 보존한다.
+
+### 한계와 종료 규칙
+이번 실행은 edit_file 경로를 검사했다. apply_patch는 권한 회수 후 목록 제거 검사에 포함되지만 실제 patch 실행·재시작 replay는 수행하지 않았다. 전원 장애, 의도적 SIGKILL/crash, 교차 프로세스 동시 잠금, 수동 복구, 모든 영속 모드/agent/relay lifecycle, Docker, 실제 ChatGPT 실계정 E1 및 source-to-build 재현성은 통과로 확대하지 않는다.
+
+C는 위 범위에서 완료했으므로 새 변경·실패 근거 없이 동일 lifecycle, verify:minimum, 감사·재연결 블록을 재실행하지 않는다. 이후 새 코드·의존성 변경이 있으면 영향 범위에 맞춰 필요한 검사만 선택한다. 남은 직접 연결 단계는 Chat 앱 노출 후 workspace_info이며 C의 독립 fixture 응답으로 대체하지 않는다.
 
 ## 유지하는 기준과 이력
 M1·M2a·M2b 구현, 이전 E0/파일-only E1의 사용자 근거, M2C_LOCAL_CHECKS_OK, IG-04의 코드 50cad2d/통합 8dd7876 반영과 이전 production/benchmark 해시 대조는 유지한다. 정확한 최신 전체 검사 수를 추정하거나 이전 335/336을 현재 실패로 바꾸지 않는다. 교차 프로세스 다른 ID 잠금·수동 복구·다중 파일·프로세스 복구·실과제 성능·CI 한도 관문은 여전히 미완료다.
 
 [최소 검사 사용자 보고](validation/m2c-local-checks-user-report.json) · [원격 반영](validation/m2c-publication-readback.json) · [기동 전 진단](validation/m2c-macos-execution-path-report.json) · [이전 상세 진행표](https://github.com/dearcloud09/localmcp/blob/8fa9a34fb103389b24ab0b1f56d988263f7cd309/docs/progress.md).
 
-이번 Git 변경은 onepager·progress·새 사용자 실행 근거 JSON뿐이다. 기존 E1/과거 증거 JSON·제품 소스·테스트·의존성·설정·권한·main·배포·과금은 변경하지 않는다. 문서 커밋에 [skip ci]를 사용하며 CI 성공을 주장하지 않는다.
+이번 Git 변경은 onepager·progress·새 C 사용자 실행 근거 JSON뿐이다. 감사·재연결을 포함한 기존 시점별 JSON은 수정하지 않는다. 기존 E1/과거 증거 JSON·제품 소스·테스트·의존성·설정·권한·main·배포·과금은 변경하지 않는다. 문서 커밋에 [skip ci]를 사용하며 CI 성공을 주장하지 않는다.
