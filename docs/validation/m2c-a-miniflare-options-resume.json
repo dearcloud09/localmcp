@@ -1,0 +1,139 @@
+{
+  "date_recorded": "2026-09-20",
+  "repository": "dearcloud09/localmcp",
+  "branch": "feat/m1-modular-runtime",
+  "observed_remote_head": "5767247fd752f7ceee472efb3e7fc1eb9ba2a429",
+  "gate": "A isolated regression",
+  "verdict": "verification_pending",
+  "evidence": {
+    "type": "user_pasted_resume_summary_compared_with_delivered_scripts_and_pinned_upstream_source",
+    "direct_macos_execution": false,
+    "raw_macos_logs_received": false,
+    "prior_resume_script_sha256": "8c90606f0150b11821ca3a2667883c5dce551b7727c9661efc206852d1610071",
+    "prior_native_script_sha256": "fcbdb5d9d6b4335b7a4a37e93b8c392762ce2bd8f9506e2973e7299b388f8b12"
+  },
+  "candidate": {
+    "sourceHead": "8dd7876192c1290d7d18bd70cc9b6d264aca34c4",
+    "packageSha256": "6694256b3bbe76baa5bd4e169a266ac62bcb9ebe8db88092f71b4d744330a591",
+    "lockSha256": "d0397dedfdbac5fdf8f0eb95aaaaaaba9833cfb58ba0a9a2e0faa75d9cef13bd"
+  },
+  "user_report": {
+    "node": "v23.11.0",
+    "npm": "11.4.2",
+    "platform": "darwin",
+    "arch": "arm64",
+    "passed_stages": [
+      "short-ipc-probe",
+      "tsx-startup-probe",
+      "full-tests",
+      "sdk-smoke",
+      "wrangler-version"
+    ],
+    "failed_stage": "native-smoke",
+    "exitCode": 1,
+    "signal": null,
+    "reason": null,
+    "cleanupConfirmed": true,
+    "test_groups": [
+      {
+        "tests": 336,
+        "pass": 336,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      {
+        "tests": 32,
+        "pass": 32,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      {
+        "tests": 11,
+        "pass": 11,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      }
+    ],
+    "test_pass_sum": 379,
+    "test_counts_basis": "reported bounded parser plus npm test exit 0; SDK and prior C counts not added",
+    "sdkSmoke": {
+      "status": "passed",
+      "transport": "real-sdk-stdio",
+      "beforeFail": 3,
+      "afterPass": 3,
+      "stalePatchRejected": true
+    },
+    "wranglerCliVersion": "4.131.0",
+    "oldSocketPathBytes": 105,
+    "macosPathBudgetBytes": 103,
+    "shortSocketPathBytes": 42,
+    "tsxStartupConfirmed": true,
+    "originalProjectUnchanged": true,
+    "originalCandidateUnchanged": true,
+    "priorEvidenceUnchanged": true,
+    "installedHiddenLockUnchanged": true,
+    "executionFilesUnchanged": true,
+    "candidateFilesAndTrackedSourceUnchanged": true,
+    "candidateBuildUnchanged": true,
+    "installRun": false,
+    "buildRun": false,
+    "productionFixApplied": false,
+    "exactSourceToBuildProven": false
+  },
+  "native_diagnosis": {
+    "error": "MiniflareCoreError ERR_VALIDATION: workers undefined; expected array",
+    "stderr_bytes": 929,
+    "stderr_sha256": "e7ed80bbfbecf8229eec78ed5ba0a6c47e431385c43fe5bf27680d76524d34bc",
+    "stdout_bytes": 0,
+    "failure_layer": "operator native smoke constructor options",
+    "old_form": "top-level modules/script/compatibilityDate",
+    "required_form": "workers[].config with type/name/compatibilityDate and manifest mainModule/modules; module type esm",
+    "product_or_dependency_regression_proven": false,
+    "individual_native_success_receipts_received": false,
+    "installed_audit_executed": false
+  },
+  "upstream": {
+    "repository": "cloudflare/workers-sdk",
+    "ref": "wrangler@4.131.0",
+    "schema_blob": "f6fbc043fd4841ab2c88125cde758c37153ee38a",
+    "single_module_helper_blob": "0cf3333d5616a3cb8a8b653a1d795e6b06cad786",
+    "dispatch_test_blob": "44d44277b2a31c2e321be76a92a4520df65228b1"
+  },
+  "next_runner": {
+    "artifact": "resume-a-native.mjs",
+    "sha256": "8a6b98cb6710882a59b43bfdfd82209db3df8b8ec61ef078fb64a2715cf933c3",
+    "stages": [
+      "miniflare-options-types",
+      "native-smoke-v5",
+      "installed-audit"
+    ],
+    "full_tests_rerun": false,
+    "install_or_build_run": false,
+    "candidate_reinterpreted": false,
+    "previous_reports_retained": true,
+    "new_output_create_only": true,
+    "actual_mac_execution_done": false,
+    "synthetic_and_local_node_selftests": 21,
+    "real_installed_miniflare_schema_tested_here": false,
+    "mac_installed_types_preflight_included": true
+  },
+  "boundaries": {
+    "primary_session_localmcp_calls": 0,
+    "existing_e1_or_d_accessed": false,
+    "D_blocked_mutation_retried": false,
+    "source_tests_packages_changed": false,
+    "past_evidence_json_changed": false,
+    "main_merged": false,
+    "deployed": false,
+    "B_docker_run": false,
+    "temporary_home_is_os_sandbox": false,
+    "reproducibleBuildVerified": false
+  },
+  "privacy": "No personal report path, PID, UID, session UUID, access URL, credentials or raw log stored."
+}
