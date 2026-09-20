@@ -1,0 +1,127 @@
+{
+  "date_recorded": "2026-09-20",
+  "repository": "dearcloud09/localmcp",
+  "branch": "feat/m1-modular-runtime",
+  "observed_remote_head": "03c78d391663cc28d713aec3445564b5c42834a0",
+  "gate": "A isolated regression",
+  "verdict": "verification_pending",
+  "evidence_type": "user_reported_masked_log_diagnostic_plus_original_helper_review_and_upstream_sources",
+  "logs": {
+    "files_read_reported": 3,
+    "inputsMetadataStable": true,
+    "stdout": {
+      "bytes": 116,
+      "sha256": "ed83f60e4880d06636c9e6c8834fc9aaedc96b8f3862b88070a620d830c82bee",
+      "lines": 5,
+      "test_totals": []
+    },
+    "stderr": {
+      "bytes": 1092,
+      "sha256": "c1942dc8e972e8aed4a11a1a58ecc209196d58ecaf21d9d2385f2c7579b1b4d0",
+      "lines": 21,
+      "error": "listen EINVAL",
+      "syscall": "listen",
+      "function": "createIpcServer",
+      "test_failure_headings": []
+    },
+    "raw_log_bytes_independently_received": false,
+    "log_read_exit": 0
+  },
+  "diagnosis": {
+    "failure_layer": "tsx launcher IPC before launching test child",
+    "leading_cause": "original operator runner TMP path exceeds macOS Unix socket path budget",
+    "reconstructed_path_utf8_bytes": 105,
+    "documented_macOS_path_budget_bytes": 103,
+    "excess_bytes": 2,
+    "calculation_is_not_raw_mac_observation": true,
+    "mac_short_tmp_counterfactual_executed": false,
+    "dependency_regression_proven": false,
+    "test_assertion_failure_proven": false,
+    "old_long_listen_to_be_repeated": false
+  },
+  "sources": {
+    "original_runner_sha256": "3ace131e96c8f66bc8d415acf02e6edf75a01238a57bd535c6ff975bd4b3c4f8",
+    "original_runner_bytes_read": true,
+    "node_documentation": "https://nodejs.org/download/release/v23.11.0/docs/api/net.html#identifying-paths-for-ipc-connections",
+    "tsx_repo": "privatenumber/tsx",
+    "tsx_ref": "v4.23.13",
+    "tsx_blobs": {
+      "src/utils/temporary-directory.ts": "99a3c1ff8f79a233a815e82170eb3360b9ffea85",
+      "src/utils/ipc/get-pipe-path.ts": "0cdb58df7be3b367637f38409e55aaa0250e876b",
+      "src/utils/ipc/server.ts": "6741be1bb840a27256832d1a9c674d63c163d74d",
+      "src/cli.ts": "754aff4c5fd7fc4414cb48b9a78397764d169b5c"
+    }
+  },
+  "resume": {
+    "artifact": "resume-a-regression.mjs",
+    "sha256": "8c90606f0150b11821ca3a2667883c5dce551b7727c9661efc206852d1610071",
+    "prepared_not_mac_executed": true,
+    "reuses_existing_install_and_build": true,
+    "child_env_change": [
+      "TMPDIR",
+      "TMP",
+      "TEMP"
+    ],
+    "short_tmp_mode": "0700 dedicated unique directory",
+    "max_planned_ipc_bytes": 90,
+    "stages": [
+      "short-ipc-probe",
+      "tsx-startup-probe",
+      "full-tests",
+      "sdk-smoke",
+      "wrangler-version",
+      "native-smoke",
+      "installed-audit",
+      "invariance"
+    ],
+    "success_marker": "A_ISOLATED_INSTALL_REGRESSION_OK",
+    "prior_report_and_logs_overwritten": false,
+    "install_run": false,
+    "build_run": false,
+    "source_or_tests_modified": false,
+    "automatic_retry": false,
+    "hidden_lock_and_selected_executables_hashed_not_all_dependencies": true
+  },
+  "selftest": {
+    "node": "v22.16.0",
+    "platform": "linux",
+    "tests": 15,
+    "passed": 15,
+    "failed": 0,
+    "scope": [
+      "prior report and log classification guards",
+      "UTF-8 macOS IPC budget even on Linux",
+      "TMP-only environment override",
+      "real Node Unix socket short-path bind and close",
+      "read-only evidence reader and link rejection",
+      "TAP/spec summaries and privacy canaries",
+      "real process error timeout and group cleanup",
+      "no reinstall/build calls in resume main",
+      "unmodified macOS guard rejection on Linux"
+    ],
+    "actual_macos_tested": false,
+    "actual_tsx_4_23_13_executed": false,
+    "full_resume_main_on_real_candidate_executed": false,
+    "candidate_packages_installed": false,
+    "helper_sha256": "8c90606f0150b11821ca3a2667883c5dce551b7727c9661efc206852d1610071"
+  },
+  "preserved": {
+    "old_install_type_build_pass": true,
+    "candidate_audit_pass": true,
+    "E1_read_pass": true,
+    "C_scoped_pass": true,
+    "D_blocked_and_stopped": true,
+    "B_unexecuted": true,
+    "no_D_mutation_retry": true,
+    "exactSourceToBuildProven": false
+  },
+  "execution_this_turn": {
+    "mac_commands": 0,
+    "LocalMCP_calls": 0,
+    "packages_installed": false,
+    "candidate_product_tests_run": false,
+    "source_or_lock_published": false
+  },
+  "git_changes": "onepager, progress, new diagnosis/runner preparation record only",
+  "privacy": "Raw personal paths, UID/PID, session IDs, tokens, access URLs and raw logs omitted."
+}
