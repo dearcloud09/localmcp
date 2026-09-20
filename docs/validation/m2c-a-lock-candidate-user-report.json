@@ -1,0 +1,243 @@
+{
+  "date_recorded": "2026-09-20",
+  "repository": "dearcloud09/localmcp",
+  "branch": "feat/m1-modular-runtime",
+  "observed_remote_head": "aeb0f7985df87b6012b77f452a73d24c6e816e64",
+  "gate": "A candidate lock resolution and audit",
+  "verdict": "pass",
+  "verdict_scope": "Candidate-only lockfile resolution and audit on user-reported execution; not installed/runtime-tested or applied remediation.",
+  "overall_project_verdict": "verification_pending",
+  "evidence": {
+    "type": "user_pasted_candidate_output_compared_with_original_delivered_helper",
+    "raw_candidate_files_received": false,
+    "raw_audit_report_received": false,
+    "raw_registry_responses_received": false,
+    "assistant_direct_macos_execution": false,
+    "new_registry_queries_by_assistant": false
+  },
+  "helper_review": {
+    "sha256": "c9ae4a0567f921c7c06b107b26cbdcee9735f7592ae5742ec2753561a2abdd59",
+    "zip_bytes_read": true,
+    "matches_delivered_hash": true,
+    "acceptance_branches_reviewed": true,
+    "helper_modified": false,
+    "tests_rerun": false
+  },
+  "user_result": {
+    "status": "A_LOCK_CANDIDATE_READY",
+    "sourceHead": "8dd7876192c1290d7d18bd70cc9b6d264aca34c4",
+    "node": "v23.11.0",
+    "npm": "11.4.2",
+    "phaseExit": 0,
+    "endMarker": "LOCALMCP_A_CANDIDATE_END",
+    "originalProjectUnchanged": true,
+    "runtimeLockEntriesUnchanged": true,
+    "nodeModulesCreated": false,
+    "packageBodiesInstalled": false,
+    "npmLifecycleScriptsRun": false,
+    "buildRun": false,
+    "testsRun": false,
+    "originalFilesWrittenByHelper": false,
+    "localmcpCalled": false,
+    "existingE1OrDAccessed": false,
+    "copiedBackToProject": false,
+    "productionFixApplied": false
+  },
+  "audit": {
+    "scope": "candidate package-lock-only; dev/optional/peer included; public npm registry; audit-level=info",
+    "exitCode": 0,
+    "validAuditReport": true,
+    "counts": {
+      "info": 0,
+      "low": 0,
+      "moderate": 0,
+      "high": 0,
+      "critical": 0,
+      "total": 0
+    },
+    "findings": []
+  },
+  "candidate": {
+    "direct_dev_targets": {
+      "wrangler": "4.131.0",
+      "@cloudflare/workers-types": "5.20260910.1"
+    },
+    "dependency_chain": [
+      "wrangler@4.131.0",
+      "miniflare@5.20260910.0-alpha",
+      "sharp@0.35.4"
+    ],
+    "workerd": "1.20260910.1",
+    "libvips_platform_package_version": "1.3.3",
+    "packageSha256": "6694256b3bbe76baa5bd4e169a266ac62bcb9ebe8db88092f71b4d744330a591",
+    "lockSha256": "d0397dedfdbac5fdf8f0eb95aaaaaaba9833cfb58ba0a9a2e0faa75d9cef13bd",
+    "integrityMatchesMetadata_reported_for": [
+      "wrangler",
+      "miniflare",
+      "sharp",
+      "@cloudflare/workers-types"
+    ]
+  },
+  "lock_change_review": {
+    "entries": 36,
+    "distinct_paths": 36,
+    "all_dev_before_and_after": true,
+    "runtimeAffected_false_count": 36,
+    "meaning": "Full lock entry comparison excluding the root; runtimeAffected is defined only by dev flag classification. It is not an execution reachability or compatibility result.",
+    "groups": [
+      {
+        "group": "workerd platform binaries",
+        "entries": 5,
+        "before": "1.20260903.1",
+        "after": "1.20260910.1"
+      },
+      {
+        "group": "workers-types",
+        "entries": 1,
+        "before": "5.20260906.1",
+        "after": "5.20260910.1"
+      },
+      {
+        "group": "Sharp platform packages",
+        "entries": 16,
+        "before": "0.35.2",
+        "after": "0.35.4"
+      },
+      {
+        "group": "libvips platform packages",
+        "entries": 10,
+        "before": "1.3.1",
+        "after": "1.3.3"
+      },
+      {
+        "group": "miniflare",
+        "entries": 1,
+        "before": "5.20260903.0-alpha",
+        "after": "5.20260910.0-alpha"
+      },
+      {
+        "group": "sharp",
+        "entries": 1,
+        "before": "0.35.2",
+        "after": "0.35.4"
+      },
+      {
+        "group": "workerd",
+        "entries": 1,
+        "before": "1.20260903.1",
+        "after": "1.20260910.1"
+      },
+      {
+        "group": "wrangler",
+        "entries": 1,
+        "before": "4.129.0",
+        "after": "4.131.0"
+      }
+    ],
+    "path_groups": {
+      "workerd platform binaries": [
+        "node_modules/@cloudflare/workerd-darwin-64",
+        "node_modules/@cloudflare/workerd-darwin-arm64",
+        "node_modules/@cloudflare/workerd-linux-64",
+        "node_modules/@cloudflare/workerd-linux-arm64",
+        "node_modules/@cloudflare/workerd-windows-64"
+      ],
+      "workers-types": [
+        "node_modules/@cloudflare/workers-types"
+      ],
+      "Sharp platform packages": [
+        "node_modules/@img/sharp-darwin-arm64",
+        "node_modules/@img/sharp-darwin-x64",
+        "node_modules/@img/sharp-freebsd-wasm32",
+        "node_modules/@img/sharp-linux-arm",
+        "node_modules/@img/sharp-linux-arm64",
+        "node_modules/@img/sharp-linux-ppc64",
+        "node_modules/@img/sharp-linux-riscv64",
+        "node_modules/@img/sharp-linux-s390x",
+        "node_modules/@img/sharp-linux-x64",
+        "node_modules/@img/sharp-linuxmusl-arm64",
+        "node_modules/@img/sharp-linuxmusl-x64",
+        "node_modules/@img/sharp-wasm32",
+        "node_modules/@img/sharp-webcontainers-wasm32",
+        "node_modules/@img/sharp-win32-arm64",
+        "node_modules/@img/sharp-win32-ia32",
+        "node_modules/@img/sharp-win32-x64"
+      ],
+      "libvips platform packages": [
+        "node_modules/@img/sharp-libvips-darwin-arm64",
+        "node_modules/@img/sharp-libvips-darwin-x64",
+        "node_modules/@img/sharp-libvips-linux-arm",
+        "node_modules/@img/sharp-libvips-linux-arm64",
+        "node_modules/@img/sharp-libvips-linux-ppc64",
+        "node_modules/@img/sharp-libvips-linux-riscv64",
+        "node_modules/@img/sharp-libvips-linux-s390x",
+        "node_modules/@img/sharp-libvips-linux-x64",
+        "node_modules/@img/sharp-libvips-linuxmusl-arm64",
+        "node_modules/@img/sharp-libvips-linuxmusl-x64"
+      ],
+      "miniflare": [
+        "node_modules/miniflare"
+      ],
+      "sharp": [
+        "node_modules/sharp"
+      ],
+      "workerd": [
+        "node_modules/workerd"
+      ],
+      "wrangler": [
+        "node_modules/wrangler"
+      ]
+    }
+  },
+  "limits": {
+    "candidate_hashes_reported_not_recomputed": true,
+    "package_tarball_bytes_not_verified_this_turn": true,
+    "integrity_metadata_match_not_provenance_attestation": true,
+    "audit_zero_not_proof_of_all_vulnerability_absence": true,
+    "dev_only_not_proof_of_runtime_unreachability": true,
+    "native_package_platform_compatibility_unverified": true,
+    "complete_original_filesystem_attested": false,
+    "original_snapshot_scope": [
+      "Git HEAD",
+      "Git porcelain status",
+      "package.json SHA-256/Git blob",
+      "package-lock.json SHA-256"
+    ],
+    "existing_dist_not_measured_by_candidate_helper": true,
+    "source_to_build_reproducibility_proven": false
+  },
+  "next_gate": {
+    "state": "awaiting_specific_package_install_and_execution_approval",
+    "target": "fresh isolated copy of the pinned R2 source plus hash-verified candidate manifests",
+    "install": "npm ci --ignore-scripts with matching strict-peer and include flags; actual package downloads; private HOME/cache/logs",
+    "planned_validation": [
+      "typecheck",
+      "build",
+      "existing tests and isolated SDK smoke",
+      "changed Wrangler/Miniflare/Sharp/workerd loading and bounded native smoke",
+      "installed-tree audit and candidate/original invariance"
+    ],
+    "no_automatic_install_script_enabling_or_rebuild": true,
+    "no_R1_R2_copyback": true,
+    "no_E1_D_access_or_mutation": true,
+    "no_public_relay_or_cloud_login_or_deploy": true,
+    "no_Docker_install": true
+  },
+  "preserved": {
+    "C_scoped_pass": true,
+    "existing_E1_read_pass": true,
+    "D_guarded_edit": "blocked",
+    "D_dedicated_agent_stop": "pass on prior user report",
+    "B_actual_Docker": "unexecuted"
+  },
+  "current_actions": {
+    "documentation_only": true,
+    "packages_installed_by_assistant": false,
+    "candidate_helper_rerun": false,
+    "source_tests_dependencies_modified": false,
+    "past_evidence_json_modified": false,
+    "main_merged": false,
+    "deployed": false
+  },
+  "privacy": "Personal candidate/report paths, machine names, tokens, URLs containing credentials, and session identifiers are omitted."
+}
