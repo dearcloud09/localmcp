@@ -3,55 +3,58 @@
 갱신: 2026-09-20 · [1pager](onepager.ko.md) · `feat/m1-modular-runtime` · PR #1 Draft.
 
 ## 현재 판정
-**전체 프로젝트: verification_pending.** 기존 E1의 별도 대화 연결·버전 포함 읽기와 C의 한정된 수명주기는 사용자 실행 근거 기준 pass다. 이번에는 별도 D 샘플·중계 등록·앱·guarded edit의 구체적 승인을 받았고 실행 패키지를 준비했다. 승인·준비를 실제 등록/기동/도구 호출 성공으로 바꾸지 않는다.
+**D: blocked — 최초 edit_file 요청의 호스트 안전 차단 사용자 보고. 전체 프로젝트: verification_pending.** 기존 E1 연결·읽기와 C의 한정된 수명주기 pass는 유지한다. D 읽기 성공을 guarded edit 성공으로 확대하지 않는다. [이번 차단 보고](validation/m2c-d-host-safety-block-user-report.json)
 
-## D — 승인된 범위와 실행 패키지
-사용자는 기존 E1 밖의 새 디렉터리·프로필·런타임 상태에서 probe.txt와 reference.txt 두 무비밀 텍스트 파일만 사용하는 서버, 기존 제3자 공개 중계의 별도 등록, 별도 앱 연결과 guarded-edit 검증을 승인했다. 기존 E1 앱/URL/profile/sample/evidence는 변경하지 않는다. 실제 프로젝트·셸·하위 MCP·Docker·새 설치·계정/비용 변경·main 병합·배포 승인이 아니다. [준비 기록](validation/m2c-d-authorization-preparation.json)
+## D — 실제 진행 보고와 중단
+### 근거의 출처
+사용자가 별도 대화의 실행 요약을 전달했다. 주 담당은 원시 도구 transcript·호스트 오류 payload·맥 파일을 직접 받지 않았다. 사용자 보고와 제공했던 ZIP의 실제 코드, 전달된 텍스트·해시·길이의 재계산을 구분한다. 이번 주 담당의 LocalMCP 호출·맥 명령·mutation·서버 조작은 모두 0회다.
 
-### 실제 준비와 소스 확인
-원격 시작 HEAD는 cc86a388565e8d474b70a7fc0b3c3a9d7364f709였다. R2의 고정 ref에서 src/agent.ts, src/lifecycle.ts, src/core/mutation-coordinator.ts, src/workspace.ts를 읽었다. 별도 HOME의 lifecycle start가 새 worker 등록 및 agent/HTTP 자식을 지원하며, FILE_VERSION_CONFLICT와 replay receipt의 의미를 확인했다. 기존 e1-session prepare/start나 버그 복원을 사용하지 않는다.
+| 단계 | 보고된 결과 | 판정 범위 |
+|---|---|---|
+| 1 workspace_info | D root/profile, project/defaultWorkspace, 파일 전용 권한 및 memory 정보 확인 | 정상 조회 성공 보고 |
+| 2 list_directory | probe.txt와 reference.txt 두 항목 | 초기 보이는 파일 집합 |
+| 3 reference versioned read | 지정 형식, 66바이트와 SHA-256 반환 | 초기 참조 읽기 |
+| 4 probe versioned read | state=before와 끝 LF, 13바이트와 H0 반환 | 초기 probe 읽기 |
+| 5 edit_file 시도 | 호스트 안전 검사 차단 | 편집 영수증 없음, replayed=false 미수신 |
+| 6–12 | 미실행 | 재읽기·replay·stale-hash·최종 참조/목록 비교 미검증 |
 
-운영자 패키지 d-session.mjs는 채팅 산출물이다. 제품 소스/테스트 업로드나 과거 차단된 소스 재전송이 아니다. SHA-256은 `16da8fc1721e5c4d7cbe712d5979175b8192a832909075fef6aaf56a561cc072`다. 기존 라이프사이클 구현을 호출하며 새 서버 구현이나 서비스 설치는 포함하지 않는다.
+성공 호출 4회, 차단된 시도 1회다. 성공 경로 12회 완료나 최초 mutation 성공으로 세지 않는다. LocalMCP-E1은 사용하지 않았고 차단 뒤 추가 호출·다른 ID/도구 재시도는 없었다는 사용자 보고다.
 
-### setup / status / copy-url / check / stop
-setup은 R2 HEAD 8dd7876192c1290d7d18bd70cc9b6d264aca34c4, clean 상태, lock SHA-256 8185650314a8799924768a54193de71332d3a5c1037a87d58b4e08ba5442b1d4, dist manifest d093a515eca545d75117ae7b9fb363445502dcfd03c48b7c902ffedd58c7f637를 요구한다. 다르면 pull/설치/빌드로 덮지 않고 중단한다.
+### 권한·데이터의 확인 범위
+workspace/defaultWorkspace는 project, files/read/write=true와 scope=file-tools다. shell/processes/persistentProcesses=false, skills/mcpServers/availableChecks=[]를 보고했다. mutationRecovery는 memory, restartPersistent/automaticRetry/atomicFileAndJournal=false다. read_file.includeVersion과 edit_file.expectedSha256/operationId 입력 정의도 확인했다고 보고됐다. 이 허용 보고는 별도 호스트 안전 판정의 통과를 보장하지 않는다.
 
-D 전용 base는 create-only다. workspace에는 probe.txt 초기값 state=before와 LF, reference.txt에는 무비밀 세션 UUID를 담는다. profile·session·launch intent·등록·연결·증거는 workspace 밖에 둔다. 파일 읽기/쓰기는 허용하지만 shell/processes/skills/mcpServers/checks는 비활성·비어 있다. memory recovery를 사용한다. 기존 E1 경로에는 접근하지 않는다.
+초기 probe의 H0는 `95676c6c9cade5d14a4c9aba288b55b3018e0d86d2fca5fb589364eab07a1787`, 13바이트다. 초기 reference SHA-256은 `778d6236ff586381966db8ac01f9ffa1696256c18aef4b0725c9550461506731`, 66바이트다. 전달된 세션 UUID가 들어간 reference 및 probe를 끝 LF 포함 UTF-8로 재구성해 두 길이·해시가 모두 일치함을 계산했다. UUID·reference 원문·개인 경로는 공개 기록에서 제외한다. 이 계산은 초기 전달 데이터의 내부 일치만 확인하며 최종 상태를 증명하지 않는다.
 
-실제 setup은 파일 생성과 별도 lifecycle start, 새 공개 중계 등록/연결, PID/socket/log/connection 쓰기가 있으므로 읽기 전용이 아니다. 출력을 캡처하고 URL을 pbcopy의 표준입력으로만 전달한다. 클립보드에는 자격증명이 들어가므로 앱 URL 입력칸 외에는 붙여넣지 않는다. 실패하면 원시 stderr나 URL 대신 안전한 단계·오류 코드를 반환한다.
+요청은 probe.txt에서 state=before와 LF를 state=after와 LF로 바꾸고 H0 및 d-<세션 UUID>-edit를 사용하는 edit_file이었다. 작업 ID 형식은 적합하지만, 서버가 실제 입력을 받아 검증했다고 주장하지 않는다.
 
-중복 setup, 예상과 다른 프로필/등록/참조/파일 집합, 후보 변경은 fail-closed다. start 결과가 불명확하면 자동 재시도하지 않는다. 기존 lifecycle의 실패 처리에는 자기가 시작한 자식 종료가 있을 수 있다. 성공한 D_READY는 서버 상태·등록/경로 대조 및 후보 불변 근거이지 MCP 호출이나 실계정 편집 성공이 아니다.
+### 차단과 불확실성
+전달된 오류 문구는 “OpenAI의 안전 검사에서 이 도구 요청을 차단했습니다.”다. 별도 기계 오류 코드는 제공되지 않았다. 최초 편집 영수증·replayed 값이 없고 최종 probe/reference/목록의 사후 관측도 없으므로 성공 또는 변경 없음 모두 확정하지 않는다. 요청의 서버 도달 여부, 구체적인 호스트 규칙 및 오탐 여부도 독립 확인하지 않았다.
 
-status/copy-url은 D 제어 상태와 기존 등록을 대조하며 서버를 시작하지 않는다. check는 최종 probe 및 불변 reference/파일 집합/profile, 동일 agent PID, 후보 snapshot을 검사하고 별도 evidence JSON을 남긴다. 이것만으로 편집 주체·replay·stale 거부를 증명하지 않는다. 동일 agent PID도 내부 자식이 절대 교체되지 않았다는 증명은 아니다.
+이는 9번 단계에서 기대한 FILE_VERSION_CONFLICT가 아니다. 해시 보호 동작 검사는 아직 도달하지 않았으므로 LocalMCP의 guard 실패로 분류하지 않는다. 이전 502·주 담당 대화의 FORBIDDEN·이번 호스트 안전 차단은 별도 관측이다. D_CHAT_GUARDED_EDIT_OK 및 D_LOCAL_STATE_OK는 성립하지 않는다.
 
-stop은 D 제어 소켓의 config/log/등록과 launch 기록을 대조해 그 D agent에만 stop을 보낸다. setup 실패 후 launch.json이 없어도 해당 D launch intent와 소켓/등록을 확인할 수 있는 경우에만 종료한다. PID 추정·범용 kill·기존 E1 제어를 하지 않는다. 샘플·증거·원격 등록·앱은 삭제하지 않는다.
+## 안전한 종료 — 원본 도구의 status / stop만 사용
+기존 ZIP의 d-session.mjs SHA-256 `16da8fc1721e5c4d7cbe712d5979175b8192a832909075fef6aaf56a561cc072`를 다시 계산해 일치함을 확인했다. 파일을 수정하거나 새로운 mutation 경로를 만들지 않았다.
 
-### 실계정 수용 기준
-D-chat-request.txt는 허용된 일반 웹 대화에서 새 LocalMCP-D 앱만 사용한다. 주 담당 대화의 FORBIDDEN을 직접 URL/다른 도구로 우회하지 않는다. 첫 호출은 workspace_info이며 D의 root/profile과 파일-only/memory 조건을 확인한다.
+status는 D session/profile/launch/등록 및 제어 상태를 대조하고 sampleState를 before/after로 요약한다. 샘플·기록을 편집하거나 서버를 시작하지 않는다. 실패는 미확인으로 남기고 그 결과를 맞추기 위해 파일을 바꾸지 않는다. 기존 check는 GREEN(state=after) 상태를 요구하므로 차단 건의 일반 사후 검사로 사용하지 않는다.
 
-성공 경로 12회 호출: workspace_info → 목록 → reference versioned read → probe versioned read → guarded edit → probe 재읽기 → 동일 인자의 replay → probe 재읽기 → 별도 ID/옛 해시 편집의 FILE_VERSION_CONFLICT → probe 재읽기 → reference 재읽기 → 목록 대조다. 실제 내용 변경은 최초 edit 한 번뿐이다. replay는 성공 확인된 요청의 의도적 중복 검사이며, 오류/timeout 재시도 허가가 아니다.
+stop은 D 전용 base·상태 디렉터리·launch 기록·제어 응답의 config/log/등록을 검증한 뒤 해당 D 제어 소켓에 stop만 보낸다. 현재 샘플이나 저장소를 수정할 필요가 없다. 상태 확인 실패 뒤에도 stop은 자체 대상 검증을 따로 수행하지만, 이 검증을 통과하지 못하면 범용 kill이나 경로 변경으로 우회하지 않는다.
 
-FILE_VERSION_CONFLICT가 아닌 오류·FORBIDDEN·502·timeout은 즉시 중단한다. 올바른 현재 oldText와 다른 operationId를 사용해 stale-hash 자체를 검사한다. reference 내용이나 보이는 파일 목록만으로 숨은 링크까지 증명하지 않고, 로컬 check의 원시 파일 집합 검사와 결합한다. 토큰/URL/개인 경로·원시 로그는 공유하지 않는다.
+D_STOPPED는 D 종료 확인일 뿐 guarded-edit 성공이 아니다. 샘플·증거·원격 등록·ChatGPT 앱은 삭제하지 않는다. status/stop의 실제 실행 및 종료 확인은 아직 미수신이다. 주 담당이 이미 맥 서버를 종료했다고 표시하지 않는다.
 
-D_CHAT_GUARDED_EDIT_OK와 같은 세션 UUID의 D_LOCAL_STATE_OK를 결합하고 D_STOPPED는 별도 정리 상태로 기록한다. 파일 결과만으로 실제 모델의 편집/replay/거부를 증명하지 않는다. 이번 D는 memory/edit_file 한정이며 apply_patch·재시작 지속성·source-to-build 재현성·전체 agent/relay 수명주기 보장이 아니다.
+이번 차단 요청을 다른 ID·tool·대화·직접 HTTP·로컬 파일 수정으로 대신 수행하지 않는다. 승인 설정 완화·재등록·setup 반복·재빌드/재시작을 차단 해결책으로 안내하지 않는다. 재시도 대신 기존 오류·발생 시각·동작 범위를 비밀정보 없이 공식 지원에 전달해 검토받는 경로로 분리한다. 차단 원인 해소나 재실행 허가를 이 기록이 제공하지 않는다.
 
-### 이번 자체 검사와 아직 하지 않은 것
-Linux/Node v22.16.0에서 합성 lifecycle controller/agent와 clipboard 대역을 사용했다. 실제 로컬 Unix socket을 사용했지만 MCP·공개 네트워크는 호출하지 않았다. 17개 동작 조건과 14회 비밀 출력 canary 확인이 통과했다. 테스트 사본만 합성 checkout의 platform/head/lock/dist/clipboard 상수로 바꿨고, 별도 검사는 배포본 후보 상수를 유지해 거부를 확인했다.
+## 유지되는 A·B·C와 기존 연결 근거
+A는 실제 감사 사용자 보고에서 high 3개와 wrangler→miniflare→sharp 경로를 식별한 상태다. 의존성 수정·새 설치·audit fix·overrides·lock 변경·수정 후 감사는 미실행이다. 이번 D 차단을 해당 취약점의 증상으로 추정하지 않는다. [A 근거](validation/m2c-audit-reconnect-user-report.json)
 
-동작 점검은 create-only, 두 파일 범위, 등록 URL 출력 차단/clipboard, 초기 상태의 최종 검사 거부, 최종 상태 확인과 편집 주체 미증명 표시, reference/파일 추가/profile 변조 거부, 중복 setup 거부, disconnected 상태의 D만 종료, 시작 불확실성 및 안전한 종료, 기존 디렉터리 alias 거부를 포함한다. 대역의 canary 성공을 모든 비밀유출 부재의 증명으로 확대하지 않는다.
+B는 PATH/지정 설치 위치에서 알려진 Docker CLI가 없어 실제 E0-D를 실행하지 못했다. 시스템 전체 미설치로 단정하지 않고 설치·이미지 다운로드는 별도 승인으로 남긴다.
 
-맥 setup, 실제 중계 등록·기동, 앱 생성, 실계정 mutation, 로컬 최종 검사·종료는 아직 수행하지 않았다. 앱 관리 도구에는 사용자 지정 MCP URL 등록 action이 없고 LocalMCP 검색도 비어 있어 앱 등록은 운영자 UI 단계로 남긴다. 기존 원격 Git 읽기/기록은 이 주 담당 세션이 관리한다.
+C는 실제 SDK 1.30.0, stdio 9개와 loopback HTTP 9개, cleanupConfirmed/projectUnchanged=true 및 PHASE_EXIT=0을 받은 열거된 범위의 pass다. 이번 실계정 호스트 차단이 그 별도 서버 검사를 취소하지 않는다. C도 모든 crash/전원 장애·apply_patch 실행·동시 프로세스 잠금·agent/relay·Docker 보장은 아니다. [C 근거](validation/m2c-scoped-lifecycle-user-report.json)
 
-## 유지되는 A·B·C 및 연결 근거
-A는 R2의 실제 npm 감사 사용자 보고에서 high 3개를 확보하고 wrangler 4.129.0 → miniflare 5.20260903.0-alpha → sharp 0.35.2의 lock 경로와 advisory를 식별했다. 수정·새 설치·audit fix·overrides·lock 변경 및 수정 후 감사는 미실행이다. 이를 이번 D 준비에서 반복하지 않았다. [A 기록](validation/m2c-audit-reconnect-user-report.json)
+기존 E1의 별도 대화 연결과 versioned read는 사용자 근거 기준 pass다. 기존 샘플이나 성공 증거를 새 검증용으로 초기화·편집하지 않는다. [기존 읽기](validation/m2c-versioned-read-user-report.json)
 
-B는 PATH/지정 설치 위치에서 알려진 Docker CLI가 없어서 실제 E0-D 미실행이다. 시스템 전체 미설치로 확정하지 않고 설치·이미지 다운로드는 별도 승인으로 남긴다.
+## 후보·기록·변경 경계
+앞선 후보는 R2 HEAD `8dd7876192c1290d7d18bd70cc9b6d264aca34c4`, dist manifest `d093a515eca545d75117ae7b9fb363445502dcfd03c48b7c902ffedd58c7f637`다. 이번 D 보고에는 새 D_setup JSON/manifest·프로세스 provenance가 없어 정확한 실행 빌드 증명을 추가하지 않는다. exactSourceToBuildProven=false를 유지한다.
 
-C는 SDK 1.30.0의 stdio 9개와 loopback HTTP 9개, 총 18개 점검 사용자 보고, cleanupConfirmed/projectUnchanged=true, PHASE_EXIT=0으로 한정된 pass다. 의도적 crash·전원 장애·교차 프로세스 동시 잠금·apply_patch 실행·모든 agent/relay 수명주기·Docker·실계정 편집으로 확대하지 않는다. [C 기록](validation/m2c-scoped-lifecycle-user-report.json)
+새 문서와 차단 보고 JSON만 갱신한다. 이전 D 승인·준비 JSON과 과거 성공/실패 근거를 수정하지 않는다. 제품 소스·테스트·의존성·기존 E1·설정·권한·main·배포·비용 변경 없음. PR Draft 및 [skip ci] 문서 커밋으로 유지하며 CI 성공을 주장하지 않는다. 문서 갱신 때문에 R2 pull·재빌드·감사/C/기존 E1 검사 반복을 요구하지 않는다.
 
-기존 E1의 별도 대화 workspace_info 1회와 versioned read 1회는 사용자 전달 근거로 pass다. 44바이트 수정 완료 코드와 SHA-256 76f26bd292166033d02e77bdb8fe6aec01e915ccb8cb3f93b8971f9dcd78250e를 재계산했다. 주 담당 대화의 마지막 FORBIDDEN과 과거 502 원인은 별도로 미확인이다. 이번에는 LocalMCP를 재탐색/호출하지 않았다. [읽기 기록](validation/m2c-versioned-read-user-report.json)
-
-## 변경과 이력
-이번 원격 변경은 1pager·progress·새 D 승인/준비 JSON뿐이다. 이전 보고 JSON, 기존 E1, 실행 소스·테스트·의존성·계정 승인 설정·main·배포·과금은 변경하지 않았다. [skip ci] 문서 커밋이며 CI 통과를 주장하지 않는다. 문서 차이로 R2 pull·재빌드·완료 검사 반복을 요구하지 않는다.
-
-[직전 상세 진행표](https://github.com/dearcloud09/localmcp/blob/cc86a388565e8d474b70a7fc0b3c3a9d7364f709/docs/progress.md) · [최소 검사 보고](validation/m2c-local-checks-user-report.json) · [원격 코드 반영](validation/m2c-publication-readback.json). 기존 M1/M2a/M2b/M2c 구현·최소 검사·원격 반영 근거는 유지하고, 미완료 교차 프로세스 잠금·수동 복구·다중 파일·실과제 성능은 추가 구현하지 않는다.
+[이전 D 승인·준비](validation/m2c-d-authorization-preparation.json) · [직전 상세 진행표](https://github.com/dearcloud09/localmcp/blob/a98e8470aefabb8713c828c96bd5d5b28ad85052/docs/progress.md) · [최소 검사 보고](validation/m2c-local-checks-user-report.json) · [원격 코드 반영](validation/m2c-publication-readback.json). 미완료 기능을 이번에 추가하지 않는다.

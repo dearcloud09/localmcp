@@ -1,0 +1,174 @@
+{
+  "date": "2026-09-20",
+  "repository": "dearcloud09/localmcp",
+  "branch": "feat/m1-modular-runtime",
+  "observed_remote_head": "a98e8470aefabb8713c828c96bd5d5b28ad85052",
+  "gate": "D",
+  "verdict": "blocked",
+  "overall_project_verdict": "verification_pending",
+  "verdict_scope": "Live-account guarded edit blocked by a host safety check according to the relayed report; not a server-side guard test failure or a completed D pass.",
+  "evidence": {
+    "type": "user_relayed_separate_chat_execution_report_with_independent_consistency_calculation",
+    "raw_tool_transcript_received": false,
+    "raw_host_error_payload_received": false,
+    "macos_files_directly_read_by_primary_session": false,
+    "primary_session_localmcp_calls_this_turn": 0,
+    "primary_session_macos_commands_this_turn": 0
+  },
+  "reported_execution": {
+    "successful_localmcp_d_calls": 4,
+    "blocked_edit_attempt_number": 5,
+    "reported_total_call_attempts": 5,
+    "planned_success_path_calls": 12,
+    "successful_calls": [
+      "workspace_info",
+      "list_directory",
+      "read_file(reference.txt, includeVersion=true)",
+      "read_file(probe.txt, includeVersion=true)"
+    ],
+    "localmcp_e1_used": false,
+    "post_block_localmcp_calls": 0,
+    "alternative_id_or_tool_retry": false,
+    "stage_6_through_12_executed": false,
+    "chat_success_marker_earned": false,
+    "confirmed_successful_mutations": 0
+  },
+  "reported_preconditions": {
+    "workspace": "project",
+    "defaultWorkspace": "project",
+    "root_matches_d": true,
+    "configFile_matches_d": true,
+    "files": true,
+    "filePermissions": {
+      "read": true,
+      "write": true,
+      "scope": "file-tools"
+    },
+    "shell": false,
+    "processes": false,
+    "persistentProcesses": false,
+    "skills": [],
+    "mcpServers": [],
+    "availableChecks": [],
+    "mutationRecovery": {
+      "mode": "memory",
+      "restartPersistent": false,
+      "automaticRetry": false,
+      "atomicFileAndJournal": false
+    },
+    "reported_schema_fields": [
+      "read_file.includeVersion",
+      "edit_file.expectedSha256",
+      "edit_file.operationId"
+    ]
+  },
+  "initial_data_consistency": {
+    "method": "UTF-8 bytes reconstructed with terminal LF from the relayed sample text; SHA-256 recomputed in the assistant environment, not a second server read.",
+    "initial_file_set": [
+      "probe.txt",
+      "reference.txt"
+    ],
+    "initial_file_count": 2,
+    "session_uuid_stored": false,
+    "reference": {
+      "format_valid_for_reported_session": true,
+      "reported_bytes": 66,
+      "computed_bytes": 66,
+      "reported_sha256": "778d6236ff586381966db8ac01f9ffa1696256c18aef4b0725c9550461506731",
+      "computed_sha256": "778d6236ff586381966db8ac01f9ffa1696256c18aef4b0725c9550461506731",
+      "match": true
+    },
+    "probe": {
+      "content": "state=before\n",
+      "reported_bytes": 13,
+      "computed_bytes": 13,
+      "reported_sha256": "95676c6c9cade5d14a4c9aba288b55b3018e0d86d2fca5fb589364eab07a1787",
+      "computed_sha256": "95676c6c9cade5d14a4c9aba288b55b3018e0d86d2fca5fb589364eab07a1787",
+      "match": true
+    },
+    "proves_final_state": false,
+    "raw_newline_independently_received": false
+  },
+  "blocked_request": {
+    "tool": "edit_file",
+    "path": "probe.txt",
+    "workspace": "project",
+    "oldText": "state=before\n",
+    "newText": "state=after\n",
+    "expectedSha256": "95676c6c9cade5d14a4c9aba288b55b3018e0d86d2fca5fb589364eab07a1787",
+    "operation_id_pattern": "d-<reported session UUID>-edit",
+    "operation_id_format_valid": true,
+    "block_message_verbatim": "OpenAI의 안전 검사에서 이 도구 요청을 차단했습니다.",
+    "machine_error_code_received": null,
+    "server_delivery_independently_verified": null,
+    "edit_receipt_received": false,
+    "replayed_value_received": null,
+    "host_rule_or_false_positive_determined": false,
+    "identified_as_FILE_VERSION_CONFLICT": false,
+    "identified_as_prior_502": false
+  },
+  "unverified": {
+    "final_probe_content": null,
+    "final_probe_hash": null,
+    "final_probe_bytes": null,
+    "reference_final_unchanged": null,
+    "final_file_set_unchanged": null,
+    "replay_executed": false,
+    "stale_hash_test_executed": false,
+    "local_final_check_completed": false,
+    "D_server_stop_confirmed": false,
+    "fresh_build_or_process_provenance": false,
+    "exact_running_commit": null,
+    "exactSourceToBuildProven": false
+  },
+  "operator_package_review": {
+    "original_zip_bytes_read": true,
+    "script_sha256": "16da8fc1721e5c4d7cbe712d5979175b8192a832909075fef6aaf56a561cc072",
+    "script_modified": false,
+    "status_reads_current_sample_without_mutating": true,
+    "check_requires_state_after": true,
+    "stop_verifies_d_identity_and_targets_d_control_socket": true,
+    "new_product_execution_test_run": false
+  },
+  "cleanup_plan": {
+    "status": "pending_operator_execution",
+    "actions": [
+      "status",
+      "stop"
+    ],
+    "mcp_tools_called": false,
+    "sample_edit_performed": false,
+    "status_failure_does_not_authorize_edit_or_reset": true,
+    "stop_has_its_own_identity_checks": true,
+    "session_files_retained": true,
+    "remote_registration_deleted": false,
+    "app_deleted": false,
+    "cleanup_is_not_guarded_edit_success": true
+  },
+  "safety_boundary": {
+    "blocked_request_retried": false,
+    "alternative_mutation_route_provided": false,
+    "write_approval_or_safety_setting_changed": false,
+    "new_session_to_repeat_blocked_edit_created": false,
+    "server_rebuild_or_restart": false,
+    "support_review_is_the_authorized_next_path_for_the_block": true
+  },
+  "preserved_gates": {
+    "existing_E1_read_only_pass": true,
+    "C_scoped_lifecycle_pass": true,
+    "A_identification_complete_remediation_pending": true,
+    "B_actual_docker_unexecuted": true
+  },
+  "change_scope": {
+    "documentation_only": true,
+    "product_source_or_test_changes": false,
+    "past_evidence_json_modified": false,
+    "dependency_or_lockfile_change": false,
+    "existing_e1_accessed_by_primary_session": false,
+    "services_or_images_installed": false,
+    "main_merged": false,
+    "deployed": false,
+    "ci_success_claimed": false
+  },
+  "privacy": "Raw session UUID/operation ID, reference plaintext, personal paths, PIDs, credentials, URLs and raw logs omitted. Initial hashes and nonsecret probe text retained."
+}
