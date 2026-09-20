@@ -1,0 +1,94 @@
+{
+  "date": "2026-09-20",
+  "repository": "dearcloud09/localmcp",
+  "branch": "feat/m1-modular-runtime",
+  "observed_remote_head": "cc86a388565e8d474b70a7fc0b3c3a9d7364f709",
+  "gate": "D",
+  "status": "authorized_operator_package_ready_not_executed",
+  "overall_project_verdict": "verification_pending",
+  "authorization": {
+    "user_approved": true,
+    "scope": [
+      "separate two-text-file sample",
+      "separate profile and runtime state",
+      "new registration using previously reviewed third-party relay",
+      "new test app connection",
+      "guarded edit/replay/stale-hash validation"
+    ],
+    "existing_e1_changes_authorized": false,
+    "install_or_cost_changes_authorized": false
+  },
+  "artifact": {
+    "name": "d-session.mjs",
+    "sha256": "16da8fc1721e5c4d7cbe712d5979175b8192a832909075fef6aaf56a561cc072",
+    "actions": [
+      "setup",
+      "status",
+      "copy-url",
+      "check",
+      "stop"
+    ],
+    "candidate_source_head": "8dd7876192c1290d7d18bd70cc9b6d264aca34c4",
+    "candidate_dist_manifest": "d093a515eca545d75117ae7b9fb363445502dcfd03c48b7c902ffedd58c7f637",
+    "source_to_build_proven": false,
+    "stored_as_chat_artifact_not_product_source": true
+  },
+  "selftest": {
+    "basis": "Linux synthetic lifecycle and clipboard doubles; no MCP or public network",
+    "node": "v22.16.0",
+    "behavior_checks_passed": 17,
+    "secret_output_checks_passed": 14,
+    "actual_macos_tested": false,
+    "actual_localmcp_tested": false,
+    "actual_public_relay_tested": false,
+    "actual_chatgpt_tested": false,
+    "test_copies_use_fixture_specific_guards": true,
+    "published_candidate_guard_rejection_tested": true
+  },
+  "planned_acceptance": {
+    "chat_success_marker": "D_CHAT_GUARDED_EDIT_OK",
+    "local_success_marker": "D_LOCAL_STATE_OK",
+    "session_id_must_match": true,
+    "successful_path_mcp_calls": 12,
+    "edit_file_requests": 3,
+    "intended_content_changes": 1,
+    "expected_stale_error": "FILE_VERSION_CONFLICT",
+    "reference_and_file_set_unchanged": true,
+    "memory_mode_only": true,
+    "apply_patch_tested": false,
+    "local_files_prove_actor_or_replay": false
+  },
+  "execution_this_turn": {
+    "macos_accessed": false,
+    "new_sample_created_on_mac": false,
+    "new_relay_registration_created": false,
+    "new_app_created": false,
+    "localmcp_calls": 0,
+    "source_or_tests_published": false,
+    "packages_installed": false,
+    "build_run": false,
+    "existing_e1_accessed": false,
+    "actual_D_pass": false
+  },
+  "operator_requirements": [
+    "run setup once on Mac",
+    "create separate LocalMCP-D app with clipboard URL; preserve E1",
+    "execute approved D prompt in permitted web conversation",
+    "run local check and scoped stop"
+  ],
+  "clipboard": {
+    "contains_credential": true,
+    "url_to_stdout": false,
+    "copy_performed_on_mac_this_turn": false
+  },
+  "scope_limits": [
+    "No raw process arguments/environment or credentials in shared output",
+    "No home-wide search or permissions",
+    "No automatic retry or reset",
+    "No old E1 helper prepare/start",
+    "No claim current conversation FORBIDDEN resolved",
+    "No Docker, dependency remediation or full recovery claim"
+  ],
+  "documentation_only_commit": true,
+  "privacy": "No personal absolute path, PID, access URL, token, or raw log stored."
+}
