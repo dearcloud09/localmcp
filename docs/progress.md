@@ -25,9 +25,16 @@ dev 표시만으로 런타임 도달 불가능을 증명하지 않는다. 검토
 ## 기존 E1 — 재기동 성공 보고와 Chat 도구 노출을 분리
 사용자는 기존 등록/샘플을 검증하는 블록에서 E1_RECONNECTED, startExitCode=0, ready=true, launchAttempted=true를 보고했다. 요청 시각은 2026-09-19T23:49:03.792Z다. buildStable=true와 existingSampleAndEvidencePreserved=true이며, 디스크 전체 dist manifest는 `d093a515eca545d75117ae7b9fb363445502dcfd03c48b7c902ffedd58c7f637`다. PID와 개인 경로는 공개 기록에서 제외한다. mcpToolCalled=false, exactSourceToBuildProven=false를 그대로 유지한다.
 
-이전 재연결 결과 수신 뒤에는 앱 승인 설정 found/기본값 Allow low-risk actions 상속과 도구 미노출을 각각 확인했다. 이번 C 결과 수신 뒤에도 LocalMCP-E1 workspace_info 도구 탐색과 Plugin_Management 검색을 수행했으나 해당 namespace가 없고 검색 결과가 비어 있었다. 이번에는 승인 설정·살아 있는 E1 서버 상태를 다시 조회하지 않았다. 등록 설정 존재, 독립 SDK 전송 성공, 실제 ChatGPT 도구 노출은 서로 다른 근거다. 이번 실제 workspace_info 호출은 0회이며, 502 재시도가 아니다. 사용자 앱 refresh/대화 선택 완료 여부는 이번 메시지에 보고되지 않았다.
+### Refresh·멘션 후 새 직접 관측 — 정의 노출, 대화 지원 거부
+앞선 턴에는 namespace가 없었지만 사용자가 Refresh 및 멘션 완료를 알린 이번 턴에는 LocalMCP-E1 도구 20개가 노출됐다. read_file 입력에 includeVersion이 있고, edit_file과 apply_patch 모두 expectedSha256·operationId를 제공한다. 이는 호스트에 노출된 M2c 정의이며 실행 중 서버의 커밋이나 기능 실행 증명이 아니다.
 
-남은 Chat 단계는 기존 앱 상세의 refresh와 대화 내 앱 선택이다. [공식 Developer mode 안내](https://developers.openai.com/api/docs/guides/developer-mode)에 따라 도구 설명/스키마 새로고침과 대화 선택을 수행한다. 서버 build/restart, 권한 확대, 새 URL 등록과 같은 작업으로 취급하지 않는다. 도구가 노출되면 첫 실제 LocalMCP 호출은 workspace_info이며, 정상 응답 전에 기존 calculator 파일을 읽거나 편집하지 않는다. 현재 workspace/권한/mutationRecovery의 실시간 값은 아직 미확인이다.
+첫 LocalMCP 호출 시도는 workspace_info({}) 한 번이다. 결과는 `ToolError: FORBIDDEN: This conversation does not support developer MCPs`였다. 이 거부 후 다른 LocalMCP 도구를 호출하거나 재시도하지 않았다. 정상 workspace payload 수신은 0회다. workspace, root, configFile, files, filePermissions, shell, processes, persistentProcesses, skills, mcpServers, availableChecks, mutationRecovery는 모두 응답에 없음이며 false/빈 값으로 추정하지 않는다. 기존 E1 여부를 현재 응답으로 확인하지 못했으므로 calculator.mjs를 비롯한 파일은 읽거나 편집하지 않았다.
+
+앱 승인 설정은 이번에 다시 읽어 found / Use my default / Allow low-risk actions를 확인했다. 승인이 허용된 상태와 대화가 developer MCP를 지원하는지는 별개다. 기존 502와 이번 FORBIDDEN을 합쳐 같은 원인으로 기록하지 않는다. 오류 문구는 Chat 호스트의 대화 지원을 지목하지만 실제 백엔드 전달 여부는 추적하지 않았고, 프로젝트 종류·계정·모드·호스트 결함 중 원인도 미확정이다. 현재 E1 ready·실행 빌드·프로세스는 이번에 직접 확인하지 않았다. [새 관측 JSON](validation/m2c-chat-host-forbidden-observation.json)
+
+[공식 Developer mode 안내](https://developers.openai.com/api/docs/guides/developer-mode)는 웹에서의 기능 활성화, 앱 메타데이터 Refresh와 대화별 앱 선택을 구분한다. 읽은 공식 안내에서는 이 정확한 FORBIDDEN의 원인이나 확정적인 복구법을 찾지 못했다. 이 오류만으로 요금제 변경, 권한 확대 또는 프로젝트 미지원 판정을 요구하지 않는다.
+
+다음 최소 대조는 사용자에게 이미 허용된 Developer mode의 새 일반 웹 대화에서 동일한 기존 앱을 선택하고 workspace_info만 한 번 호출하는 것이다. 이 대화는 계속 주 작업/기록 세션이며 새 대화는 연결 확인에만 한정한다. 이는 원인 분리용 대조이지 보장된 수정이 아니다. 같은 거부 또는 기능 미제공이면 추가 요청을 중단하고 공식 지원/해당 관리자에게 확인한다. 계정/앱/서버 권한을 바꾸거나 토큰 추출·직접 HTTP·다른 도구로 제한된 호출을 대체하지 않는다. 성공하더라도 반환된 workspace/권한/기능 범위만 확인하고 기존 E1 편집 또는 D 통과로 확대하지 않는다.
 
 이전 502의 정확한 발생 계층과 종료 원인은 미확정이다. 재기동 성공 보고로 당시 원인을 소급 확정하지 않는다. 기존 E1은 파일-only memory profile이며, 향후 memory/restartPersistent=false 응답 자체는 M2c 부재를 의미하지 않는다. 재연결/읽기만으로 D의 새로운 guarded-edit 실계정 검사를 통과시키지 않는다. 같은 재연결·감사 블록을 자동 반복하지 않는다.
 
@@ -65,11 +72,11 @@ projectUnchanged는 Git HEAD/status, package.json, lockfile, dist manifest의 sn
 ### 한계와 종료 규칙
 이번 실행은 edit_file 경로를 검사했다. apply_patch는 권한 회수 후 목록 제거 검사에 포함되지만 실제 patch 실행·재시작 replay는 수행하지 않았다. 전원 장애, 의도적 SIGKILL/crash, 교차 프로세스 동시 잠금, 수동 복구, 모든 영속 모드/agent/relay lifecycle, Docker, 실제 ChatGPT 실계정 E1 및 source-to-build 재현성은 통과로 확대하지 않는다.
 
-C는 위 범위에서 완료했으므로 새 변경·실패 근거 없이 동일 lifecycle, verify:minimum, 감사·재연결 블록을 재실행하지 않는다. 이후 새 코드·의존성 변경이 있으면 영향 범위에 맞춰 필요한 검사만 선택한다. 남은 직접 연결 단계는 Chat 앱 노출 후 workspace_info이며 C의 독립 fixture 응답으로 대체하지 않는다.
+C는 위 범위에서 완료했으므로 새 변경·실패 근거 없이 동일 lifecycle, verify:minimum, 감사·재연결 블록을 재실행하지 않는다. 이후 새 코드·의존성 변경이 있으면 영향 범위에 맞춰 필요한 검사만 선택한다. 남은 직접 연결 단계는 호스트가 허용하는 대화에서의 workspace_info이며 C의 독립 fixture 응답으로 대체하지 않는다.
 
 ## 유지하는 기준과 이력
 M1·M2a·M2b 구현, 이전 E0/파일-only E1의 사용자 근거, M2C_LOCAL_CHECKS_OK, IG-04의 코드 50cad2d/통합 8dd7876 반영과 이전 production/benchmark 해시 대조는 유지한다. 정확한 최신 전체 검사 수를 추정하거나 이전 335/336을 현재 실패로 바꾸지 않는다. 교차 프로세스 다른 ID 잠금·수동 복구·다중 파일·프로세스 복구·실과제 성능·CI 한도 관문은 여전히 미완료다.
 
 [최소 검사 사용자 보고](validation/m2c-local-checks-user-report.json) · [원격 반영](validation/m2c-publication-readback.json) · [기동 전 진단](validation/m2c-macos-execution-path-report.json) · [이전 상세 진행표](https://github.com/dearcloud09/localmcp/blob/8fa9a34fb103389b24ab0b1f56d988263f7cd309/docs/progress.md).
 
-이번 Git 변경은 onepager·progress·새 C 사용자 실행 근거 JSON뿐이다. 감사·재연결을 포함한 기존 시점별 JSON은 수정하지 않는다. 기존 E1/과거 증거 JSON·제품 소스·테스트·의존성·설정·권한·main·배포·과금은 변경하지 않는다. 문서 커밋에 [skip ci]를 사용하며 CI 성공을 주장하지 않는다.
+이번 Git 변경은 onepager·progress·새 Chat 호스트 관측 JSON뿐이다. 감사·재연결을 포함한 기존 시점별 JSON은 수정하지 않는다. 기존 E1/과거 증거 JSON·제품 소스·테스트·의존성·설정·권한·main·배포·과금은 변경하지 않는다. 문서 커밋에 [skip ci]를 사용하며 CI 성공을 주장하지 않는다.

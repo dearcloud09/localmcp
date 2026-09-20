@@ -13,7 +13,9 @@ ChatGPT가 판단하고 포크가 실행·권한·기록을 맡는다. `ChatGPT 
 ## 이전 감사·재기동 결과와 남은 연결 단계
 사용자가 R2의 감사 및 기존 E1 재연결 블록 결과를 제공했다. 정상 npm 감사 JSON에서 high 3개를 확인했고 프로젝트 불변 검사도 성공했다. 기존 등록으로 E1_RECONNECTED/ready=true, 기동 종료 코드 0, 빌드 manifest 안정성 및 기존 샘플·성공 증거 보존을 보고했다. 이는 사용자 실행 근거이며 이번 어시스턴트의 직접 macOS 실행 결과는 아니다.
 
-이전 앱 승인 설정 조회는 found/기본값 상속이었다. 이번 C 결과 수신 뒤에도 도구 namespace 탐색에는 LocalMCP-E1이 없었고 플러그인 검색 결과도 비어 있었다. 이번에는 승인 설정이나 살아 있는 E1 서버 상태를 다시 조회하지 않았다. 실제 workspace_info는 호출하지 못했다. 이전 502가 재발한 것으로 기록하지 않으며, 앱 등록·서버 ready·Chat 도구 노출·실제 호출 성공을 구분한다. 서버 재기동 블록을 반복할 이유는 없다.
+사용자가 앱 Refresh와 멘션 완료를 알린 뒤 이번 탐색에서 LocalMCP-E1 도구 20개가 다시 노출됐다. read_file.includeVersion과 edit_file/apply_patch의 expectedSha256·operationId가 정의에 포함돼 있다. 첫 실제 호출 시도 workspace_info({})는 `FORBIDDEN: This conversation does not support developer MCPs`를 반환했다. 정상 서버 응답은 없으며 현재 workspace·권한·mutationRecovery와 실행 빌드는 미확인이다. 이번 결과는 이전 도구 미노출이나 502와 다른 Chat 호스트의 대화 지원 거부다. 앱 승인 설정은 found/기본값 Allow low-risk actions 상속이며 변경하지 않았다. [이번 직접 관측](validation/m2c-chat-host-forbidden-observation.json)
+
+같은 Refresh·멘션·호출·서버 재시작을 반복하지 않는다. 이 대화는 주 작업/기록 세션으로 유지한다. 사용자가 이미 허용된 Developer mode의 공식 웹 대화에서 같은 앱으로 단일 workspace_info 읽기를 대조할 수 있지만, 새 대화 성공을 보장하거나 현재 제한의 원인을 프로젝트·요금제·버그로 단정하지 않는다. 권한이 제공되지 않거나 같은 거부가 발생하면 중단하고 지원 경로를 사용한다. 토큰을 추출하거나 다른 도구/직접 URL로 제한을 우회하지 않는다.
 
 [이번 감사·재연결 근거](validation/m2c-audit-reconnect-user-report.json)
 
@@ -21,7 +23,7 @@ ChatGPT가 판단하고 포크가 실행·권한·기록을 맡는다. `ChatGPT 
 | 관문 | 현재 상태 | 남은 작업 |
 |---|---|---|
 | A / DEP-01 | 감사 수집·패키지/advisory 식별·원격 lock 대조 완료 | 도달 가능성의 런타임 확인, 의존성 수정과 수정 후 감사는 미실행 |
-| 연결 복구 | 기존 E1 재기동·ready 성공 사용자 보고 | 기존 앱을 대화에 선택/메타데이터 refresh 후 실제 workspace_info |
+| 연결 복구 | 기존 재기동 성공 보고·M2c 정의 노출. workspace_info는 대화 지원 FORBIDDEN | 권한 내 공식 지원 대화의 단일 읽기 대조. 서버/권한 변경 없음 |
 | B / E0-D | PATH와 지정 설치 위치에서 Docker CLI 미발견 | 알려진 실행 경로 없음. 설치/이미지 다운로드는 승인 없이 진행하지 않음 |
 | C / 영속 lifecycle | **한정된 범위 통과 — 실제 SDK, 두 전송의 18개 점검 사용자 보고** | 동일 검사의 재실행 불필요. 범위 밖 복구 보장은 별도 |
 | D / 최종 후보 실계정 E1 | 미실행 | 실행 중 workspace·권한·M2c 응답 확인 후 별도 비밀 없는 샘플 범위 검토 |
