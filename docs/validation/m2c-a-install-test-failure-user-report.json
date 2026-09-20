@@ -1,0 +1,93 @@
+{
+  "date_recorded": "2026-09-20",
+  "repository": "dearcloud09/localmcp",
+  "branch": "feat/m1-modular-runtime",
+  "observed_remote_head": "a47d918fd071c2be60c5476778c13ad6b7e43726",
+  "gate": "A isolated installation and regression",
+  "verdict": "verification_pending",
+  "evidence": {
+    "type": "user_pasted_runner_summary_plus_original_runner_review",
+    "assistant_direct_macos_execution": false,
+    "raw_logs_received": false,
+    "full_failure_details_known": false
+  },
+  "sourceHead": "8dd7876192c1290d7d18bd70cc9b6d264aca34c4",
+  "candidatePackageSha256": "6694256b3bbe76baa5bd4e169a266ac62bcb9ebe8db88092f71b4d744330a591",
+  "candidateLockSha256": "d0397dedfdbac5fdf8f0eb95aaaaaaba9833cfb58ba0a9a2e0faa75d9cef13bd",
+  "environment": {
+    "node": "v23.11.0",
+    "npm": "11.4.2",
+    "platform": "darwin",
+    "arch": "arm64"
+  },
+  "stages": [
+    {"stage":"npm-version","status":"passed","exitCode":0,"signal":null,"reason":null,"cleanupConfirmed":true},
+    {"stage":"npm-ci","status":"passed","exitCode":0,"signal":null,"reason":null,"cleanupConfirmed":true},
+    {"stage":"typecheck","status":"passed","exitCode":0,"signal":null,"reason":null,"cleanupConfirmed":true},
+    {"stage":"build","status":"passed","exitCode":0,"signal":null,"reason":null,"cleanupConfirmed":true},
+    {"stage":"full-tests","status":"failed","exitCode":1,"signal":null,"reason":null,"cleanupConfirmed":true}
+  ],
+  "user_result": {
+    "status": "VERIFICATION_PENDING",
+    "failedStage": "full-tests",
+    "errorCode": "TESTS_FAILED",
+    "phaseExit": 1,
+    "installAttempted": true,
+    "packageBodiesInstalled": true,
+    "npmLifecycleScriptsDisabled": true,
+    "buildRun": true,
+    "testsRun": true,
+    "cleanupConfirmed": true,
+    "originalProjectUnchanged": true,
+    "originalCandidateUnchanged": true,
+    "temporaryDirectoryRetained": true,
+    "exportedTrackedFiles": 138,
+    "exportedSourceManifestSha256": "207cd73a6d49ff05329987bdf93a5eb373d9b32d10a62f51d7488428c9c1633f",
+    "candidateBuildManifestSha256": "d093a515eca545d75117ae7b9fb363445502dcfd03c48b7c902ffedd58c7f637",
+    "existingE1OrDAccessed": false,
+    "publicRelayUsed": false,
+    "dockerUsed": false,
+    "originalFilesWrittenByHelper": false,
+    "copiedBackToProject": false,
+    "productionFixApplied": false,
+    "reproducibleBuildVerified": false,
+    "exactSourceToBuildProven": false,
+    "automaticRetry": false
+  },
+  "review": {
+    "original_runner_sha256": "3ace131e96c8f66bc8d415acf02e6edf75a01238a57bd535c6ff975bd4b3c4f8",
+    "matches_delivered_hash": true,
+    "build_manifest_matches_prior_reported_value": true,
+    "raw_build_comparison_performed": false,
+    "failure_code_is_wrapper_summary": true,
+    "failed_test_names": null,
+    "test_totals": null,
+    "root_cause": null,
+    "tap_totals_assigned_only_after_success": true,
+    "source_invariance_after_tests": null,
+    "not_reached": ["sdk-smoke","wrangler-version","native-smoke","installed-audit","final validation-copy invariance"],
+    "reason_null_does_not_rule_out_internal_test_timeout": true,
+    "cleanup_is_created_process_group_scope_only": true
+  },
+  "next_step": {
+    "action": "read existing report and full-tests stdout/stderr only",
+    "three_fixed_files": true,
+    "node_test_reporter_reference": "https://nodejs.org/download/release/v23.11.0/docs/api/test.html#test-reporters",
+    "reader_sha256": "1c35a0806aceed63c72832ba717bbb6b6ac13eba15ec30a028108653fae86fff",
+    "synthetic_reader_checks": 9,
+    "reinstall": false,
+    "retest": false,
+    "files_written_on_mac": false,
+    "localmcp_called": false,
+    "log_output_is_masked_bounded_diagnostic": true
+  },
+  "preserved": {
+    "A_lock_candidate_pass": true,
+    "C_prior_scoped_pass": true,
+    "E1_prior_readonly_pass": true,
+    "D_blocked_and_stopped": true,
+    "B_not_executed": true
+  },
+  "git_scope": "onepager, progress and this new report only; no product, test, manifest, lockfile or prior evidence changes",
+  "privacy": "Personal reportDirectory, local paths, PIDs, credentials and raw logs omitted."
+}
