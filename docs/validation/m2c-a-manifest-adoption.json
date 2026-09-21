@@ -1,0 +1,98 @@
+{
+  "date_recorded": "2026-09-21",
+  "repository": "dearcloud09/localmcp",
+  "branch": "feat/m1-modular-runtime",
+  "base_commit": "d523b3da30dc4cbfe4252902bf317ffcc2498507",
+  "gate": "A exact tested manifest adoption",
+  "overall_project_verdict": "verification_pending",
+  "evidence": {
+    "uploaded_manifest_bytes_directly_read": true,
+    "candidate_hashes_match_prior_execution_report": true,
+    "previous_regression_evidence": "m2c-a-isolated-regression-pass-user-report.json",
+    "new_install_audit_build_or_test_run": false,
+    "local_macos_original_changed": false
+  },
+  "files": {
+    "package.json": {
+      "bytes": 2692,
+      "sha256": "6694256b3bbe76baa5bd4e169a266ac62bcb9ebe8db88092f71b4d744330a591",
+      "git_blob": "9c13f284bf129281dedd4d770cb23ae79e368e8b"
+    },
+    "package-lock.json": {
+      "bytes": 125093,
+      "sha256": "d0397dedfdbac5fdf8f0eb95aaaaaaba9833cfb58ba0a9a2e0faa75d9cef13bd",
+      "git_blob": "48253e020d8901ed96b2fc422d7122bbdde05d64"
+    }
+  },
+  "direct_development_dependency_changes": {
+    "wrangler": {
+      "from": "^4.129.0",
+      "to": "4.131.0"
+    },
+    "@cloudflare/workers-types": {
+      "from": "^5.20260906.1",
+      "to": "5.20260910.1"
+    }
+  },
+  "direct_package_comparison": {
+    "baseline_git_blob": "0faca9632cc8929ea262d39dc7b0f981f9ea34e7",
+    "only_two_dev_dependency_values_changed": true,
+    "scripts_runtime_dependencies_engines_and_metadata_unchanged": true
+  },
+  "uploaded_lock_structure": {
+    "packages_excluding_root": 248,
+    "non_dev_entries": 95,
+    "root_declarations_match_package": true,
+    "overrides_added": false
+  },
+  "required_publication_checks": {
+    "base_lock_git_blob": "32b1658c5497d908a5fb91f2448519f788bf6b31",
+    "changed_nonroot_entries": 36,
+    "added_or_removed_entries": 0,
+    "changed_entries_must_all_remain_dev": true,
+    "nondev_full_entry_equality": true,
+    "exact_candidate_bytes_in_commit": true,
+    "commit_changed_paths_exactly_five": true,
+    "unchanged_remote_base_before_push": true,
+    "ordinary_push_only": true,
+    "push_attempts_maximum": 1,
+    "readback_must_match_created_commit": true
+  },
+  "previous_accepted_regression": {
+    "basis": "user-pasted execution reports checked against delivered runners",
+    "source_head": "8dd7876192c1290d7d18bd70cc9b6d264aca34c4",
+    "platform": "macOS arm64",
+    "node": "v23.11.0",
+    "npm": "11.4.2",
+    "npm_test_pass_count": 379,
+    "sdk_stdio_smoke": "pass",
+    "wrangler_version": "4.131.0",
+    "native_checkpoints_passed": 7,
+    "installed_audit_total": 0,
+    "not_newly_executed": true
+  },
+  "publication_boundary": {
+    "record_and_two_manifests_are_one_commit": true,
+    "remote_ref_result_is_external_operator_report": true,
+    "mac_source_worktrees_and_installed_servers_not_updated": true,
+    "main_merge": false,
+    "deployment": false,
+    "npm_publish": false,
+    "ci_pass_claimed": false
+  },
+  "preserved": {
+    "existing_E1_readonly_pass": true,
+    "C_scoped_18_check_pass": true,
+    "D_guarded_edit": "blocked; dedicated agent previously stopped",
+    "B_actual_Docker": "unexecuted"
+  },
+  "limits": {
+    "new_audit_of_current_registry": false,
+    "cross_platform_execution_proven": false,
+    "all_node_modules_bytes_attested": false,
+    "exactSourceToBuildProven": false,
+    "reproducibleBuildVerified": false,
+    "dependency_safety_universally_proven": false
+  },
+  "privacy": "No personal absolute paths, user identity, PID, session UUID, credentials, access URLs, or raw logs."
+}
