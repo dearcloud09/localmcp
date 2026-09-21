@@ -3,7 +3,7 @@
 갱신: 2026-09-21 · [1pager](onepager.ko.md) · `feat/m1-modular-runtime` · PR #1 Draft.
 
 ## 현재 판정
-A 후보의 분리 설치·회귀 pass를 유지하며, 검증된 package.json·package-lock.json 원문 수신과 해시 확인을 완료했다. 현재 커밋은 이 두 manifest를 원문 그대로 채택하는 범위다. 원격 branch ref 게시 결과와 맥 원본 설치환경 갱신은 별개이며 전체 프로젝트는 verification_pending이다. [원문 채택 기록](validation/m2c-a-manifest-adoption.json)
+A 후보의 분리 설치·회귀 pass를 유지하며, 검증된 package.json·package-lock.json 원문 수신과 해시 확인을 완료했다. 채택 커밋 248f4edac3343c832e8d0967af853a6a14d7f49e의 게시와 원격 대조도 완료했다. 원격 branch ref 게시 결과와 맥 원본 설치환경 갱신은 별개이며 전체 프로젝트는 verification_pending이다. [원문 채택 기록](validation/m2c-a-manifest-adoption.json)
 
 ## 직접 확인한 파일
 | 파일 | 바이트 | SHA-256 | Git blob |
@@ -28,8 +28,21 @@ libc 등 플랫폼 메타데이터를 임의로 추가하거나 lock을 재생�
 이전 실행기의 긴 TMPDIR와 Miniflare 옵션 불일치, 그 수정 뒤 통과는 과거 증거 JSON에 보존한다. 실패를 삭제하거나 기준을 낮추지 않는다. 원시 맥 report/audit 및 모든 의존성 본문을 새로 수신했다고 하지 않는다. 받은 것은 검증 manifest 두 파일이다.
 
 ## 변경·승인 경계
-이번 커밋은 package.json, package-lock.json, docs/onepager.ko.md, docs/progress.md, docs/validation/m2c-a-manifest-adoption.json만 포함한다. 이전 JSON·제품 소스·제품 테스트·원본 작업 파일·node_modules/dist·서버·권한·E1/D·main·배포는 변경하지 않는다. 채팅 산출물에 있는 게시 도구의 존재는 원격 게시 완료 증명이 아니며 결과는 운영자 report/실제 ref로 확인한다.
+채택 커밋 248f4edac3343c832e8d0967af853a6a14d7f49e은 package.json, package-lock.json, docs/onepager.ko.md, docs/progress.md, docs/validation/m2c-a-manifest-adoption.json만 포함한다. 이전 JSON·제품 소스·제품 테스트·원본 작업 파일·node_modules/dist·서버·권한·E1/D·main·배포는 변경하지 않는다. 채팅 산출물에 있는 게시 도구의 존재는 원격 게시 완료 증명이 아니며 결과는 운영자 report/실제 ref로 확인한다.
 
 기존 E1 읽기 및 C의 두 전송 18개 한정된 pass, D의 blocked/전용 agent 종료 상태는 유지한다. B 실제 Docker는 미실행이다. exactSourceToBuildProven=false, reproducibleBuildVerified=false도 유지한다. 문서와 동일 바이트 게시 때문에 이미 통과한 검사를 반복하지 않는다.
 
 [직전 상세 진행표](https://github.com/dearcloud09/localmcp/blob/d523b3da30dc4cbfe4252902bf317ffcc2498507/docs/progress.md)에 이전 설치·검증 수용의 전체 맥락을 보존한다.
+
+## 2026-09-21 — 챗 실사용 시작 관문 검토
+
+이번 추가 작업은 [실사용 준비안](chat-development-readiness.ko.md)의 근거와 승인 경계를 정한 것이다.
+
+- 직접 조회: PR HEAD 248f4ed, Draft/open/미병합; LocalMCP-D 앱 설정 found, Allow low-risk actions 상속. 계정 요금제·조직 정책·차단 당시 설정은 이 조회로 확인할 수 없다.
+- 정적 코드 검토: files.ts → define.ts → registry.ts → server.ts. edit_file은 readOnlyHint=false/destructiveHint=true/openWorldHint=false이고 세 필드가 tools/list까지 전달되는 코드 경로를 확인했다. 차단 당시 실서버 descriptor나 호스트 snapshot을 확보한 것은 아니다.
+- 권한 경계: fileWrite는 변경 6종 및 등록된 workspace 전체에 적용한다. edit_file만 강제로 허용하는 기능으로 오인하지 않는다.
+- 공식 자료 확인: Developer mode 가이드와 Help Center의 Pro 쓰기 지원 설명이 불일치한다. 계정 지원 여부를 단정하거나 요금제 변경을 요청하지 않고 지원 검토 항목으로 남겼다.
+- 준비 완료: 비밀값을 제외한 지원 요청 초안과 첫 LocalMCP 분리 사본의 도입 기준. 지원 제출·사본 생성·새 연결은 미실행이다.
+- 전송 후보: 공식 Secure MCP Tunnel의 공개 listener 불필요 구조와 별도 Platform 권한/키/client 조건을 확인했다. 사용자 이용 가능성·비용은 미확인이다. 새 설치·등록·키 발급은 하지 않았다. 호스트 차단 우회 경로로 사용하지 않는다.
+
+이번 LocalMCP 호출·차단 편집 재시도·제품 코드 변경·설치·테스트·서버 조작·권한 변경은 0회다. 새 파일은 위 준비안이며 1pager/진행표에 연결한다. 과거 증거 JSON과 manifest 바이트는 보존한다. 이후 실제 행동은 지원 검토와 사용자에게만 보이는 계정/대화 조건 확인에 따라 정한다.
