@@ -1,16 +1,20 @@
 {
   "workspaces": {
-    "home": "~"
+    "project": "/absolute/path/to/your/project"
   },
-  "defaultWorkspace": "home",
+  "defaultWorkspace": "project",
   "features": {
     "files": true,
-    "shell": true,
-    "processes": true
+    "shell": false,
+    "processes": false
   },
   "skills": {
     "dir": "skills",
-    "enabled": ["local-development"]
+    "enabled": []
   },
-  "mcpServers": {}
+  "mcpServers": {},
+  "permissions": {
+    "fileRead": true,
+    "fileWrite": false
+  }
 }

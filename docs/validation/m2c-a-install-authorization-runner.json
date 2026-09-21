@@ -1,0 +1,62 @@
+{
+  "date_recorded": "2026-09-20",
+  "repository": "dearcloud09/localmcp",
+  "branch": "feat/m1-modular-runtime",
+  "observed_remote_head": "b0311f0a025cab87363a09264caf17993f57573c",
+  "gate": "A isolated installation and regression",
+  "status": "authorized_runner_prepared_not_product_executed",
+  "overall_project_verdict": "verification_pending",
+  "authorization": {
+    "user_approved": true,
+    "temporary_copy_only": true,
+    "package_and_platform_native_downloads": true,
+    "explicit_type_build_test_and_native_execution": true,
+    "install_lifecycle_scripts_enabled": false,
+    "original_copyback_or_deployment": false
+  },
+  "runner": {
+    "name": "validate-a-install.mjs",
+    "sha256": "3ace131e96c8f66bc8d415acf02e6edf75a01238a57bd535c6ff975bd4b3c4f8",
+    "source_head": "8dd7876192c1290d7d18bd70cc9b6d264aca34c4",
+    "candidate_package_sha256": "6694256b3bbe76baa5bd4e169a266ac62bcb9ebe8db88092f71b4d744330a591",
+    "candidate_lock_sha256": "d0397dedfdbac5fdf8f0eb95aaaaaaba9833cfb58ba0a9a2e0faa75d9cef13bd",
+    "original_dist_manifest": "d093a515eca545d75117ae7b9fb363445502dcfd03c48b7c902ffedd58c7f637",
+    "success_marker": "A_ISOLATED_INSTALL_REGRESSION_OK",
+    "automatic_retry": false,
+    "existing_candidate_reused": true,
+    "new_copy_from_git_objects": true,
+    "source_export_includes_git_metadata": false,
+    "stored_as_chat_artifact": true
+  },
+  "selftest": {
+    "platform": "linux",
+    "node": "v22.16.0",
+    "passed": 17,
+    "failed": 0,
+    "synthetic_manifest_and_lock_fixtures": true,
+    "real_temporary_git_and_node_child_processes": true,
+    "syntax_checked": true,
+    "actual_candidate_installation": false,
+    "macos_product_regression": false
+  },
+  "execution_this_turn": {
+    "primary_session_localmcp_calls": 0,
+    "macos_commands_run": 0,
+    "candidate_package_bodies_installed": false,
+    "candidate_build_or_product_tests_run": false,
+    "existing_e1_or_d_accessed": false,
+    "D_blocked_mutation_retried": false,
+    "package_lock_or_product_source_published": false
+  },
+  "limits": {
+    "cleanup_scope": "Created stage process groups plus native-smoke Miniflare.dispose; not all detached descendants.",
+    "home_is_os_sandbox": false,
+    "temporary_files_retained": true,
+    "original_project_remediated": false,
+    "exactSourceToBuildProven": false,
+    "D_guarded_edit_still_blocked": true,
+    "B_docker_not_authorized_by_this_install_scope": true
+  },
+  "git_change_scope": "onepager, progress, and this authorization/preparation record only",
+  "privacy": "No personal absolute paths, PIDs, session IDs, credentials, access URLs or raw logs stored."
+}

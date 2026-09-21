@@ -13,6 +13,9 @@ import { Assembly, frames, parseFrame, MAX_BYTES } from './relay-protocol.js';
 interface Settings { workerUrl: string; agentToken: string; mcpToken: string; deviceId?: string }
 const DEFAULT_PUBLIC_WORKER_URL='https://localmcp-relay.daodao973597.workers.dev';
 
+// Reject unsafe configuration before local state, registration, or network activity.
+const initialConfig = await config();
+
 await mkdir(stateDir,{recursive:true,mode:0o700});
 const pidFile=resolve(stateDir,'agent.pid');
 let closing = false, ready = false, mcpUrl: string | null = null;
@@ -100,7 +103,7 @@ if (!localReady || closing) {stop(1);} else {
   let attempt=0, busy=false;
   const mcpPath=settings.deviceId?`/mcp/${settings.deviceId}/${settings.mcpToken}`:`/mcp/${settings.mcpToken}`;
   mcpUrl=new URL(mcpPath,origin).href;
-  await writeFile(resolve(stateDir,'connection.json'),JSON.stringify({url:mcpUrl,authentication:'none',transport:'worker-websocket',deviceId:settings.deviceId,root:process.env.LOCALMCP_ROOT||process.cwd()},null,2),{mode:0o600});
+  await writeFile(resolve(stateDir,'connection.json'),JSON.stringify({url:mcpUrl,authentication:'none',transport:'worker-websocket',deviceId:settings.deviceId,root:initialConfig.root},null,2),{mode:0o600});
   const wsUrl=new URL(settings.deviceId?`/agent/${settings.deviceId}`:'/agent',origin);wsUrl.protocol=origin.protocol==='https:'?'wss:':'ws:';
   function connect() {
     if (closing) return;

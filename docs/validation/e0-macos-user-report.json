@@ -1,0 +1,62 @@
+{
+  "recorded_date": "2026-09-19",
+  "gate": "E0",
+  "status": "passed_user_reported",
+  "repository": "dearcloud09/localmcp",
+  "branch": "feat/m1-modular-runtime",
+  "associated_source_commit": "88f455c5c69945bdcb7bd6cda23e9a6dbaceb839",
+  "revision_basis": "The supplied terminal transcript shows Updating d5b4ea9..88f455c and Fast-forward immediately before the run. The remote PR head and runner source were read at the corresponding full SHA. The raw report revision and working-tree contents were not independently verified.",
+  "evidence": {
+    "kind": "user_supplied_terminal_transcript",
+    "command": "npm run verify:minimum",
+    "observed_stage_lines": [
+      "Checking: typecheck",
+      "Checking: build",
+      "Checking: full-tests",
+      "Checking: mcp-smoke"
+    ],
+    "observed_success_marker": "MINIMUM_LOCAL_OK (Docker and live ChatGPT not tested)",
+    "report_path_printed": true,
+    "raw_report_json_received": false,
+    "stage_logs_received": false,
+    "local_identifying_paths_stored": false,
+    "initial_missing_script_error": "Observed before the pull; subsequent updated invocation reached all four stages and the success marker."
+  },
+  "source_cross_check": {
+    "files_read": [
+      "scripts/verify-minimum.mjs",
+      "scripts/lib/verification.mjs",
+      "scripts/smoke-mcp.mjs"
+    ],
+    "conclusion": "At the associated revision, the final marker is emitted only after runStages returns passed. A nonzero exit, timeout, cancellation or launch failure prevents this marker. The final smoke uses the installed SDK and a built stdio server, not a live ChatGPT session."
+  },
+  "stage_results": {
+    "typecheck": "passed_user_reported",
+    "build": "passed_user_reported",
+    "full-tests": "passed_user_reported",
+    "mcp-smoke": "passed_user_reported"
+  },
+  "environment": {
+    "platform": "macOS (user terminal context)",
+    "node_version": null,
+    "npm_version": null,
+    "dirty_working_tree": null,
+    "installed_dependencies_match_lockfile": null
+  },
+  "test_counts": null,
+  "test_skip_count": null,
+  "docker_requested": false,
+  "live_chatgpt_tested": false,
+  "rerun_by_assistant": false,
+  "github_ci_tested": false,
+  "ci_status": "deferred_user_reported_quota_limit",
+  "remaining": [
+    "E0-D actual Docker execution, isolation and timeout cleanup",
+    "E1 live ChatGPT account, remote connection and model tool use",
+    "Other operating-system/runtime combinations",
+    "M2B-03c legacy shell and external MCP global isolation",
+    "M2c product-level concurrency, idempotency and durable recovery",
+    "M3 performance measurement"
+  ],
+  "record_change_scope": "Documentation and verification record only; no runtime, test or dependency changes."
+}

@@ -2,47 +2,81 @@ import { Client } from '@modelcontextprotocol/sdk/client/index.js';
 import { StdioClientTransport } from '@modelcontextprotocol/sdk/client/stdio.js';
 import { AjvJsonSchemaValidator } from '@modelcontextprotocol/sdk/validation/ajv';
 import type { Tool } from '@modelcontextprotocol/sdk/types.js';
+import { ExternalToolPolicy, ExternalToolPolicyError } from '../core/external-tool-policy.js';
 
-export interface McpServerConfig { command:string; args?:string[]; env?:Record<string,string>; }
-interface Loaded { name:string; client:Client; tools:Tool[]; }
+export interface McpServerConfig {
+  command: string; args?: string[]; env?: Record<string, string>; allowedTools?: string[];
+}
+interface Loaded { name: string; client: Client; tools: Tool[]; policy: ExternalToolPolicy; refreshing?: Promise<Tool[]>; }
 export class McpLoader {
-  private loaded:Loaded[]=[];
-  private pending=new Set<Promise<unknown>>();
-  private track<T>(operation:Promise<T>):Promise<T>{this.pending.add(operation);return operation.finally(()=>this.pending.delete(operation));}
-  constructor(private servers:Record<string,McpServerConfig>){}
-  async start(){
+  private loaded: Loaded[] = [];
+  private pending = new Set<Promise<unknown>>();
+  private track<T>(operation: Promise<T>): Promise<T> {
+    this.pending.add(operation);
+    return operation.finally(() => this.pending.delete(operation));
+  }
+  constructor(private servers: Record<string, McpServerConfig>) {}
+  async start() {
+    // Validate ALL configured grants before starting ANY child process.
+    const configured = Object.entries(this.servers).map(([name, cfg]) => ({
+      name, cfg, policy: new ExternalToolPolicy(cfg.allowedTools),
+    }));
     try {
-      for(const [name,cfg] of Object.entries(this.servers)){
-        const client=new Client({name:`localmcp-${name}`,version:'0.3.0'});
-        const transport=new StdioClientTransport({command:cfg.command,args:cfg.args||[],env:cfg.env,stderr:'inherit'});
-        const server={name,client,tools:[] as Tool[]};
+      for (const { name, cfg, policy } of configured) {
+        const client = new Client({ name: `localmcp-${name}`, version: '0.3.0' });
+        const transport = new StdioClientTransport({ command: cfg.command, args: cfg.args || [], env: cfg.env, stderr: 'inherit' });
+        const server: Loaded = { name, client, tools: [], policy };
         this.loaded.push(server);
         await client.connect(transport);
         await this.refresh(server);
       }
-    } catch(error) {await this.close();throw error;}
+    } catch (error) { await this.close(); throw error; }
   }
-  private getServer(name:string):Loaded {
-    const server=this.loaded.find(server=>server.name===name);
-    if(!server)throw new Error(`Unknown MCP server '${name}'`);
+  private getServer(name: string): Loaded {
+    const server = this.loaded.find(server => server.name === name);
+    if (!server) throw new Error(`Unknown MCP server '${name}'`);
     return server;
   }
-  private async refresh(server:Loaded):Promise<Tool[]> {
-    const tools:Tool[]=[];let cursor:string|undefined;
-    do{const page=await server.client.listTools({cursor});tools.push(...page.tools);cursor=page.nextCursor;}while(cursor);
-    server.tools=tools;
-    return tools;
+  private refresh(server: Loaded): Promise<Tool[]> {
+    if (!server.refreshing) {
+      server.refreshing = this.loadCatalog(server).finally(() => { server.refreshing = undefined; });
+    }
+    return server.refreshing;
   }
-  listServers(){return this.loaded.map(({name})=>({name}));}
-  async listTools(server:string):Promise<Tool[]> {return this.track(this.refresh(this.getServer(server)));}
-  async call(serverName:string,toolName:string,args:Record<string,unknown>){
-    const server=this.getServer(serverName);
-    const tool=server.tools.find(tool=>tool.name===toolName);
-    if(!tool)throw new Error(`Unknown MCP tool '${toolName}' on server '${serverName}'; use list_mcp_tools first`);
-    // Each tool gets its own schema scope: unrelated servers may reuse the same $id.
-    const validation=new AjvJsonSchemaValidator().getValidator(tool.inputSchema)(args);
-    if(!validation.valid)throw new Error(`Invalid arguments for MCP tool '${toolName}': ${validation.errorMessage}`);
-    return this.track(server.client.callTool({name:toolName,arguments:args},undefined,{timeout:60000}));
+  private async loadCatalog(server: Loaded): Promise<Tool[]> {
+    // A failed refresh must not leave stale callable descriptors behind.
+    server.tools = [];
+    const tools: Tool[] = [];
+    const cursors = new Set<string>();
+    let cursor: string | undefined, pages = 0;
+    do {
+      if (++pages > 64) throw new ExternalToolPolicyError('MCP_CATALOG_LIMIT');
+      const page = await server.client.listTools({ cursor });
+      tools.push(...page.tools);
+      if (tools.length > 4096) throw new ExternalToolPolicyError('MCP_CATALOG_LIMIT');
+      cursor = page.nextCursor;
+      if (cursor !== undefined) {
+        if (cursors.has(cursor)) throw new ExternalToolPolicyError('MCP_CATALOG_LOOP');
+        cursors.add(cursor);
+      }
+    } while (cursor !== undefined);
+    server.tools = server.policy.accept(tools);
+    return structuredClone(server.tools);
   }
-  async close(){await Promise.allSettled([...this.pending]);await Promise.allSettled(this.loaded.map(server=>server.client.close()));this.loaded=[];}
+  listServers() { return this.loaded.map(({ name }) => ({ name })); }
+  async listTools(server: string): Promise<Tool[]> { return this.track(this.refresh(this.getServer(server))); }
+  async call(serverName: string, toolName: string, args: Record<string, unknown>) {
+    const server = this.getServer(serverName);
+    server.policy.assertAllowed(toolName);
+    const tool = server.tools.find(tool => tool.name === toolName);
+    if (!tool) throw new Error(`Unknown MCP tool '${toolName}' on server '${serverName}'; use list_mcp_tools first`);
+    const validation = new AjvJsonSchemaValidator().getValidator(tool.inputSchema)(args);
+    if (!validation.valid) throw new Error(`Invalid arguments for MCP tool '${toolName}': ${validation.errorMessage}`);
+    return this.track(server.client.callTool({ name: toolName, arguments: args }, undefined, { timeout: 60000 }));
+  }
+  async close() {
+    await Promise.allSettled([...this.pending]);
+    await Promise.allSettled(this.loaded.map(server => server.client.close()));
+    this.loaded = [];
+  }
 }

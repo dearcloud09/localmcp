@@ -1,0 +1,66 @@
+{
+  "date": "2026-09-19",
+  "base_commit": "62b179cadd16c6330f806f3d1163af87e363af49",
+  "scope": "M2B-01b file-tool read/write permissions; not OS isolation",
+  "environment": {
+    "os": "Linux",
+    "node": "22.16.0",
+    "typescript": "5.8.3",
+    "node_type_source": "available global ts-node dependency; not upstream lockfile"
+  },
+  "executed": {
+    "strict_typecheck": "tsc --strict --noEmitOnError, permission resolver/registry and independent module tests only",
+    "test_command": "node --test compiled/test/file-permissions.test.js compiled/test/modular-core.test.js compiled/test/modular-cli.test.js compiled/test/modular-files-process.test.js repo/test/file-permissions-profile.test.mjs",
+    "tests": 67,
+    "pass": 67,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 0,
+    "breakdown": {
+      "new_permission_core_tests": 20,
+      "new_profile_tests": 4,
+      "existing_independent_tests": 43
+    },
+    "syntax": {
+      "files": 11,
+      "errors": []
+    },
+    "combined_log_sha256": "d26b979a50e40192bc21eced2839362ea063b53b31e4a01cae574cefd77ea182"
+  },
+  "not_run": [
+    "full upstream dependency typecheck/build/test",
+    "six new SDK/config/hot-reload integration tests",
+    "updated existing SDK and Worker integration fixtures",
+    "original 28-test profile suite in this run",
+    "macOS and Windows",
+    "live ChatGPT connection",
+    "GitHub CI (user-reported quota; skip ci commit)"
+  ],
+  "network": {
+    "git_clone": "Could not resolve host: github.com",
+    "npm_ping": "EAI_AGAIN registry.npmjs.org"
+  },
+  "source_sha256": {
+    "src/core/file-permissions.ts": "1f68b8388af9525fa61d154fe460095c5189ac03bda05817cc762e0ed96871a5",
+    "src/core/registry.ts": "070bcb6ef550773cdc42f369eb46fcdb03b59f668ca0a4bb43450a47d727314a",
+    "src/config.ts": "27bfe1c2e008c84e2eaec36a746402f885c5375a66f5b9748d004b9d5e66c015",
+    "src/modules/files.ts": "c0542c7b4c81ed462db1ea1dd6cb9500994e5601c545708a560db11d05d69c5c",
+    "src/modules/workspaces.ts": "13fa55b6c9b539840685a3e30601a26b11735897d6e16daef5d2cb37fef73606",
+    "scripts/lib/project-profile.mjs": "0c2f76388c500f828d810b95c360a5baabdbaffc0a7c43d1ae140f62ec318e9c",
+    "package.json": "11bad8a529cbd8a008c18133cf549da4cd2a9c85ed7a30eae9ad792936efe84d",
+    "localmcp.example.json": "ac84a35a328950aa04ec15f62cf065c2d9580f3a142294c4f206743d2674c9bd",
+    "test/localmcp.test.ts": "c08b5cc57029d744df8e5cc21ad1e29478a7ca2a1e5830732441a65def16c3d2",
+    "test/relay.test.ts": "0161e0b4d19ed0f67e3b6c00276d789a8fe9353948f1a15faab68349a25b071d",
+    "test/mcp.test.ts": "8be2f50ec1c672c4867213a912d19afdf825889f3cb5ae50c8ca0af397fd19ec",
+    "test/modular-integration.test.ts": "7949df7453a617c3a355dca5f76a9d21fe41e2fa327178750e213e33f0b8e97f",
+    "test/file-permissions.test.ts": "cfc556bef89f9bf3efd78d8ec5b6cdbc97738fbc0e8c080ad4d677b67c800a8e",
+    "test/file-permissions-integration.test.ts": "1126d518dd438fea842861204dbf627c64f05f4347eb1b8f4341b96296d4c212",
+    "test/file-permissions-profile.test.mjs": "fcf8c782760b4037947998749ce81b706478bf72545623fadce28b9c4b2c0c62"
+  },
+  "limitations": [
+    "Applies to file tools at dispatch, not direct Workspace library access.",
+    "Explicit shell/external MCP may still read/write with host privileges.",
+    "Settings apply to subsequent dispatches; active operations are not rolled back.",
+    "No new network round trip or child MCP added. No latency improvement measured."
+  ]
+}

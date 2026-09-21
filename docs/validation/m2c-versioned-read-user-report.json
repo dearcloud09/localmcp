@@ -1,0 +1,116 @@
+{
+  "date": "2026-09-20",
+  "repository": "dearcloud09/localmcp",
+  "branch": "feat/m1-modular-runtime",
+  "observed_remote_head": "bb92ca9bbd3c9fb8b9a985ea70b4ebccef3756c6",
+  "gate": "separate-chat versioned read",
+  "verdict": "pass",
+  "verdict_scope": "User-relayed single read_file(includeVersion=true) result with recomputed content/length/hash consistency; not guarded-edit E1 or primary-chat access.",
+  "overall_project_verdict": "verification_pending",
+  "evidence": {
+    "type": "user_relayed_separate_chat_tool_result_summary_plus_local_calculation",
+    "raw_tool_transcript_received": false,
+    "raw_macos_file_independently_read": false,
+    "current_session_localmcp_calls": 0,
+    "current_session_macos_commands": 0
+  },
+  "preconditions_reported_from_reused_workspace_response": {
+    "workspace_info_called_again": false,
+    "root_matches_existing_e1": true,
+    "configFile_matches_existing_e1": true,
+    "fileRead": true,
+    "shell": false,
+    "processes": false,
+    "skills": [],
+    "mcpServers": [],
+    "availableChecks": [],
+    "fresh_workspace_response": false,
+    "personal_paths_stored": false
+  },
+  "reported_call": {
+    "name": "read_file",
+    "arguments": {
+      "workspace": "project",
+      "path": "calculator.mjs",
+      "includeVersion": true
+    },
+    "call_count": 1,
+    "bytes": 44,
+    "sha256": "76f26bd292166033d02e77bdb8fe6aec01e915ccb8cb3f93b8971f9dcd78250e",
+    "content_line_without_terminal_newline": "export function add(a, b) { return a + b; }",
+    "additional_calls": false,
+    "other_file_access": false,
+    "mutations": false,
+    "shell_or_process_execution": false,
+    "server_or_git_actions": false
+  },
+  "calculation": {
+    "method": "Reconstruct UTF-8 candidates from displayed code and compare byte lengths/SHA-256. Python hashlib used in assistant work environment, not the Mac.",
+    "candidates": [
+      {
+        "ending": "none",
+        "utf8_bytes": 43,
+        "sha256": "c4b7a01cbde242bf0e133e7afefc62e73fffdac917b0efd9cb40f26ed25d26f0",
+        "matches_reported_sha256": false
+      },
+      {
+        "ending": "LF",
+        "utf8_bytes": 44,
+        "sha256": "76f26bd292166033d02e77bdb8fe6aec01e915ccb8cb3f93b8971f9dcd78250e",
+        "matches_reported_sha256": true
+      },
+      {
+        "ending": "CRLF",
+        "utf8_bytes": 45,
+        "sha256": "2fdce8a21defa6bf4c3007ff7ab5c6db7778420897ee4d34f7f8f22c96acf783",
+        "matches_reported_sha256": false
+      }
+    ],
+    "consistent_candidate": "displayed code plus one terminal LF",
+    "byte_length_match": true,
+    "sha256_match": true,
+    "raw_newline_directly_received": false,
+    "independent_server_observation": false
+  },
+  "scope_limits": {
+    "read_only_gate_completed": true,
+    "all_existing_e1_files_attested_by_this_read": false,
+    "guarded_edit_live_account_tested": false,
+    "replay_live_account_tested": false,
+    "write_permission_exercised": false,
+    "primary_chat_restriction_retested": false,
+    "primary_chat_restriction_cleared": null,
+    "previous_502_cause_proven": false,
+    "exact_running_commit": null,
+    "fresh_build_or_process_provenance": false,
+    "exactSourceToBuildProven": false,
+    "C_scoped_pass_unchanged": true,
+    "actual_docker_verified": false,
+    "dependency_remediation_done": false
+  },
+  "next_gate": {
+    "name": "separate-sample guarded-edit E1",
+    "sample_proposal": [
+      "probe.txt (mutation target)",
+      "reference.txt (immutable)"
+    ],
+    "existing_e1_directory_modified": false,
+    "new_directory_profile_runtime_only": true,
+    "public_relay_scope_approval_required": true,
+    "new_exposure_approved": false,
+    "new_sample_created": false,
+    "new_app_or_registration_created": false,
+    "repeat_read_required": false
+  },
+  "change_scope": {
+    "documentation_only": true,
+    "source_or_tests_changed": false,
+    "previous_evidence_json_modified": false,
+    "permissions_changed": false,
+    "packages_or_images_installed": false,
+    "public_exposure_expanded": false,
+    "main_merged": false,
+    "deployed": false
+  },
+  "privacy": "No personal paths, PIDs, credentials, access URLs, raw logs or E1 challenge values stored."
+}

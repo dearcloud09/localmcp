@@ -1,0 +1,126 @@
+{
+  "date": "2026-09-20",
+  "repository": "dearcloud09/localmcp",
+  "branch": "feat/m1-modular-runtime",
+  "verdict": "verification_pending",
+  "evidence_type": "user_pasted_output_of_hash_verified_readonly_diagnostic",
+  "diagnostic_sha256": "08cf8db8626869a8856cb5b4dac200684ed7d404e4a6428b62049ce64d012650",
+  "assistant_direct_macos_access": false,
+  "observed_remote_head": "2ad5944c07f925c65f6423e121e5da20d7451e77",
+  "terminal": {
+    "node": "v23.11.0",
+    "platform": "darwin",
+    "npm_found": true,
+    "npm_version_from_metadata": "11.4.2",
+    "npm_command_executed": false
+  },
+  "checkouts": [
+    {
+      "label": "R1",
+      "head": "4a5e66c99ca95efe99fc1890942e8ac9c34ce9c8",
+      "branch": "feat/m1-modular-runtime",
+      "changes": 0,
+      "source_m2c_markers": false,
+      "disk_build_m2c_markers": false,
+      "recovery_init_present": false,
+      "non_docs_from_reference": null
+    },
+    {
+      "label": "R2",
+      "head": "8dd7876192c1290d7d18bd70cc9b6d264aca34c4",
+      "branch": "verify/m2c-integration",
+      "changes": 0,
+      "source_m2c_markers": true,
+      "disk_build_m2c_markers": true,
+      "recovery_init_present": true,
+      "non_docs_from_reference": null
+    }
+  ],
+  "shared_lock_sha256": "8185650314a8799924768a54193de71332d3a5c1037a87d58b4e08ba5442b1d4",
+  "r2_build_sha256": {
+    "agent": "b9c986c796a89d264a3570b783179ed707970df17b0580816e1d8d35d22ce725",
+    "index": "07b84c07b4df884194344458d609c10d3d09e61fe627041264c4617afcc8f042",
+    "server": "6efcb065f02ffc462b147846641364916a7bafda60990794b71f1fdd7380344c",
+    "modules/files": "5ed8105897b619a597354cdeb7adf8536a76850b30c3070502967b5642f6a69c",
+    "modules/workspaces": "075a8d29a5e443ba192493daa2b27c3c0c5221be8e08afe2f918656952bbfe48"
+  },
+  "dependency_metadata": {
+    "@modelcontextprotocol/sdk": "1.30.0",
+    "express": "5.2.1",
+    "ws": "8.21.3",
+    "zod": "4.5.4",
+    "tsx": "4.23.13",
+    "typescript": "7.0.2"
+  },
+  "e1": {
+    "control_error": "ECONNREFUSED",
+    "normal_status_received": false,
+    "existing_worker_state_file": true,
+    "existing_connection_record": true,
+    "recorded_pid_present": true,
+    "live_pid_confirmed": false,
+    "log_tail_available": false,
+    "matching_processes": 0,
+    "ps_available": true,
+    "lsof_available": true,
+    "process_scan_scope": "Same-user Node/localmcp processes associated with the two named checkout cwd values or recorded/live E1 PID. Not a system-wide absence proof."
+  },
+  "docker": {
+    "cli_found_on_path": false,
+    "installed_system_wide": null,
+    "daemon_available": null,
+    "reviewed_image_available": null
+  },
+  "remote_compare": {
+    "base": "8dd7876192c1290d7d18bd70cc9b6d264aca34c4",
+    "head": "2ad5944c07f925c65f6423e121e5da20d7451e77",
+    "ahead_by": 2,
+    "changed_files": 4,
+    "all_under_docs": true,
+    "source_tests_dependencies_changed": false
+  },
+  "inferences": {
+    "current_e1_control_path_unavailable": true,
+    "historical_502_origin_or_shutdown_cause_proven": false,
+    "old_schema_and_502_same_cause_proven": false,
+    "r1_has_old_disk_code_but_prior_execution_from_r1_unproven": true,
+    "r2_selected_for_independent_execution": true,
+    "source_to_disk_build_proven": false
+  },
+  "prepared_next_actions": {
+    "A": "Run an independent R2 npm audit, save private raw report, print scoped findings; compare project state before/after.",
+    "connection": "Preflight existing E1 session, sample, profile, registration and R2 build; use existing general lifecycle start with E1 HOME; sanitize URL-bearing output; read back status.",
+    "B": "Check a fixed list of existing Docker CLI locations only. No install/start/pull.",
+    "C": "Use R2 with independent fixture/profile/journal and stdio/loopback HTTP child servers; execution pending.",
+    "D": "After ready evidence, call workspace_info once. Reconnection is not a new guarded-edit E1 pass."
+  },
+  "operator_script_sha256": {
+    "audit.mjs": "50ec48a0e9d88b5cc3e7bf0c9d8f2014c4bb9f41b1879daf55e3dbb5f05af65b",
+    "reconnect.mjs": "2d7f02e1b1a4fd82289ae73bca7d1e2692d90423a7fa1f2fe414e2ae10b65238"
+  },
+  "operator_self_test": {
+    "syntax_checks": 2,
+    "synthetic_checks": 10,
+    "environment": "assistant Linux / Node v22.16.0",
+    "real_macos_or_live_relay_test": false,
+    "real_npm_audit": false,
+    "fixture_identity_substitutions_and_command_helper_stubs": true
+  },
+  "executed_this_turn": {
+    "localmcp_retry": false,
+    "npm_audit": false,
+    "server_start": false,
+    "actual_docker": false,
+    "full_durable_lifecycle": false,
+    "new_live_chatgpt_e1": false
+  },
+  "change_scope": {
+    "documentation_only": true,
+    "product_source_or_tests_changed": false,
+    "existing_e1_or_evidence_changed": false,
+    "permissions_expanded": false,
+    "main_merged": false,
+    "deployed": false
+  },
+  "privacy": "No credentials, connection URLs, raw argv/env, personal paths, PID values or challenges stored."
+}

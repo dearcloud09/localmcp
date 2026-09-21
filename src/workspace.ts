@@ -1,10 +1,16 @@
 import { constants } from 'node:fs';
-import { lstat, open, readdir, mkdir, rm, rename, stat as fsStat } from 'node:fs/promises';
+import { lstat, open, readdir, mkdir, rm, rename, stat as fsStat, rmdir, realpath } from 'node:fs/promises';
 import { createHash, randomBytes } from 'node:crypto';
 import { resolve, relative, isAbsolute, sep, dirname, basename } from 'node:path';
 
+import { fileMutationQueue, fileMutationJournal, mutationPath, MutationError, type MutationJournalBackend } from './core/mutation-coordinator.js';
+import { assertFileToolPath, assertMutableTree, isSensitivePath, SensitivePathError } from './core/sensitive-paths.js';
+
 const MAX_TEXT_BYTES = 1024 * 1024;
 const DEFAULT_IGNORES = new Set(['.git', 'node_modules']);
+
+export interface EditOptions { expectedSha256?: string; operationId?: string }
+const digest = (content: string | Buffer): string => createHash('sha256').update(content).digest('hex');
 
 export interface LineEdit { startLine: number; endLine: number; replacement: string }
 
@@ -22,12 +28,46 @@ function globToRegExp(glob: string) {
 }
 
 export class Workspace {
-  constructor(readonly root:string) {}
+  constructor(readonly root:string, private readonly mutationJournal: MutationJournalBackend = fileMutationJournal) {}
+
+  private async mutationKeys(inputs: string[]): Promise<{ scope: string; paths: string[] }> {
+    const root = await realpath(this.root);
+    const paths = inputs.map(input => {
+      const target = resolve(this.root, input), rel = relative(this.root, target);
+      if (rel === '..' || rel.startsWith(`..${sep}`) || isAbsolute(rel)) throw new Error('Path is outside workspace');
+      assertFileToolPath(rel);
+      return resolve(root, rel);
+    });
+    return { scope: mutationPath(root), paths };
+  }
+
+  private async mutate<T>(inputs: string[], action: () => Promise<T>): Promise<T> {
+    const keys = await this.mutationKeys(inputs);
+    return fileMutationQueue.run(keys.paths, action);
+  }
+
+  private async editOperation<T extends object>(path: string, payload: unknown, options: EditOptions, action: () => Promise<T>): Promise<T & { operationId?: string; replayed?: boolean }> {
+    if (options.expectedSha256 !== undefined && !/^[a-f0-9]{64}$/.test(options.expectedSha256)) {
+      throw new MutationError('INVALID_EXPECTED_SHA256');
+    }
+    if (options.operationId !== undefined && options.expectedSha256 === undefined) {
+      throw new MutationError('OPERATION_ID_REQUIRES_EXPECTED_SHA256');
+    }
+    const keys = await this.mutationKeys([path]);
+    const execute = () => fileMutationQueue.run(keys.paths, action);
+    if (options.operationId === undefined) return execute();
+    const fingerprint = digest(JSON.stringify([mutationPath(keys.paths[0]), options.expectedSha256, payload]));
+    const result = await this.mutationJournal.run(keys.scope, options.operationId, fingerprint, execute);
+    return { ...result.value, operationId: options.operationId, replayed: result.replayed };
+  }
 
   async path(input: string, createParents = false): Promise<string> {
     const target = resolve(this.root, input);
     const rel = relative(this.root, target);
     if (rel === '..' || rel.startsWith(`..${sep}`) || isAbsolute(rel)) throw new Error('Path is outside workspace');
+    assertFileToolPath(rel);
+    const rootInfo = await lstat(this.root);
+    if (rootInfo.isSymbolicLink() || !rootInfo.isDirectory()) throw new SensitivePathError('INVALID_WORKSPACE');
     const parts = rel.split(sep).filter(Boolean);
     let current = this.root;
     for (let i = 0; i < parts.length; i++) {
@@ -40,21 +80,44 @@ export class Workspace {
         if (error.code !== 'ENOENT') throw error;
         if (i < parts.length - 1) {
           if (!createParents) throw error;
-          await mkdir(current);
+          try { await mkdir(current); }
+          catch (createError: any) {
+            if (createError.code !== 'EEXIST') throw createError;
+            const parent = await lstat(current);
+            if (parent.isSymbolicLink() || !parent.isDirectory()) throw new Error('Parent is not a directory');
+          }
         }
       }
     }
     return target;
   }
 
-  async read(path: string) {
+  async readVersion(path: string) {
     const file = await open(await this.path(path), constants.O_RDONLY | constants.O_NOFOLLOW);
     try {
       const info = await file.stat();
+      if (info.nlink !== 1) throw new SensitivePathError('HARDLINK_BLOCKED');
       if (!info.isFile() || info.size > MAX_TEXT_BYTES) throw new Error('Only regular text files up to 1 MiB are supported');
-      return await file.readFile('utf8');
+      // Bound allocation even when an external writer grows the file during read.
+      const buffer = Buffer.alloc(Math.min(info.size + 1, MAX_TEXT_BYTES + 1)); let length = 0;
+      while (length < buffer.length) {
+        const { bytesRead } = await file.read(buffer, length, buffer.length - length, null);
+        if (!bytesRead) break;
+        length += bytesRead;
+      }
+      if (length > MAX_TEXT_BYTES) throw new Error('Content exceeds 1 MiB');
+      const after = await file.stat();
+      const stamp = (v: typeof info) => [v.dev, v.ino, v.size, v.mtimeMs, v.ctimeMs, v.mode, v.nlink].join(':');
+      if (stamp(info) !== stamp(after) || length !== after.size) throw new MutationError('FILE_CHANGED_DURING_READ');
+      const bytes = buffer.subarray(0, length);
+      let content: string;
+      try { content = new TextDecoder('utf-8', { fatal: true, ignoreBOM: true }).decode(bytes); }
+      catch { throw new MutationError('INVALID_UTF8'); }
+      return { content, sha256: digest(bytes), bytes: length, stamp: stamp(after) };
     } finally { await file.close(); }
   }
+
+  async read(path: string) { return (await this.readVersion(path)).content; }
 
   async readLines(path: string, startLine = 1, endLine?: number) {
     if (startLine < 1 || (endLine !== undefined && endLine < startLine)) throw new Error('Invalid line range');
@@ -72,8 +135,12 @@ export class Workspace {
   }
 
   async write(path: string, content: string, overwrite: boolean) {
+    return this.mutate([path], () => this.writeUnlocked(path, content, overwrite));
+  }
+
+  private async writeUnlocked(path: string, content: string, overwrite: boolean, expected?: { sha256: string; stamp: string }) {
     if (Buffer.byteLength(content) > MAX_TEXT_BYTES) throw new Error('Content exceeds 1 MiB');
-    const target = await this.path(path, true);
+    const target = await this.path(path, !expected);
     if (!overwrite) {
       const file = await open(target, constants.O_WRONLY | constants.O_CREAT | constants.O_EXCL | constants.O_NOFOLLOW, 0o600);
       try { await file.writeFile(content, 'utf8'); }
@@ -81,9 +148,12 @@ export class Workspace {
       return {path: relative(this.root, target), bytes: Buffer.byteLength(content)};
     }
 
+    let mode = 0o600;
     try {
       const current = await lstat(target);
       if (current.isSymbolicLink() || !current.isFile() || current.nlink > 1) throw new Error('Only regular files with one hard link can be overwritten');
+      // Preserve ordinary permission bits, never copy setuid/setgid bits.
+      mode = current.mode & 0o777;
     } catch (error: any) {
       if (error.code !== 'ENOENT') throw error;
     }
@@ -91,16 +161,28 @@ export class Workspace {
     const temp = resolve(dirname(target), `.${basename(target)}.localmcp-${randomBytes(8).toString('hex')}`);
     const file = await open(temp, constants.O_WRONLY | constants.O_CREAT | constants.O_EXCL | constants.O_NOFOLLOW, 0o600);
     try {
-      await file.writeFile(content, 'utf8');
-      await file.sync();
-    } finally { await file.close(); }
-    try { await rename(temp, target); }
-    catch (error) { await rm(temp, {force: true}); throw error; }
+      try {
+        await file.writeFile(content, 'utf8');
+        await file.chmod(mode);
+        await file.sync();
+      } finally { await file.close(); }
+      if (expected) {
+        // Best-effort external-writer detection; not an OS-atomic compare-and-swap.
+        const current = await this.readVersion(path);
+        if (current.sha256 !== expected.sha256 || current.stamp !== expected.stamp) throw new MutationError('FILE_VERSION_CONFLICT');
+      }
+      await rename(temp, target);
+    } catch (error) {
+      await rm(temp, {force: true});
+      throw error;
+    }
     return {path: relative(this.root, target), bytes: Buffer.byteLength(content)};
   }
 
   async list(path: string, offset: number, limit: number) {
-    const entries = (await readdir(await this.path(path), {withFileTypes: true})).sort((a,b) => a.name.localeCompare(b.name));
+    const entries = (await readdir(await this.path(path), {withFileTypes: true}))
+      .filter(entry => !entry.isSymbolicLink() && !isSensitivePath(relative(this.root, resolve(this.root, path, entry.name))))
+      .sort((a,b) => a.name.localeCompare(b.name));
     return {entries: entries.slice(offset, offset + limit).map(e => ({name: e.name, type: e.isSymbolicLink() ? 'symlink' : e.isDirectory() ? 'directory' : 'file'})), total: entries.length, nextOffset: offset + limit < entries.length ? offset + limit : null};
   }
 
@@ -127,6 +209,7 @@ export class Workspace {
         if (DEFAULT_IGNORES.has(entry.name) || entry.isSymbolicLink()) continue;
         const full = resolve(dir, entry.name);
         const rel = relative(this.root, full).split(sep).join('/');
+        if (isSensitivePath(rel)) continue;
         if (entry.isDirectory()) {
           results.push({path: rel + '/', type: 'directory'});
           if (depth < maxDepth) await visit(full, depth + 1);
@@ -183,44 +266,89 @@ export class Workspace {
     return {matches, truncated: matches.length >= maxResults};
   }
 
-  async applyEdits(path: string, edits: LineEdit[], expectedSha256?: string) {
-    const old = await this.read(path);
-    const beforeHash = createHash('sha256').update(old).digest('hex');
-    if (expectedSha256 && expectedSha256 !== beforeHash) throw new Error('File changed since it was read (sha256 mismatch)');
-    const lines = old.split('\n');
-    const sorted = [...edits].sort((a,b) => b.startLine - a.startLine);
-    let previousStart = Number.POSITIVE_INFINITY;
-    for (const edit of sorted) {
-      if (edit.startLine < 1 || edit.endLine < edit.startLine || edit.endLine > lines.length) throw new Error('Invalid edit line range');
-      if (edit.endLine >= previousStart) throw new Error('Edits overlap');
-      lines.splice(edit.startLine - 1, edit.endLine - edit.startLine + 1, ...edit.replacement.split('\n'));
-      previousStart = edit.startLine;
-    }
-    const content = lines.join('\n');
-    await this.write(path, content, true);
-    return {path, beforeSha256: beforeHash, afterSha256: createHash('sha256').update(content).digest('hex'), edits: edits.length, bytes: Buffer.byteLength(content)};
+  async editText(path: string, oldText: string, newText: string, options: EditOptions = {}) {
+    options = { ...options };
+    return this.editOperation(path, ['edit_file', oldText, newText], options, async () => {
+      if (typeof oldText !== 'string' || !oldText || typeof newText !== 'string') throw new MutationError('INVALID_EDIT_TEXT');
+      const before = await this.readVersion(path);
+      if (options.expectedSha256 && options.expectedSha256 !== before.sha256) throw new MutationError('FILE_VERSION_CONFLICT');
+      const index = before.content.indexOf(oldText);
+      if (index < 0 || before.content.indexOf(oldText, index + 1) >= 0) throw new Error('oldText must match exactly once');
+      const content = before.content.slice(0, index) + newText + before.content.slice(index + oldText.length);
+      const written = await this.writeUnlocked(path, content, true, before);
+      return { ...written, beforeSha256: before.sha256, afterSha256: digest(content) };
+    });
+  }
+
+  async applyEdits(path: string, edits: LineEdit[], expectedSha256?: string, operationId?: string) {
+    edits = edits.map(e => ({ startLine: e.startLine, endLine: e.endLine, replacement: e.replacement }));
+    return this.editOperation(path, ['apply_patch', edits.map(e => [e.startLine, e.endLine, e.replacement])],
+      { expectedSha256, operationId }, async () => {
+      const before = await this.readVersion(path);
+      const beforeHash = before.sha256;
+      if (expectedSha256 && expectedSha256 !== beforeHash) throw new MutationError('FILE_VERSION_CONFLICT');
+      if (!edits.length || edits.length > 100) throw new Error('Invalid edit count');
+      const lines = before.content.split('\n');
+      const sorted = [...edits].sort((a,b) => b.startLine - a.startLine);
+      let previousStart = Number.POSITIVE_INFINITY;
+      for (const edit of sorted) {
+        if (!Number.isInteger(edit.startLine) || !Number.isInteger(edit.endLine) || typeof edit.replacement !== 'string' ||
+            edit.startLine < 1 || edit.endLine < edit.startLine || edit.endLine > lines.length) throw new Error('Invalid edit line range');
+        if (edit.endLine >= previousStart) throw new Error('Edits overlap');
+        lines.splice(edit.startLine - 1, edit.endLine - edit.startLine + 1, ...edit.replacement.split('\n'));
+        previousStart = edit.startLine;
+      }
+      const content = lines.join('\n');
+      await this.writeUnlocked(path, content, true, before);
+      return {path, beforeSha256: beforeHash, afterSha256: digest(content), edits: edits.length, bytes: Buffer.byteLength(content)};
+    });
   }
 
   async createDirectory(path: string) {
+    return this.mutate([path], () => this.createDirectoryUnlocked(path));
+  }
+
+  private async createDirectoryUnlocked(path: string) {
     const target = await this.path(path, true);
     await mkdir(target, {recursive: false});
     return {path: relative(this.root, target)};
   }
 
   async delete(path: string, recursive: boolean) {
+    return this.mutate([path], () => this.deleteUnlocked(path, recursive));
+  }
+
+  private async deleteUnlocked(path: string, recursive: boolean) {
     const target = await this.path(path);
     if (target === this.root) throw new Error('Cannot delete workspace root');
     const info = await lstat(target);
     if (info.isSymbolicLink()) throw new Error('Symbolic links are not allowed');
-    if (info.isDirectory() && !recursive) await rm(target, {recursive: false});
+    await assertMutableTree(this.root, target);
+    if (info.isDirectory() && !recursive) await rmdir(target);
     else await rm(target, {recursive, force: false});
     return {path: relative(this.root, target)};
   }
 
   async move(from: string, to: string, overwrite: boolean) {
+    // Preserve root-move denial before validating destination mutation keys.
+    if (resolve(this.root, from) === resolve(this.root)) throw new Error('Cannot move workspace root');
+    return this.mutate([from, to], () => this.moveUnlocked(from, to, overwrite));
+  }
+
+  private async moveUnlocked(from: string, to: string, overwrite: boolean) {
     const source = await this.path(from);
+    if (source === this.root) throw new Error('Cannot move workspace root');
     const sourceInfo = await lstat(source);
     if (sourceInfo.isSymbolicLink()) throw new Error('Symbolic links are not allowed');
+    // Validate both trees before creating destination parents or moving any file.
+    await assertMutableTree(this.root, source);
+    const candidate = resolve(this.root, to);
+    if (candidate === this.root) throw new Error('Cannot replace workspace root');
+    const candidateRel = relative(this.root, candidate);
+    if (candidateRel === '..' || candidateRel.startsWith(`..${sep}`) || isAbsolute(candidateRel)) throw new Error('Path is outside workspace');
+    assertFileToolPath(candidateRel);
+    try { await lstat(candidate); await assertMutableTree(this.root, await this.path(to)); }
+    catch (error: any) { if (error.code !== 'ENOENT') throw error; }
     const target = await this.path(to, true);
     if (!overwrite) {
       try { await lstat(target); throw new Error('Destination already exists'); }

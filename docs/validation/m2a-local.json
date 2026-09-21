@@ -1,0 +1,50 @@
+{
+  "date": "2026-09-18",
+  "base_commit": "d5b4ea9511c5c05229bb34ab52747553a61e3f03",
+  "environment": {
+    "os": "Linux",
+    "node": "22.16.0",
+    "npm": "10.9.2"
+  },
+  "new_profile_tests": {
+    "command": "node --test test/project-profile.test.mjs",
+    "tests": 28,
+    "pass": 28,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 0
+  },
+  "npm_entrypoint": {
+    "command": "npm run test:profile",
+    "tests": 28,
+    "pass": 28,
+    "note": "Same suite, not 28 additional distinct tests."
+  },
+  "demo_checks": {
+    "before_source_fix": {
+      "tests": 3,
+      "fail": 3,
+      "exit_code": 1
+    },
+    "after_source_fix": {
+      "tests": 3,
+      "pass": 3,
+      "exit_code": 0
+    },
+    "test_file_unchanged": true,
+    "chatgpt_performed_edit": false
+  },
+  "not_run": [
+    "current full repository typecheck/build/combined tests",
+    "current macOS or Windows run",
+    "SDK/Worker integration",
+    "live ChatGPT connection",
+    "GitHub CI (user-reported quota limit)"
+  ],
+  "network_issue": "git clone could not resolve github.com",
+  "source_sha256": {
+    "scripts/lib/project-profile.mjs": "676a80db5e997e2de47db66eee70048202376470e2bd322fb3299554057fabce",
+    "scripts/project-profile.mjs": "4b5c0493ae513fc855601dd6b2c96c73c382807fcdbb7702292d4aa36605302d",
+    "test/project-profile.test.mjs": "ebfef9d8f04e8fcf2c94859b50fcf642d1d143119895c91ecd27a71683886594"
+  }
+}

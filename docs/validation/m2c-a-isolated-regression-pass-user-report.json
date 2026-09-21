@@ -1,0 +1,265 @@
+{
+  "date_recorded": "2026-09-20",
+  "repository": "dearcloud09/localmcp",
+  "branch": "feat/m1-modular-runtime",
+  "observed_remote_head": "37b9db434cce420f1d407f63c263bd13311c69a9",
+  "gate": "A isolated candidate installation and regression",
+  "verdict": "pass",
+  "verdict_scope": "Enumerated candidate-only installation/regression gates accepted on user-reported execution compared with the delivered runner. Not source-worktree or remote-manifest remediation.",
+  "overall_project_verdict": "verification_pending",
+  "evidence": {
+    "type": "user_pasted_complete_final_summary_compared_with_original_runner_and_prior_reports",
+    "assistant_direct_macos_execution": false,
+    "raw_final_report_received": false,
+    "raw_candidate_manifests_received": false,
+    "raw_audit_report_received": false,
+    "raw_dependency_package_bytes_received": false,
+    "execution_timestamp_supplied": false,
+    "localmcp_calls_this_turn": 0,
+    "product_tests_rerun_this_turn": false
+  },
+  "runner_review": {
+    "original_zip_read": true,
+    "runner_sha256": "8a6b98cb6710882a59b43bfdfd82209db3df8b8ec61ef078fb64a2715cf933c3",
+    "native_script_sha256": "feaa4882d1addb7e2cdff943dedb80b82333518e97aa8017e2a923e8c3e28fdc",
+    "both_hashes_recomputed_and_match": true,
+    "prior_evidence_and_finalization_guards_reviewed": true,
+    "criteria_changed_after_result": false,
+    "new_synthetic_tests_run": false
+  },
+  "candidate": {
+    "sourceHead": "8dd7876192c1290d7d18bd70cc9b6d264aca34c4",
+    "packageSha256": "6694256b3bbe76baa5bd4e169a266ac62bcb9ebe8db88092f71b4d744330a591",
+    "lockSha256": "d0397dedfdbac5fdf8f0eb95aaaaaaba9833cfb58ba0a9a2e0faa75d9cef13bd",
+    "versions": {
+      "wrangler": "4.131.0",
+      "miniflare": "5.20260910.0-alpha",
+      "sharp": "0.35.4",
+      "workerd": "1.20260910.1",
+      "@cloudflare/workers-types": "5.20260910.1"
+    },
+    "raw_manifest_hashes_recomputed_by_primary_session": false
+  },
+  "user_result": {
+    "status": "A_ISOLATED_INSTALL_REGRESSION_OK",
+    "phaseExit": 0,
+    "endMarker": "LOCALMCP_A_NATIVE_RESUME_END",
+    "node": "v23.11.0",
+    "npm": "11.4.2",
+    "platform": "darwin",
+    "arch": "arm64",
+    "stages": [
+      {
+        "stage": "miniflare-options-types",
+        "status": "passed",
+        "exitCode": 0,
+        "signal": null,
+        "reason": null,
+        "cleanupConfirmed": true
+      },
+      {
+        "stage": "native-smoke-v5",
+        "status": "passed",
+        "exitCode": 0,
+        "signal": null,
+        "reason": null,
+        "cleanupConfirmed": true
+      },
+      {
+        "stage": "installed-audit",
+        "status": "passed",
+        "exitCode": 0,
+        "signal": null,
+        "reason": null,
+        "cleanupConfirmed": true
+      }
+    ],
+    "installedOptionsTypesChecked": true,
+    "nativeCheckpoints": [
+      {
+        "check": "installed-versions",
+        "status": "passed"
+      },
+      {
+        "check": "sharp-png-round-trip",
+        "status": "passed"
+      },
+      {
+        "check": "workerd-version",
+        "status": "passed"
+      },
+      {
+        "check": "miniflare-constructor",
+        "status": "passed"
+      },
+      {
+        "check": "miniflare-ready-loopback",
+        "status": "passed"
+      },
+      {
+        "check": "miniflare-local-response",
+        "status": "passed"
+      },
+      {
+        "check": "miniflare-disposed",
+        "status": "passed"
+      }
+    ],
+    "nativeSmoke": {
+      "status": "A_NATIVE_SMOKE_V5_OK",
+      "versions": {
+        "wrangler": "4.131.0",
+        "miniflare": "5.20260910.0-alpha",
+        "sharp": "0.35.4",
+        "workerd": "1.20260910.1",
+        "@cloudflare/workers-types": "5.20260910.1"
+      },
+      "sharpPngRoundTrip": true,
+      "vips": "8.18.6",
+      "workerdVersionDate": "2026-09-10",
+      "miniflareLocalRequest": true,
+      "miniflareDisposed": true
+    },
+    "audit": {
+      "exitCode": 0,
+      "validAuditReport": true,
+      "counts": {
+        "info": 0,
+        "low": 0,
+        "moderate": 0,
+        "high": 0,
+        "critical": 0,
+        "total": 0
+      },
+      "findings": []
+    }
+  },
+  "reused_evidence": {
+    "successful_stages": [
+      "npm-version",
+      "npm-ci",
+      "typecheck",
+      "build",
+      "short-ipc-probe",
+      "tsx-startup-probe",
+      "full-tests",
+      "sdk-smoke",
+      "wrangler-version"
+    ],
+    "testSummaryGroups": [
+      {
+        "tests": 336,
+        "suites": 0,
+        "pass": 336,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      {
+        "tests": 32,
+        "suites": 0,
+        "pass": 32,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      {
+        "tests": 11,
+        "suites": 0,
+        "pass": 11,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      }
+    ],
+    "reusedTestPassCount": 379,
+    "tests_rerun_in_final_native_resume": false,
+    "counts_not_combined_with_sdk_fixture_C_or_synthetic_tests": true,
+    "sdkSmoke": {
+      "status": "passed",
+      "transport": "real-sdk-stdio",
+      "before": {
+        "fail": 3
+      },
+      "after": {
+        "pass": 3
+      },
+      "stalePatchRejected": true
+    },
+    "wranglerCliVersion": "4.131.0",
+    "priorResumeReportSha256": "3b06870f1b41d5011ad744fb2460fb0422110e6c7f2b9c9da1ed1dbfd1b7fc8c",
+    "priorInstallReportSha256": "b75dc8da6845f774f429b943eba4883f4953135e492744d730769bded4086c53",
+    "prior_raw_report_hashes_independently_recomputed": false
+  },
+  "reported_invariance": {
+    "originalProjectUnchanged": true,
+    "originalCandidateUnchanged": true,
+    "priorEvidenceUnchanged": true,
+    "installedHiddenLockUnchanged": true,
+    "executionAndOptionsFilesUnchanged": true,
+    "candidateFilesAndTrackedSourceUnchanged": true,
+    "candidateBuildUnchanged": true
+  },
+  "cleanup": {
+    "cleanupConfirmed": true,
+    "miniflareDisposed": true,
+    "scope": "New stage process groups plus Miniflare.dispose; not an independent census of all detached descendants.",
+    "shortTemporaryDirectoryRetained": true,
+    "newLogsRetained": true
+  },
+  "limits": {
+    "audit_scope": "npm audit after installation with dev/optional/peer included; registry findings at execution time, not a native-binary security assessment",
+    "sharp_scope": "2x2 RGB PNG encode/decode round trip; no HEIF/libheif exploit or advisory regression test",
+    "platform_scope": "reported macOS arm64 only",
+    "node_modules_all_bytes_attested": false,
+    "cross_platform_execution_verified": false,
+    "source_to_build_reproducibility_verified": false,
+    "exactSourceToBuildProven": false,
+    "reproducibleBuildVerified": false,
+    "copiedBackToProject": false,
+    "productionFixApplied": false,
+    "remote_package_lock_applied": false
+  },
+  "execution_boundaries_reported": {
+    "installRun": false,
+    "buildRun": false,
+    "fullTestsRerun": false,
+    "sdkSmokeRerun": false,
+    "wranglerVersionRerun": false,
+    "dependencyChangesRequested": false,
+    "sourceModifiedByHelper": false,
+    "installLifecycleScriptsDisabled": true,
+    "existingE1OrDAccessed": false,
+    "publicRelayUsed": false,
+    "dockerUsed": false,
+    "automaticRetry": false
+  },
+  "acceptance": {
+    "all_three_new_stages_passed": true,
+    "seven_native_checkpoints_unique_and_complete": true,
+    "native_response_and_dispose_confirmed_on_user_report": true,
+    "installed_audit_zero": true,
+    "all_required_invariance_flags_true": true,
+    "scoped_install_regression_gate_closed": true,
+    "repeat_test_required": false
+  },
+  "next_gate": {
+    "action": "Obtain the exact tested package.json and package-lock.json bytes, verify hashes and remote diff, then decide/apply the bounded manifest change on the working branch.",
+    "candidate_regeneration_required": false,
+    "remote_manifest_write_performed": false,
+    "mac_original_copyback_performed": false,
+    "new_install_or_server_change_requested": false
+  },
+  "preserved": {
+    "C_prior_scoped_pass": true,
+    "E1_prior_readonly_pass": true,
+    "D_guarded_edit": "blocked; dedicated agent previously stopped",
+    "B_actual_docker": "unexecuted",
+    "past_failure_and_preparation_json_unchanged": true
+  },
+  "git_change_scope": "Documentation and this new evidence record only; no source, test, manifest, lockfile, main merge, deployment, permission, or cost changes.",
+  "privacy": "Personal paths, PIDs, session IDs, credentials, access URLs, raw logs, and path-dependent options are omitted."
+}

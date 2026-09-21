@@ -1,0 +1,57 @@
+{
+  "recorded_date": "2026-09-19",
+  "repository": "dearcloud09/localmcp",
+  "branch": "feat/m1-modular-runtime",
+  "documentation_base_commit": "2e9339a882b4c7399507e03b6108460305909ba8",
+  "evidence_type": "user_pasted_local_check_json_correlated_with_user_forwarded_chat_session_answer",
+  "status": "passed_on_user_provided_evidence",
+  "scope": "E1 files-only connection, specified source edit, reread and local sample check",
+  "previous_record": "docs/validation/e1-chat-session-user-report.json",
+  "previous_record_preserved_as": "historical pre-local-check report",
+  "local_report_received": {
+    "status": "E1_LOCAL_CHECK_OK",
+    "tests": 3,
+    "pass": 3,
+    "changedFiles": [
+      "calculator.mjs"
+    ],
+    "testFileUnchanged": true,
+    "chatgptActorVerified": false,
+    "meaning": "Compare this challenge with actual ChatGPT MCP calls; local files alone cannot attribute the edit."
+  },
+  "challenge_comparison": {
+    "encoding": "SHA-256 of UTF-8 challenge without trailing newline",
+    "prior_report_sha256": "8222d6c37149e230698a76bb890bc57f1c3b9ccc8d6971347708f2645a52a9d4",
+    "local_report_sha256": "8222d6c37149e230698a76bb890bc57f1c3b9ccc8d6971347708f2645a52a9d4",
+    "raw_strings_match": true,
+    "hashes_match": true,
+    "raw_challenge_published": false
+  },
+  "acceptance": {
+    "e1_files_only_minimum": "pass",
+    "basis": "User-reported app connection and forwarded chat execution answer plus matching successful local check JSON.",
+    "independent_actor_attestation": false,
+    "not_required": [
+      "Repeat E0",
+      "Reinstall dependencies",
+      "Regenerate E1 session",
+      "Repeat edit or check without a new failure"
+    ]
+  },
+  "verification_limits": {
+    "raw_tool_calls_inspected_in_this_chat": false,
+    "approval_trace_inspected": false,
+    "mac_files_read_in_this_chat": false,
+    "original_evidence_file_uploaded": false,
+    "executed_revision_independently_verified": false,
+    "tests_rerun_by_assistant_this_turn": false,
+    "server_shutdown_verified": false,
+    "app_disconnection_verified": false,
+    "live_docker_verified": false,
+    "general_coding_performance_verified": false,
+    "production_security_audit": false
+  },
+  "next_gate": "E0-D: establish available local Docker and a reviewed existing image, then exercise real sandbox checks.",
+  "privacy": "No connection URL, access token, personal local path, or raw challenge stored.",
+  "code_changed_by_this_update": false
+}

@@ -1,0 +1,111 @@
+{
+  "date_recorded": "2026-09-20",
+  "repository": "dearcloud09/localmcp",
+  "branch": "feat/m1-modular-runtime",
+  "observed_remote_head": "0bd374cd639b70ecf6fb5718f08c3581f5827211",
+  "gate": "D post-block state inspection and dedicated-agent shutdown",
+  "verdict": "pass",
+  "verdict_scope": "User-reported successful status then stop for the same D session; not a guarded-edit pass.",
+  "D_guarded_edit_verdict": "blocked",
+  "overall_project_verdict": "verification_pending",
+  "evidence": {
+    "type": "user_pasted_operator_output_checked_against_original_script",
+    "same_session_as_prior_block_report": true,
+    "session_uuid_stored": false,
+    "execution_timestamp_supplied": false,
+    "raw_control_responses_received": false,
+    "direct_macos_execution_by_primary_session": false,
+    "current_turn_localmcp_calls": 0
+  },
+  "reported_status": {
+    "section": "D_status",
+    "status": "D_READY",
+    "ready": true,
+    "sampleState": "before",
+    "clipboardCopied": null,
+    "mcpToolCalled": false,
+    "phaseExit": 0
+  },
+  "reported_stop": {
+    "section": "D_stop",
+    "status": "D_STOPPED",
+    "onlyDedicatedAgentStopped": true,
+    "sessionFilesRetained": true,
+    "remoteRegistrationDeleted": false,
+    "appDeleted": false,
+    "existingE1Accessed": false,
+    "phaseExit": 0
+  },
+  "script_review": {
+    "artifact": "d-session.mjs",
+    "sha256": "16da8fc1721e5c4d7cbe712d5979175b8192a832909075fef6aaf56a561cc072",
+    "original_uploaded_zip_read": true,
+    "hash_matches_delivered_version": true,
+    "status_and_stop_branches_reviewed": true,
+    "script_modified": false,
+    "product_test_rerun": false,
+    "status_assertions_implied_by_success": [
+      "profile/session/launch and live agent identity match",
+      "registration and connection record match",
+      "exact two-file sample set",
+      "reference content matches session baseline",
+      "probe bytes equal state=before followed by LF"
+    ],
+    "stop_assertions_implied_by_success": [
+      "D control response identity matches dedicated records",
+      "D stop control request completes",
+      "control socket becomes unavailable with ENOENT or ECONNREFUSED",
+      "recorded live agent PID reports ESRCH"
+    ],
+    "assertions_are_not_additional_reported_output_fields": true
+  },
+  "acceptance": {
+    "both_phases_exit_zero": true,
+    "pre_stop_probe_state_observed_on_user_report": true,
+    "dedicated_agent_shutdown_accepted_on_user_report": true,
+    "cleanup_gate_closed": true,
+    "requires_repeated_status_or_stop": false,
+    "chat_guarded_edit_success_marker_earned": false,
+    "local_green_check_success_marker_earned": false
+  },
+  "limits": {
+    "before_is_point_in_time_not_execution_history": true,
+    "prior_blocked_request_server_delivery_proven": false,
+    "transient_mutation_ruled_out": false,
+    "fresh_probe_or_reference_hash_returned": false,
+    "post_stop_file_read_performed": false,
+    "descendant_processes_independently_enumerated": false,
+    "remote_registration_revoked": false,
+    "credentials_revoked": false,
+    "new_persistent_local_evidence_written_by_status_or_stop": false,
+    "exact_running_commit": null,
+    "fresh_build_manifest_received": false,
+    "exactSourceToBuildProven": false,
+    "existing_E1_live_state_rechecked": false
+  },
+  "preserved_gates": {
+    "D_edit_receipt_received": false,
+    "D_replay_executed": false,
+    "D_stale_hash_test_executed": false,
+    "C_scoped_lifecycle_pass": true,
+    "existing_E1_read_only_pass": true,
+    "A_remediation_completed": false,
+    "B_actual_docker_executed": false
+  },
+  "boundaries": {
+    "blocked_edit_retried": false,
+    "alternative_mutation_route_used": false,
+    "server_restarted": false,
+    "safety_or_permission_settings_changed": false,
+    "retained_sample_must_not_be_reset": true
+  },
+  "change_scope": {
+    "documentation_only": true,
+    "past_evidence_json_modified": false,
+    "source_tests_dependencies_modified": false,
+    "main_merged": false,
+    "deployed": false,
+    "ci_pass_claimed": false
+  },
+  "privacy": "No raw session UUID, operation ID, personal filesystem path, PID, credential, access URL or raw log stored."
+}

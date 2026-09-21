@@ -1,0 +1,134 @@
+{
+  "date": "2026-09-19",
+  "repository": "dearcloud09/localmcp",
+  "remote_base_commit": "5da55f2f045428537c640bba59aed3a83b8c3f60",
+  "scope": "M2C-02a opt-in durable mutation journal and actual Workspace injection; local review only",
+  "remote_runtime_changed": false,
+  "source_upload_attempted_this_turn": false,
+  "prior_upload_boundary": "Prior code upload blocked by tool security. No retry, split upload, alternative channel or source embedding into remote documentation.",
+  "local_base": {
+    "artifact": "localmcp-m2c-review.zip",
+    "base_commit": "2850cf40103b5d4098455edccac732791bc107be",
+    "six_source_hashes_verified": true
+  },
+  "environment": {
+    "platform": "linux",
+    "node": "v22.16.0",
+    "typescript": "5.8.3",
+    "node_types": "25.1.0",
+    "test_uid": 1000,
+    "source_tree": "partial source fixture, not full clone"
+  },
+  "executed": {
+    "strict_typecheck": "tsc -p tsconfig.independent.json; actual independent source subset, no SDK substitutes",
+    "command": "node --test compiled/test/durable-journal.test.js compiled/test/durable-crash.test.js compiled/test/mutation-coordinator.test.js compiled/test/mutation-workspace.test.js compiled/test/modular-cli.test.js compiled/test/modular-files-process.test.js",
+    "tests": 91,
+    "pass": 91,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 0,
+    "breakdown": {
+      "new_durable_journal_and_workspace": 25,
+      "new_real_process_crash_and_concurrency": 4,
+      "previous_mutation": 37,
+      "previous_cli_git_files_process": 25
+    },
+    "crash_checkpoints": {
+      "before_effect": "actual child SIGKILL, unresolved, retry refused, zero effects",
+      "after_effect_before_terminal": "actual child SIGKILL, unresolved, retry refused, one effect",
+      "after_terminal": "actual child SIGKILL, persisted success replayed, still one effect"
+    },
+    "cross_process_same_id": {
+      "processes": 6,
+      "actual_effects": 1
+    },
+    "same_instance_same_id": {
+      "requests": 20,
+      "actual_actions": 1
+    },
+    "negative_control": {
+      "new_memory_journal_instances_action_count": 2,
+      "reopened_durable_journal_action_count": 1
+    },
+    "failure_injection": "Owner-only operation directory made unwritable after callback effect; outcome unknown, no automatic retry. Permission restoration only in temporary test fixture.",
+    "initial_test_issue_fixed": "Concurrent capacity test initially used a 50ms lock wait and reached lock-timeout rather than full. Capacity assertion retained; normal fixture now uses the 2000ms production default. Stale-lock test separately retains a 50ms wait.",
+    "patch_roundtrip": "7 changed/new source files applied against previous local M2c review in a temporary Git repo and compared byte-for-byte. No remote/user checkout applied."
+  },
+  "benchmark": {
+    "scope": "single-process local 4096-byte guarded Workspace edit; not MCP or end-to-end",
+    "samples_per_mode": 100,
+    "warmup_per_mode": 10,
+    "bytes_per_file": 4096,
+    "memory": {
+      "n": 100,
+      "p50Ms": 0.9006489999999872,
+      "p95Ms": 1.2899919999999838,
+      "minMs": 0.7235769999999775,
+      "maxMs": 1.733936999999969,
+      "meanMs": 0.9513035400000011
+    },
+    "durable": {
+      "n": 100,
+      "p50Ms": 2.3228349999999978,
+      "p95Ms": 3.4087770000000006,
+      "minMs": 1.8327719999999772,
+      "maxMs": 5.70471299999997,
+      "meanMs": 2.4458077599999974
+    },
+    "successful_replay": {
+      "n": 100,
+      "p50Ms": 0.5540369999999939,
+      "p95Ms": 0.8397089999999992,
+      "minMs": 0.4575849999999946,
+      "maxMs": 1.6115570000000048,
+      "meanMs": 0.6004990600000005
+    },
+    "not_end_to_end": true,
+    "raw_report_sha256": "ce06cd150fe307817f4732ec396c7d73ac77121b6ededa0e8e14e408afd41f07"
+  },
+  "source_sha256": {
+    "src/core/durable-mutation-journal.ts": "507e34780f31631ce1f8584e05758951d6786b75c54786a7f39deb4ea4950bbf",
+    "src/core/mutation-coordinator.ts": "1a1712a28538ee7e8af47da75074c177bdb86e3dd0a6810b43003c5413d76f97",
+    "src/workspace.ts": "7a7d6d2ec5fd6f1dc8b23b0cdd3ec0e69d1d48ba2f6e745223ac8770b380e5ac",
+    "test/durable-journal.test.ts": "0f5e2684a724737826f822e4df42cac07a169b3ae1c1000a715b8345268d8c3b",
+    "test/durable-crash.test.ts": "cfbe722014091c85b5d5c27fc49f7db71178febf5fc1f0f47267170c27138d2e",
+    "test/fixtures/durable-child.ts": "47e4fb52c87c43e74ae4f851d467c079c312b050830503017f52d87e9321c122",
+    "benchmarks/journal.mjs": "f095e76099046e82d3ed9049e2101b480e30cb296cf83d0a228f578bde22db07"
+  },
+  "logs_sha256": {
+    "combined.tap": "1abd296fe4fcb2a1ead9c5a632e4e9fd49fbb3086e6a1134b9593bafba09f7bc",
+    "typecheck.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "not_run": [
+    "Runtime config/MCP SDK wiring for new journal",
+    "Full pinned dependency check/build/test of new changes",
+    "Existing five M2c SDK integration tests",
+    "New code macOS/Windows",
+    "Real Docker E0-D",
+    "New code live ChatGPT E1",
+    "Power-loss, kernel-crash, network filesystem or disk-failure durability",
+    "Product process resurrection / automatic recovery",
+    "End-to-end ChatGPT/MCP latency"
+  ],
+  "limits": [
+    "POSIX local-filesystem opt-in library; missing/corrupt namespaces fail closed.",
+    "A persisted success receipt means callback success was recorded, not current file state or atomicity of file and log.",
+    "In-flight records cannot distinguish a still-running worker from an interrupted one; no re-execution.",
+    "Same-ID reservation spans cooperating processes sharing one journal. Different-ID file locks remain process-local.",
+    "Directory allocation lock is not stolen after a crash. Owner review is required before any recovery.",
+    "No automatic eviction, retry, rollback, PID killing or namespace reset.",
+    "Stores relative-path receipts and digests, not file contents, source edits or exception messages. Hashes are not confidentiality encryption.",
+    "Directory/file fsync requests are OS/device dependent and SIGKILL does not simulate power failure.",
+    "Existing remote E0/E1 evidence is preserved and does not apply automatically to unpublished local code."
+  ],
+  "network": {
+    "github_git_probe": "Could not resolve host: github.com",
+    "npm_registry_https_probe": "Could not resolve host: registry.npmjs.org",
+    "docker_cli": "not found",
+    "sdk_resolution": "ERR_MODULE_NOT_FOUND in the partial worktree"
+  },
+  "authoritative_docs": [
+    "docs/onepager.ko.md",
+    "docs/progress.md"
+  ]
+}

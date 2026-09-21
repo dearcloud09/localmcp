@@ -1,0 +1,43 @@
+{
+  "date": "2026-09-19",
+  "base_commit": "66fb82dff4faf94bc0f7b8cee3e511668af0a6d6",
+  "scope": "E1 preparation helper and local evidence verification; NOT live ChatGPT",
+  "environment": {
+    "os": "Linux",
+    "node": "v22.16.0"
+  },
+  "executed": {
+    "command": "node --test test/e1-session.test.mjs",
+    "tests": 9,
+    "pass": 9,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 0,
+    "syntax_check": [
+      "scripts/e1-session.mjs",
+      "test/e1-session.test.mjs"
+    ]
+  },
+  "reused_source_blob": {
+    "scripts/lib/project-profile.mjs": "3e111618af5a7d2f8e05ceb5a33dcaffde7f3f27"
+  },
+  "source_sha256": {
+    "scripts/e1-session.mjs": "ed8ba88a06fd5b1f85fef9a0456e5b325f0cd912c4f94d41f5146ddc8dd0900b",
+    "test/e1-session.test.mjs": "e8aae8e1b1f9679e1377bf12151d60410a0172278aa0c0c6ec59b17c00096091"
+  },
+  "not_run": [
+    "live public relay startup",
+    "user macOS helper execution",
+    "ChatGPT app registration and model tool calls",
+    "current full E0 rerun",
+    "Docker"
+  ],
+  "unchanged": [
+    "runtime src",
+    "existing verification scripts",
+    "package.json",
+    "package-lock.json"
+  ],
+  "e1_status": "prepared_awaiting_user_connection",
+  "evidence_rule": "E1_LOCAL_CHECK_OK does not attribute edits; compare actual MCP tool calls and challenge before recording E1 passed."
+}

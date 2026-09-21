@@ -1,0 +1,58 @@
+{
+  "date": "2026-09-19",
+  "repository": "dearcloud09/localmcp",
+  "base_commit": "9ce1f38031696a3dda1394186bc88f2823170879",
+  "status": "blocked_external_prerequisites",
+  "scope": "integration-readiness repair and consolidated local review; not full SDK acceptance",
+  "remote_source_upload_attempted": false,
+  "remote_source_applied": false,
+  "upload_boundary": "Prior tool-security denial has no confirmed clearance. No repeated/split/alternate-route code write attempted.",
+  "environment": { "os": "linux", "node": "22.16.0", "typescript": "5.8.3", "node_types": "25.1.0", "test_uid": 1000, "full_checkout": false },
+  "executed": {
+    "archive_manifest_verified_files": 84,
+    "baseline_remote_git_blobs_verified": 7,
+    "reverse_patch_chain_steps": 4,
+    "compile": "tsc -p tsconfig.independent.json (actual independent sources/tests, not the full server)",
+    "tests": { "total": 162, "pass": 162, "fail": 0, "cancelled": 0, "skipped": 0, "new_entrypoint_tests": 8, "reexecuted_prior_tests": 154 },
+    "negative_control": {
+      "test/fixtures/durable-child.js": { "exists": false, "ts_exists": true, "exitCode": 1, "module_not_found": true },
+      "test/fixtures/runtime-journal-child.js": { "exists": false, "ts_exists": true, "exitCode": 1, "module_not_found": true },
+      "src/recovery-inspect.js": { "exists": false, "ts_exists": true, "exitCode": 1, "module_not_found": true }
+    },
+    "consolidated_patch": { "files": 27, "git_apply_check": true, "applied_bytes_match": true, "source_baseline": "partial source reconstruction of verified remote blobs", "sha256": "62e20db31cd57752280a24d5be3fbdb6e6932f18ee708e3282b6b66e4b0d2940" },
+    "restored_prior_benchmark_sha256": "f095e76099046e82d3ed9049e2101b480e30cb296cf83d0a228f578bde22db07",
+    "packaged_review": { "manifest_files": 105, "extracted_and_checked": true, "repeated_pass": 162, "not_added_to_test_total": true }
+  },
+  "fix": {
+    "type": "test subprocess source/compiled entrypoint selection",
+    "changed_existing_tests": ["test/durable-crash.test.ts", "test/recovery-runtime.test.ts", "test/recovery-inspection.test.ts"],
+    "source_mode": "explicit .ts entry and --import tsx, no inherited test-runner flags",
+    "compiled_mode": "explicit emitted .js entry, no loader",
+    "fallback": false,
+    "production_runtime_changed_this_turn": false
+  },
+  "test_coverage_limit": "Source-mode path/argv policy tested. Actual pinned tsx subprocess execution and real MCP SDK not run.",
+  "prerequisites": {
+    "git_network": "Could not resolve host: github.com",
+    "npm_network": "Could not resolve host: registry.npmjs.org",
+    "sdk_import": "ERR_MODULE_NOT_FOUND",
+    "tsx_local": "not installed",
+    "docker_cli": "not found",
+    "execution_plugins": "No installed execution environment found in plugin search; uninstalled cloud deployment offerings not used."
+  },
+  "pending_real_sdk_suites": { "test/mutation-integration.test.ts": 5, "test/recovery-runtime-sdk.test.ts": 7 },
+  "not_run": ["full pinned check/build/test", "real pinned tsx source-mode child execution", "M2c real SDK HTTP stdio Worker hot-reload integration", "macOS Windows for new source", "real Docker E0-D", "new-source live ChatGPT E1"],
+  "logs_sha256": {
+    "compiled-tests.tap": "1e0e4496a41377ceb179ed1123e0336f81cc49246fb9c69f033d85483199ced0",
+    "typecheck.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "sdk-prerequisite.log": "2afb329469b390dd464e6734264aa5012b270bcca17517183b74f79d137be212"
+  },
+  "files_sha256": {
+    "test/helpers/node-entrypoint.ts": "e8658f837bc078b39fcbcb87daf0c0f56e8e2f429592a3b014c04d2ac695cafc",
+    "test/node-entrypoint.test.ts": "36bdf23bddb2b9281caa36adbdedeef9edea08699d25c3cd0ec5b0740f8a32b1",
+    "test/durable-crash.test.ts": "f4bef695d781f5a41ec18d507b1e851749aeac24ae482d250f598958351e7e04",
+    "test/recovery-runtime.test.ts": "f21ebe229aba60e59054660a53ce9bd871f76ffd496f4fb3e5f2144635acc51d",
+    "test/recovery-inspection.test.ts": "f6046e405e7ff0194dace2cdb82bfb1ea341a9b6e8c029014d81c1c26f2ff3cf"
+  },
+  "stop_rule": "Pause new product features until authorized source publication and full pinned integration prerequisites are available. Keep Draft; no deployment, CI spend, public relay, or user-machine action."
+}

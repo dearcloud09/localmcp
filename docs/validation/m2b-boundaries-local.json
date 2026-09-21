@@ -1,0 +1,75 @@
+{
+  "date": "2026-09-19",
+  "base_commit": "aaeb0cc70e338f6da3e0b0a64842df3ff1dfa466",
+  "scope": "M2B-02a file-tool sensitive paths and M2B-02b external tool allowlist; NOT OS isolation",
+  "environment": {
+    "os": "Linux",
+    "node": "v22.16.0",
+    "typescript": "Version 5.8.3"
+  },
+  "executed": {
+    "typecheck": "tsc -p tsconfig.independent.json; actual policy/Workspace/independent source subset only",
+    "tests": {
+      "command": "node --test compiled/test/sensitive-paths.test.js compiled/test/external-tool-policy.test.js compiled/test/modular-cli.test.js compiled/test/modular-core.test.js compiled/test/modular-files-process.test.js",
+      "total": 77,
+      "pass": 77,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "breakdown": {
+        "sensitive_paths": 20,
+        "external_policy": 14,
+        "existing_independent": 43
+      }
+    },
+    "typescript_syntax": {
+      "files": 11,
+      "errors": []
+    },
+    "js_syntax": "node --check test/fixtures/policy-mcp-server.mjs",
+    "negative_controls": {
+      "before": {
+        "read": "allowed",
+        "rename": "allowed"
+      },
+      "after": {
+        "read": "SENSITIVE_PATH",
+        "rename": "SENSITIVE_PATH"
+      }
+    }
+  },
+  "not_run": [
+    "actual SDK/config/stdio boundary-integration.test.ts (5 tests)",
+    "current full dependency check/build/test",
+    "updated MCP/hot reload/Worker suites",
+    "other prior policy/profile suites in this run",
+    "macOS/Windows",
+    "live ChatGPT connection",
+    "GitHub CI (user-reported quota limit)"
+  ],
+  "network": {
+    "git_clone": "Could not resolve host: github.com",
+    "npm_ping": "EAI_AGAIN registry.npmjs.org"
+  },
+  "workspace": "Partial source fixture, not a full git clone. Reused independent sources checked against published Git blobs.",
+  "source_sha256": {
+    "src/core/sensitive-paths.ts": "5b5992c074a17f4c103f892281fbfa8a0c3d426f36d6940b283f3793ff6fd5b5",
+    "src/core/external-tool-policy.ts": "74ab6e0bc136da230948e93bb9b569b12bac6ee4f9fff48540265c4d4e8448ed",
+    "src/workspace.ts": "c9a3b87aa310c72ccc0e030477f1bbb622d06ba36e97cc7bee2cf53f971b8fb5",
+    "src/config.ts": "4f0c6724403927582c44cfd9dd025a79d0d55be5c7bfbc02ffbce22bbe4db8c1",
+    "src/mcp/loader.ts": "45bed27e2af91157cb78fdd80b22775c1952fd0534f7d82854b98991c641598a",
+    "test/sensitive-paths.test.ts": "93fdf4bc21f55a32b59f47dcf47552b10e46e5d9c767dc26e8a106855aaa35aa",
+    "test/external-tool-policy.test.ts": "e281a6779455992464f0158de397184f8622336cdef409911fd097ff71e335d3",
+    "test/boundary-integration.test.ts": "08dd67dd58ec5461a5a2805ac331f45323f869f97e094ccc7c6142c07c077750",
+    "test/fixtures/policy-mcp-server.mjs": "17fdef1f3e69adb02446e9b45ab8265145a4f4a0c8af21ca722bc3cdcf322fbb",
+    "test/hot-reload.test.ts": "4d91135aaaeef43b91136bdc5af0d668fd57fc2c3a487d03d81b7958b5120929",
+    "test/mcp.test.ts": "9ca7b90aa36ba56bdfaa26a933ef11f714fd91a534bbd3666589430ac5591282",
+    "test/relay.test.ts": "173a33b78f57552dd7dc2d18fd53d573a5bad897631bcafa9bd41b96cab15e8f"
+  },
+  "limitations": [
+    "Filename policy is not secret-content detection or protection against hostile same-user filesystem races.",
+    "External allowlists restrict advertised/called names, not process filesystem/network authority.",
+    "Descriptor pins apply to observed descriptors in one policy lifetime; they cannot prove server behavior.",
+    "No cancellation/rollback of already-running actions."
+  ]
+}

@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {mkdtemp,rm} from 'node:fs/promises';
+import {mkdtemp,rm,mkdir,writeFile} from 'node:fs/promises';
 import {tmpdir} from 'node:os';
 import {join,resolve} from 'node:path';
 import {fork,execFile} from 'node:child_process';
@@ -23,7 +23,9 @@ test('control endpoints use normalized, directory-specific Windows pipes and Uni
 
 test('native IPC supports status, idempotent start, reload, stop and restart', {timeout:30000},async t=>{
   const home=await mkdtemp(join(tmpdir(),'localmcp-ipc-'));
-  const env={...process.env,HOME:home,USERPROFILE:home};
+  const project=join(home,'project');await mkdir(project);
+  const profile=join(home,'profile.json');await writeFile(profile,JSON.stringify({root:project}),{mode:0o600});
+  const env={...process.env,HOME:home,USERPROFILE:home,LOCALMCP_CONFIG:profile,LOCALMCP_ROOT:project,LOCALMCP_SHELL:'0'};
   const children:ReturnType<typeof fork>[]=[];
   t.after(async()=>{for(const child of children)if(child.exitCode===null)child.kill();await new Promise(r=>setTimeout(r,200));await rm(home,{recursive:true,force:true});});
   const cli=async(command:string)=>(await exec(process.execPath,[resolve('dist/index.js'),command],{env,timeout:10000})).stdout;
